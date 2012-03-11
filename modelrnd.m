@@ -10,6 +10,21 @@
 % whether the model has an efficient generator, use it, and otherwise use rejection
 % sampling from the pdf.
 % 
+%  Jordan -- if we're going to have a general purpose sampler, maybe it
+%  should use MCMC so it doesn't depend on the point at 0 being the
+%  highest? Or maybe we should use some heuristics to decide if that
+%  condition is likely to hold and only use rejection sampling if so? I put
+%  a more general (but 4x slower) sampler using MCMC at the bottom of the
+%  file.
+%
+%  Tim -- isn't it a problem that the MCMC sampler gives correlated samples?
+%  Also, is there an accepted method for finding the right envelope function? I guess
+%  this reduces to finding the mode of the pdf. Would it be crazy to use one of the
+%  builtin optimization functions to acheive this?
+%
+%  p.s. we are abusing comments.
+%
+%
 %    Example usage:
 %
 %    model = StandardMixtureModel();
@@ -43,4 +58,23 @@ function r = modelrnd(model, params, dims)
     end
 
     r = reshape(samples(1:n), dims);
+end
+
+function r = mcmcParallel(pdf, params, dims)
+  burn = 10;
+  thin = 2;
+  proposals = rand(prod(dims)*thin+burn, 1).*2.*pi - pi;
+  pdfVals = pdf(proposals, params{:});
+  curLike = pdfVals(1);
+  cur = proposals(1);
+  for m=1:length(proposals)
+      newLike = pdf(proposals(m), params{:});
+      if rand < newLike/curLike
+          cur = proposals(m);
+          curLike = newLike;
+      else
+          proposals(m) = cur;
+      end
+  end
+  r = reshape(proposals(burn+1:thin:end), dims);
 end

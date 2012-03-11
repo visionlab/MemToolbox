@@ -7,12 +7,13 @@ function MCMC_Example()
   
   % Choose a model
   model = StandardMixtureModel();
+  %model = InfiniteScaleMixtureModel(d.data(:));
   
   % Run
   [params, stored] = MCMC(d.data(:), model);
   
   % Maximum likelihood parameters from MCMC
-  disp('MLE from MCMC():');
+  disp('MAP from MCMC():');
   disp(params);
   
   % Show fit

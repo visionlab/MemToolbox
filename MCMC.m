@@ -4,6 +4,11 @@
 % To do:
 %    1. Consider using an exponentially-weighted moving average covariance matrix
 %       for the proposal distribution, rather than just chopping off the early burn in.
+%    2. Do we want to encourage use of the MAP estimate, or something else like
+%       the posterior mean or median? One option is to return all three in a params struct,
+%       like params.posteriorMode, params.posteriorMean, and params.posteriorMedian.
+%    3. What do you think about returning credible intervals?
+%
 %---------------------------------------------------------------------
 function [params,stored] = MCMC(data, model)
   % Fastest if your number of start positions is the same as the number
@@ -39,11 +44,14 @@ function stored = MCMC_Chain(data, pdf, prior, ...
     start, lowerbound, upperbound, movestd)
   
   % Parameters
-  numMonte = 2000;
+  numMonte = 3000;
   numBurn = 1000;
   numCovarianceTuning = 500; % number of burn in trials used to estimate cov matrix
   probabilityOfBigMove = 0.1; % probability of taking a big jump
   sizeFactorOfBigMove = 5; % a big move is bigMoveSize times bigger than normal
+  
+  % Set acceptance counter to 0
+  numAcceptances = 0;
   
   % Set initial state
   cur = start;
@@ -57,7 +65,7 @@ function stored = MCMC_Chain(data, pdf, prior, ...
   
   % Do MCMC
   for m=1:numMonte
-    if (mod(m,500)==0)
+    if (mod(m,100)==0)
       % Progress bar? Using waitbar()?
       %waitbar(m/numMonte, waitHandle);
     end
@@ -89,6 +97,10 @@ function stored = MCMC_Chain(data, pdf, prior, ...
     if rand < exp(like - curLike)
       cur = new;
       curLike = like;
+      
+      if(m > numBurn) % if we're past the burn in, count this as an acceptance
+        numAcceptances = numAcceptances + 1;
+      end
     end
     
     % Store trace of current position
@@ -100,6 +112,9 @@ function stored = MCMC_Chain(data, pdf, prior, ...
       burnCovariance = cov(stored.vals(numCovarianceTuning:numBurn, :));
     end
   end
+  
+  disp('MCMC chain acceptance rate:');
+  disp(numAcceptances/(numMonte-numBurn));
   
   % Throw out first newBurn samples as burn-in period
   stored.vals = stored.vals(numBurn+1:end,:);

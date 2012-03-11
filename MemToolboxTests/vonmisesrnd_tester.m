@@ -1,5 +1,3 @@
-clear all;
-
 %% compare speeds of randvonmises and vonmisesrnd
 % requires jv10 and circ_stats toolboxes
 
