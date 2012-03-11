@@ -13,7 +13,7 @@
 function [params,stored] = MCMC(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
-  try, matlabpool, end
+  try matlabpool, end
   numChains = size(model.start,1);
 
   if ~isfield(model, 'prior')
@@ -29,9 +29,11 @@ function [params,stored] = MCMC(data, model)
   % Combine values across chains
   stored.vals = [chainStored(1).vals];
   stored.like = [chainStored(1).like];
+  stored.chain = ones(size(chainStored(1).like));
   for c=2:numChains
     stored.vals = [stored.vals; chainStored(c).vals];
     stored.like = [stored.like; chainStored(c).like];
+    stored.chain = [stored.chain; ones(size(chainStored(c).like)).*c];
   end
   
   % Find MAP estimate
