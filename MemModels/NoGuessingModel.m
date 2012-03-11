@@ -10,3 +10,4 @@ function model = NoGuessingModel()
 	model.start = [10;  % g, K
                    15;  % g, K
                    20]; % g, K
+end

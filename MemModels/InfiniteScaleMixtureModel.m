@@ -5,6 +5,8 @@
 %
 % still in the works.
 
+% TODO: Convert to use Memoize() instead of this way of caching
+
 function model = InfiniteScaleMixtureModel(data)
 	model.paramNames = {'g', 'sigma', 'df'};
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
@@ -16,12 +18,13 @@ function model = InfiniteScaleMixtureModel(data)
                    0.2, 0.3, 1.0;
                    0.4, 0.1, 2.0;
                    0.6, 0.5, 5.0];
-
 end
+
 
 function y = tlspdf(x, mu, sigma, df)
      y = tpdf((x - mu)./sigma,df)./sigma;
 end
+
 
 function f = CreateFastWrappedT(x)
     valsRange = 100;

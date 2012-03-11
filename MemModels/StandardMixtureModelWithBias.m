@@ -9,15 +9,14 @@ function model = StandardMixtureModelWithBias()
 	model.start = [0.01, .2, 10;  % g, K
                    0.00, .4, 15;  % g, K
                   -0.03, .1, 20]; % g, K
-
-model.generator = @StandardMixtureModelWithBiasGenerator;
-
+  model.generator = @StandardMixtureModelWithBiasGenerator;
+end
 
 % acheives a 15x speedup over the default rejection sampler
 function r = StandardMixtureModelWithBiasGenerator(parameters, dims)
-
     n = prod(dims); % figure out how many numbers to cook
-    guesses = logical(rand(n,1) < parameters{2}); % figure out which ones will be guesses
     r = rand(n,1)*2*pi - pi; % fill array with blind guesses
+    guesses = logical(rand(n,1) < parameters{2}); % figure out which ones will be guesses
     r(~guesses) = vonmisesrnd(parameters{1}, parameters{3}, [sum(~guesses),1]); % pick rnds
     r = reshape(r, dims); % reshape to requested dimensions
+end
