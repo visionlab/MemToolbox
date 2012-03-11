@@ -3,7 +3,8 @@ function MCMC_Example()
   addpath('MemVisualizations');
     
   % Example data
-  d = load('MemData/data.mat');
+  %d = load('MemData/data.mat');
+  d = load('MemData/3000+trials_3items_SUBJ#1.mat');
   
   % Choose a model
   model = StandardMixtureModel();
@@ -12,9 +13,12 @@ function MCMC_Example()
   % Run
   [params, stored] = MCMC(d.data(:), model);
   
-  % Maximum likelihood parameters from MCMC
+  % Maximum posterior parameters from MCMC
   disp('MAP from MCMC():');
   disp(params);
+  
+  % Make sure MCMC converged
+  MCMC_Convergence_Plot(stored, model.paramNames);
   
   % Show fit
   PlotData(model, params, d.data(:));
