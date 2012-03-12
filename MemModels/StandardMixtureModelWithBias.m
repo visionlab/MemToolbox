@@ -6,9 +6,9 @@ function model = StandardMixtureModelWithBias()
 	model.upperbound = [pi 1 Inf]; % Upper bounds for the parameters
 	model.movestd = [0.01, 0.02, 0.1];
 	model.pdf = @(data, mu, g, K) ((1-g).*vonmisespdf(data,mu,K) + (g).*unifpdf(data,-pi,pi));
-	model.start = [0.01, .2, 10;  % mu, g, K
+	model.start = [0.1, .2, 10;  % mu, g, K
                    0.00, .4, 15;  % mu, g, K
-                  -0.03, .1, 20]; % mu, g, K
+                  -0.1, .1, 20]; % mu, g, K
     model.generator = @StandardMixtureModelWithBiasGenerator;
 end
 
