@@ -10,7 +10,7 @@ function model = InfiniteScaleMixtureModel()
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
 	model.upperbound = [1 Inf Inf]; % Upper bounds for the parameters
 	model.movestd = [0.02, 0.1, 0.25];
-	model.pdf = @ismpdf
+	model.pdf = @ismpdf;
 	model.start = [0.0, 0.2, 0.2;
                    0.2, 0.3, 1.0;
                    0.4, 0.1, 2.0;

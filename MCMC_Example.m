@@ -48,7 +48,7 @@ function figHand = PlotDataNew(model, stored, data)
   figHand = figure;
   
   % Which to use
-  numSamplesToPlot = 127; % Number of samples to plot
+  numSamplesToPlot = 63; % Number of samples to plot
   which = round(linspace(1, size(stored.vals,1), numSamplesToPlot));
   [~,mapVal] = max(stored.like);
   params = stored.vals(mapVal,:);

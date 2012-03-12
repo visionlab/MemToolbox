@@ -1,4 +1,4 @@
-% returns a palatable colormap, courtesy of colourlovers.com.
+% returns a palatable colormap, from colourlovers.com.
 function map = palettablecolormap(type, n)
 	
 	types = {'sequential', 'diverging'};
@@ -35,5 +35,5 @@ function map = palettablecolormap(type, n)
 	end
 	
 	map = [linspace(startcolor(1)/255, endcolor(1)/255, n);
-				 linspace(startcolor(2)/255, endcolor(2)/255, n);
-				 linspace(startcolor(3)/255, endcolor(3)/255, n)]';
+		   linspace(startcolor(2)/255, endcolor(2)/255, n);
+		   linspace(startcolor(3)/255, endcolor(3)/255, n)]';
