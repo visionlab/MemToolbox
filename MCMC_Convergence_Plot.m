@@ -3,14 +3,16 @@ function figHand = MCMC_Convergence_Plot(stored, paramNames)
   % diagnose convergence: They should look the same as each other.
   figHand = figure;
   N = length(paramNames);
-  colors = {'b', 'g', 'r', 'c', 'm', 'y'};
+  colors = palettablecolors(max(stored.chain));
   for p=1:N
     % Make trace plots
     h = subplot(N,3,sub2ind([3 N],1:2,[p p]));
     for c=1:max(stored.chain)
       vals(:,c) = stored.vals(stored.chain==c, p);
+      plot(vals(:,c), 'Color', colors(c,:));
+      set(gca, 'box', 'off');
+      hold on;
     end
-    plot(vals);
     lims = axis(gca);
     set(gca, 'XTick', []);
     title(paramNames{p}, 'FontSize', 15);
@@ -22,9 +24,10 @@ function figHand = MCMC_Convergence_Plot(stored, paramNames)
       cnt = histc(vals(:,c), yBins);
       B = barh(yBins, cnt, 'hist');
       set(B, 'EdgeColor', 'none', 'FaceColor', ...
-        colors{mod(c-1, length(colors))+1}); %'FaceAlpha', .2 
+        colors(c,:)); %'FaceAlpha', .2 
       hold on;
     end    
+    set(gca, 'box', 'off');
     % Match axes of trace plots
     ylim([lims(3), lims(4)]);
     set(gca, 'YTick', []);
