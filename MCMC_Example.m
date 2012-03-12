@@ -1,44 +1,49 @@
 function MCMC_Example()
+  close all;
   addpath('MemModels');
   addpath('MemVisualizations');
     
   % Example data
-  %d = load('MemData/data.mat');
   d = load('MemData/3000+trials_3items_SUBJ#1.mat');
   
   % Choose a model
-  model = StandardMixtureModel();
-  %model = InfiniteScaleMixtureModel(d.data(:));
+  %model = StandardMixtureModel();
+  model = InfiniteScaleMixtureModel();
   
-  % Run
-  [params, stored] = MCMC(d.data(:), model);
+  % Run MCMC
+  load InfiniteScale.mat
+  %[params, stored] = MCMC(d.data(:), model);
   
   % Maximum posterior parameters from MCMC
   disp('MAP from MCMC():');
   disp(params);
   
-  % Make sure MCMC converged
-  MCMC_Convergence_Plot(stored, model.paramNames);
-  
-  % Show fit
-  PlotData(model, params, d.data(:));
+  % Make sure MCMC converged:
+  % Trace plots and histograms should have similar means and variance
+  % (e.g., should overlap). This shows that the chains that started in
+  % different places all settled into the same ending distribution.
+  h = MCMC_Convergence_Plot(stored, model.paramNames);
+  subfigure(2,3,1, h);
   
   % Show a figure with each parameter's correlation with each other
-  MCMC_Plot(stored, model.paramNames);
+  h = MCMC_Plot(stored, model.paramNames);
+  subfigure(2,3,2, h);
   
-  % Sanity check: Use mle() built-in function
+  % Show fit
+  h = PlotData(model, params, d.data(:));
+  subfigure(2,3,3, h);
+  
+  % Get MLE parameters using search
   disp('MLE from mle():');
-  params_mle = mle(d.data(:), ... % Data
-    'pdf', model.pdf, ... % Likelihood function
-    'start', model.start(1,:), ... % Start position
-    'lowerbound', model.lowerbound, ... % Lower bound for the parameters
-    'upperbound', model.upperbound);  % Upper bounds for the parameters
+  %params_mle = MLE(d.data(:), model);
   disp(params_mle);
+  
+  %save InfiniteScale.mat params stored params_mle
 end
 
-function PlotData(model, params, data)
+function figHand = PlotData(model, params, data)
   % Plot data fit
-  figure;
+  figHand = figure;
   
   % Plot data histogram
   x = linspace(-pi, pi, 55)';
