@@ -277,7 +277,6 @@ elseif isnumeric(Data) || islogical(Data) || ischar(Data)
    
 elseif isa(Data, 'function_handle')
    Engine = CoreHash(ConvertFuncHandle(Data), Engine);
-   
 else  % Most likely this is a user-defined object:
    try
       Engine = CoreHash(ConvertObject(Data), Engine);
@@ -349,15 +348,16 @@ function FuncKey = ConvertFuncHandle(FuncH)
 % The Matlab version influences the conversion by FUNCTIONS:
 % 1. The format of the struct replied FUNCTIONS is not fixed,
 % 2. The full paths of toolbox function e.g. for @mean differ.
-FuncKey = functions(FuncH);
+%a = functions(FuncH);
+%FuncKey = a.function;
 
 % ALTERNATIVE: Use name and path. The <matlabroot> part of the toolbox functions
 % is replaced such that the hash for @mean does not depend on the Matlab
 % version.
 % Drawbacks: Anonymous functions, nested functions...
-% funcStruct = functions(FuncH);
-% funcfile   = strrep(funcStruct.file, matlabroot, '<MATLAB>');
-% FuncKey    = uint8([funcStruct.function, ' ', funcfile]);
+funcStruct = functions(FuncH);
+funcfile   = strrep(funcStruct.file, matlabroot, '<MATLAB>');
+FuncKey    = uint8([funcStruct.function, ' ', funcfile]);
 
 % Finally I'm afraid there is no unique method to get a hash for a function
 % handle. Please adjust this conversion to your needs.
@@ -373,7 +373,7 @@ function DataBin = ConvertObject(DataObj)
 DataBin = uint8(DataObj);
 
 % Or perhaps this is better:
-% DataBin = struct(DataObj);
+%DataBin = struct(DataObj);
 
 % return;
 
