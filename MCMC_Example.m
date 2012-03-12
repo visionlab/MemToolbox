@@ -11,8 +11,8 @@ function MCMC_Example()
   model = InfiniteScaleMixtureModel();
   
   % Run MCMC
-  %load InfiniteScale.mat
-  [params, stored] = MCMC(d.data(:), model);
+  load InfiniteScale.mat
+  %[params, stored] = MCMC(d.data(:), model);
   
   % Maximum posterior parameters from MCMC
   disp('MAP from MCMC():');
@@ -36,18 +36,20 @@ function MCMC_Example()
   
   % Get MLE parameters using search
   disp('MLE from mle():');
-  params_mle = MLE(d.data(:), model);
+  %params_mle = MLE(d.data(:), model);
   disp(params_mle);
   
   %save InfiniteScale.mat params stored params_mle
 end
 
 function figHand = PlotDataNew(model, stored, data)
+    
   % Plot data fit
   figHand = figure;
   
   % Which to use
-  which = round(linspace(1, size(stored.vals,1), 63));
+  numSamplesToPlot = 127; % Number of samples to plot
+  which = round(linspace(1, size(stored.vals,1), numSamplesToPlot));
   [~,mapVal] = max(stored.like);
   params = stored.vals(mapVal,:);
   
@@ -62,12 +64,13 @@ function figHand = PlotDataNew(model, stored, data)
   
   % Parallel coordinates
   subplot(1,2,1);
-  map = palettablecolormap([0 0 255], [255 0 0], 64);
+  map = palettablecolormap('diverging', numSamplesToPlot+1);
   for i=1:length(which)
     valuesNormalized(i,:) = (values(i,:) - minVals) ./ (maxVals - minVals);
     seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), 'Color', map(order==i,:));
     hold on;
   end
+  set(gca, 'box', 'off');
   set(seriesInfo(end), 'LineWidth', 4); % Last one plotted is MAP value
   set(gca, 'XTick', 1:size(stored.vals,2));
   set(gca, 'XTickLabel', model.paramNames);
@@ -90,7 +93,7 @@ function figHand = PlotDataNew(model, stored, data)
   
   % Plot data histogram
   subplot(1,2,2);
-  PlotData(model, params, data);
+  PlotData(model, params, data, map(order==(length(which)), :));
 
   % What to do when series is clicked
   function Click_Callback(~,~)
@@ -107,7 +110,7 @@ function figHand = PlotDataNew(model, stored, data)
     set(seriesInfo(minValue), 'LineWidth', 4);
     uistack(seriesInfo(minValue), 'top');
     subplot(1,2,2); hold off;
-    PlotData(model, values(minValue,:), data);
+    PlotData(model, values(minValue,:), data, map(order==minValue,:));
     
     % Unhighlight old series
     if ~isempty(lastClicked)
@@ -119,7 +122,7 @@ function figHand = PlotDataNew(model, stored, data)
   end
 end
 
-function PlotData(model, params, data)
+function PlotData(model, params, data, pdfColor)
   % Plot data histogram
   x = linspace(-pi, pi, 55)';
   n = histc(data, x);
@@ -132,7 +135,7 @@ function PlotData(model, params, data)
   paramsAsCell = num2cell(params);
   p = model.pdf(vals, paramsAsCell{:});
   multiplier = length(vals)/length(x);
-  plot(vals, p ./ sum(p(:)) * multiplier, 'b--', 'LineWidth', 2);
+  plot(vals, p ./ sum(p(:)) * multiplier, 'Color', pdfColor, 'LineWidth', 2);
   xlabel('Error (radians)');
   ylabel('Probability');
 end

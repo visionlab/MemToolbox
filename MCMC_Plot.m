@@ -27,6 +27,6 @@ function figHand = MCMC_Plot(stored, paramNames)
     end
 
 	% comestics
-	colormap(palettablecolormap);
+	colormap(palettablecolormap('sequential'));
 	palettablehistogram;
 end
