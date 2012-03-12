@@ -18,7 +18,6 @@ function ptr = Memoize(func)
   function varargout = r(varargin)
     hash = DataHash(varargin);
     if m.isKey(hash)
-      disp('Cache hit!');
       result = m(hash);
       if nOut > 1
         varargout = result(1:nargout);

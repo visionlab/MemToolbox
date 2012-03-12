@@ -13,7 +13,7 @@
 function [params,stored] = MCMC(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
-  try matlabpool, end
+  try, matlabpool, end
   numChains = size(model.start,1);
 
   if ~isfield(model, 'prior')
