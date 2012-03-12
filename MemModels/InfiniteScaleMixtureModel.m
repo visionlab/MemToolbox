@@ -3,8 +3,6 @@
 % mixture model assumes that the shape of the error distribution for fixed precision 
 % is a wrapped normal.
 %
-% still in the works.
-
 % TODO: Convert to use Memoize() instead of this way of caching
 
 function model = InfiniteScaleMixtureModel()
@@ -19,6 +17,7 @@ function model = InfiniteScaleMixtureModel()
                    0.6, 0.5, 5.0];
 end
 
+% call the infinte scale mixture model with bias, mu=0
 function y = ismpdf(data,g,sigma,df)
     model = InfiniteScaleMixtureModelWithBias();
     y = model.pdf(data, 0, g, sigma, df);

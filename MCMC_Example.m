@@ -11,8 +11,8 @@ function MCMC_Example()
   model = InfiniteScaleMixtureModel();
   
   % Run MCMC
-  load InfiniteScale.mat
-  %[params, stored] = MCMC(d.data(:), model);
+  %load InfiniteScale.mat
+  [params, stored] = MCMC(d.data(:), model);
   
   % Maximum posterior parameters from MCMC
   disp('MAP from MCMC():');
@@ -36,7 +36,7 @@ function MCMC_Example()
   
   % Get MLE parameters using search
   disp('MLE from mle():');
-  %params_mle = MLE(d.data(:), model);
+  params_mle = MLE(d.data(:), model);
   disp(params_mle);
   
   %save InfiniteScale.mat params stored params_mle
@@ -62,7 +62,7 @@ function figHand = PlotDataNew(model, stored, data)
   
   % Parallel coordinates
   subplot(1,2,1);
-  map = palettablecolormap([0 255 0], [255 0 0], 64);
+  map = palettablecolormap([0 0 255], [255 0 0], 64);
   for i=1:length(which)
     valuesNormalized(i,:) = (values(i,:) - minVals) ./ (maxVals - minVals);
     seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), 'Color', map(order==i,:));
@@ -111,9 +111,9 @@ function figHand = PlotDataNew(model, stored, data)
     
     % Unhighlight old series
     if ~isempty(lastClicked)
-      set(lastClicked,  'LineWidth', 1);
+      set(lastClicked, 'LineWidth', 1);
     else
-      set(seriesInfo(end),  'LineWidth', 1);
+      set(seriesInfo(end), 'LineWidth', 1);
     end
     lastClicked = seriesInfo(minValue);
   end
