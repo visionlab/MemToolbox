@@ -8,11 +8,10 @@ function MCMC_Example()
   d = load('MemData/3000+trials_3items_SUBJ#1.mat');
   
   % Choose a model
-  %model = StandardMixtureModel();
-  %model = InfiniteScaleMixtureModel();
+  model = StandardMixtureModel();
   %model = NoGuessingModel();
   %model = StandardMixtureModelWithBias();
-  model = InfiniteScaleMixtureModelWithBias();
+  %model = InfiniteScaleMixtureModel('wrappednormal','gamma');
   
   % Run MCMC
   MCMCMemoized = MemoizeToDisk(@MCMC);
