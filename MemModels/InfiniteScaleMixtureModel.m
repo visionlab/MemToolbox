@@ -15,8 +15,15 @@ function model = InfiniteScaleMixtureModel()
                    0.2, 0.3, 1.0;
                    0.4, 0.1, 2.0;
                    0.6, 0.5, 5.0];
+  model.generator = @ismgen;
 end
 
+function r = ismgen(params, dims)
+  paramsNew = {0, params{1}, params{2}, params{3}};
+  model = InfiniteScaleMixtureModelWithBias();
+  r = model.generator(paramsNew, dims);
+end
+  
 % call the infinte scale mixture model with bias, mu=0
 function y = ismpdf(data,g,sigma,df)
     model = InfiniteScaleMixtureModelWithBias();
