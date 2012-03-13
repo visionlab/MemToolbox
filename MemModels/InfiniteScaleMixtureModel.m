@@ -1,31 +1,18 @@
-% INFINITESCALEMIXTUREMODEL() returns a structure for an infinite scale mixture model
-% with a gamma mixing distribution. This particular flavor of the infinite scale
-% mixture model assumes that the shape of the error distribution for fixed precision 
-% is a wrapped normal.
+% INFINITESCALEMIXTUREMODEL(BASE,MIXING) returns a structure for an infinite 
+% scale mixture model for a particular BASE and MIXING distribution.
 %
-% TODO: Convert to use Memoize() instead of this way of caching
+% Todo:
+%    1. Support arbitrary combinations of {wrapped normal, von Mises} bases and
+%       {gamma, truncated normal, log normal, dirac delta} mixing, and maybe even
+%       allow the mixing distribution to be over kappa, sd, or precision.
 
-function model = InfiniteScaleMixtureModel()
-	model.paramNames = {'g', 'sigma', 'df'};
-	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
-	model.upperbound = [1 Inf Inf]; % Upper bounds for the parameters
-	model.movestd = [0.02, 0.1, 0.25];
-	model.pdf = @ismpdf;
-	model.start = [0.0, 0.2, 0.2;
-                   0.2, 0.3, 1.0;
-                   0.4, 0.1, 2.0;
-                   0.6, 0.5, 5.0];
-  model.generator = @ismgen;
-end
+function model = InfiniteScaleMixtureModel(baseDistribution, mixingDistribution)
 
-function r = ismgen(params, dims)
-  paramsNew = {0, params{1}, params{2}, params{3}};
-  model = InfiniteScaleMixtureModelWithBias();
-  r = model.generator(paramsNew, dims);
-end
-  
-% call the infinte scale mixture model with bias, mu=0
-function y = ismpdf(data,g,sigma,df)
-    model = InfiniteScaleMixtureModelWithBias();
-    y = model.pdf(data, 0, g, sigma, df);
+    % is base = wrapped normal and mixing = gamma, use student's t
+    if(strcmp(baseDistribution, 'wrappednormal') && strcmp(mixingDistribution, 'gamma'))
+        model = StudentsTModel();
+        return;
+    else
+        error('The requested combination of base and mixing distributions is not supported.')
+    end
 end
