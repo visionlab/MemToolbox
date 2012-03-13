@@ -1,6 +1,7 @@
 function MCMC_Example()
   close all;
   addpath('MemModels');
+  addpath('Helpers');
   addpath('MemVisualizations');
     
   % Example data
@@ -8,11 +9,13 @@ function MCMC_Example()
   
   % Choose a model
   %model = StandardMixtureModel();
-  model = InfiniteScaleMixtureModel();
+  %model = InfiniteScaleMixtureModel();
+  %model = NoGuessingModel();
+  model = StandardMixtureModelWithBias();
   
   % Run MCMC
-  load InfiniteScale.mat
-  %[params, stored] = MCMC(d.data(:), model);
+  MCMCMemoized = MemoizeToDisk(@MCMC);
+  [params, stored] = MCMCMemoized(d.data(:), model);
   
   % Maximum posterior parameters from MCMC
   disp('MAP from MCMC():');
@@ -32,14 +35,13 @@ function MCMC_Example()
   % Show fit
   %h = PlotData(model, params, d.data(:));
   h = PlotDataNew(model, stored, d.data(:));
-  subfigure(2,2,3:4, h);
+  subfigure(2,2,3, h);
   
   % Get MLE parameters using search
   disp('MLE from mle():');
-  %params_mle = MLE(d.data(:), model);
+  MLEMemoized = MemoizeToDisk(@MLE);
+  params_mle = MLEMemoized(d.data(:), model);
   disp(params_mle);
-  
-  %save InfiniteScale.mat params stored params_mle
 end
 
 function figHand = PlotDataNew(model, stored, data)
@@ -68,10 +70,18 @@ function figHand = PlotDataNew(model, stored, data)
   for i=1:length(which)
     valuesNormalized(i,:) = (values(i,:) - minVals) ./ (maxVals - minVals);
     seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), 'Color', map(order==i,:));
+    
+    % Special case of only one parameter
+    if size(values,2) == 1
+      seriesInfo(i) = plot(1:size(values,2), ...
+        valuesNormalized(i,:), 'x', 'MarkerSize', 15, ...
+        'Color', map(order==i,:));
+    end
     hold on;
   end
   set(gca, 'box', 'off');
   set(seriesInfo(end), 'LineWidth', 4); % Last one plotted is MAP value
+  lastClicked = seriesInfo(end);
   set(gca, 'XTick', 1:size(stored.vals,2));
   set(gca, 'XTickLabel', model.paramNames);
   
@@ -97,11 +107,10 @@ function figHand = PlotDataNew(model, stored, data)
 
   % What to do when series is clicked
   function Click_Callback(~,~)
-    persistent lastClicked;
-    
     % Get the point that was clicked on
     cP = get(gca,'Currentpoint');
-    cx = round(cP(1,1));
+    cx = round(cP(1,1)); % TODO: Doesn't work well if you click in 
+                         % between two parameters (e.g., at .5 on the axis)
     cy = cP(1,2);
     
     % Show that series
@@ -113,11 +122,7 @@ function figHand = PlotDataNew(model, stored, data)
     PlotData(model, values(minValue,:), data, map(order==minValue,:));
     
     % Unhighlight old series
-    if ~isempty(lastClicked)
-      set(lastClicked, 'LineWidth', 1);
-    else
-      set(seriesInfo(end), 'LineWidth', 1);
-    end
+    set(lastClicked, 'LineWidth', 1);
     lastClicked = seriesInfo(minValue);
   end
 end
@@ -138,5 +143,17 @@ function PlotData(model, params, data, pdfColor)
   plot(vals, p ./ sum(p(:)) * multiplier, 'Color', pdfColor, 'LineWidth', 2);
   xlabel('Error (radians)');
   ylabel('Probability');
+  
+  % Always set ylim to 120% of the histogram height, regardless of function
+  % fit
+  topOfY = max(n./sum(n))*1.20;
+  ylim([0 topOfY]);
+  
+  % Label the plot with the parameter values
+  txt = [];
+  for i=1:length(params)
+    txt = [txt sprintf('%s: %.2g\n', model.paramNames{i}, params(i))];
+  end
+  text(pi, topOfY, txt, 'HorizontalAlignment', 'right');
 end
 
