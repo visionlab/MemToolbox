@@ -29,7 +29,7 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data)
     % Diff between this data and real data
     diffPlot(i,:) = nData - n;
   end  
-  
+
   % Plot data
   plot(x,nData,'r-','LineWidth',2);
   title('Simulated data from model');
@@ -38,8 +38,8 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data)
   % Plot difference
   subplot(2,1,2);
   bounds = quantile(diffPlot, [.05 .50 .95])';
-  h = boundedline(x, bounds(:,2), [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)], 'k');
-  set(h, 'LineWidth', 3);
+  h = boundedline(x, bounds(:,2), [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)], 'cmap', [0.3 0.3 0.3]);
+  set(h, 'LineWidth', 2);
   line([-pi pi], [0 0], 'LineStyle', '--', 'Color', [.5 .5 .5]);
   xlim([-pi pi]);
   title('Difference between simulated model data and real data');

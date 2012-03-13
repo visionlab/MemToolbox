@@ -91,6 +91,6 @@ end
 
 function c = desaturate(color)
     colorHSV = rgb2hsv(color);
-    colorHSV(2) = colorHSV(2)/4;
+    colorHSV(2) = colorHSV(2)/3;
     c = hsv2rgb(colorHSV);
 end
