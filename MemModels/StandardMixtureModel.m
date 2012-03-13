@@ -9,7 +9,7 @@ function model = StandardMixtureModel()
 	model.start = [.2, 10;  % g, K
                    .4, 15;  % g, K
                    .1, 20]; % g, K
-    model.generator = @StandardMixtureModelGenerator;
+  model.generator = @StandardMixtureModelGenerator;
 end
 
 % acheives a 15x speedup over the default rejection sampler

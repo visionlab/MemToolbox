@@ -9,7 +9,7 @@ function model = StandardMixtureModelWithBias()
 	model.start = [0.1, .2, 10;  % mu, g, K
                    0.00, .4, 15;  % mu, g, K
                   -0.1, .1, 20]; % mu, g, K
-    model.generator = @StandardMixtureModelWithBiasGenerator;
+  model.generator = @StandardMixtureModelWithBiasGenerator;
 end
 
 % acheives a 15x speedup over the default rejection sampler
