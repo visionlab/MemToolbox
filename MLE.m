@@ -5,7 +5,9 @@
 function [params, stored] = MLE(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
-  try, matlabpool, end
+  if matlabpool('size') == 0
+    matlabpool('open');
+  end
   
   numChains = size(model.start,1);
   for c=1:numChains
