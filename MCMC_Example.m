@@ -8,9 +8,9 @@ function MCMC_Example()
   d = load('MemData/3000+trials_3items_SUBJ#1.mat');
   
   % Choose a model
-  model = StandardMixtureModel();
+  %model = StandardMixtureModel();
   %model = NoGuessingModel();
-  %model = StandardMixtureModelWithBias();
+  model = StandardMixtureModelWithBias();
   %model = InfiniteScaleMixtureModel('wrappednormal','gamma');
   
   % Run MCMC
@@ -38,7 +38,7 @@ function MCMC_Example()
   
   % Posterior predictive
   h = PlotPosteriorPredictiveData(model, stored, d.data(:));
-  subfigure(2,2,4, h);  
+  subfigure(2,2,4, h);
   
   % Get MLE parameters using search
   disp('MLE from mle():');
