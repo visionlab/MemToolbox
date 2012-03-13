@@ -22,7 +22,15 @@ function figHand = PlotModelParametersAndData(model, stored, data)
   map = palettablecolormap('diverging', numSamplesToPlot+1);
   for i=1:length(which)
     valuesNormalized(i,:) = (values(i,:) - minVals) ./ (maxVals - minVals);
-    seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), 'Color', map(order==i,:));
+    
+    % desaturate if not MAP
+    if i < length(which)
+        colorOfLine = desaturate(map(order==i,:));
+    else
+        colorOfLine = map(order==i,:);
+    end
+    
+    seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), 'Color', colorOfLine);
     
     % Special case of only one parameter
     if size(values,2) == 1
@@ -70,6 +78,7 @@ function figHand = PlotModelParametersAndData(model, stored, data)
     diffValues = (cy-valuesNormalized(:,cx)).^2;
     [~,minValue] = min(diffValues);
     set(seriesInfo(minValue), 'LineWidth', 4);
+    set(seriesInfo(minValue), 'Color', map(order==minValue,:))
     uistack(seriesInfo(minValue), 'top');
     subplot(1,2,2); hold off;
     PlotModelFit(model, values(minValue,:), data, map(order==minValue,:));
@@ -78,4 +87,10 @@ function figHand = PlotModelParametersAndData(model, stored, data)
     set(lastClicked, 'LineWidth', 1);
     lastClicked = seriesInfo(minValue);
   end
+end
+
+function c = desaturate(color)
+    colorHSV = rgb2hsv(color);
+    colorHSV(2) = colorHSV(2)/4;
+    c = hsv2rgb(colorHSV);
 end
