@@ -22,14 +22,12 @@
 %  this reduces to finding the mode of the pdf. Would it be crazy to use one of the
 %  builtin optimization functions to acheive this?
 %
-%  p.s. we are abusing comments.
-%
-%
 %    Example usage:
 %
 %    model = StandardMixtureModel();
 %    paramsIn = {0, 1};
-%    paramsOut = MCMC(modelrnd(model, paramsIn, [1,1000]), model)
+%    simulatedData = modelrnd(model, paramsIn, [1,1000]);
+%    paramsOut = MCMC(simulatedData, model);
 
 function r = modelrnd(model, params, dims)
     
