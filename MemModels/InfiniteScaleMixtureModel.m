@@ -12,6 +12,9 @@ function model = InfiniteScaleMixtureModel(baseDistribution, mixingDistribution)
     if(strcmp(baseDistribution, 'wrappednormal') && strcmp(mixingDistribution, 'gamma'))
         model = StudentsTModel();
         return;
+    elseif(strcmp(baseDistribution, 'vonmises') && strcmp(mixingDistribution, 'binomial')
+        model = BinomialModel();
+        return;
     else
         error('The requested combination of base and mixing distributions is not supported.')
     end
