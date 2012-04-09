@@ -10,18 +10,18 @@
 %    3. What do you think about returning credible intervals?
 %
 %---------------------------------------------------------------------
-function [params,stored] = MCMC(data, model)
+function stored = MCMC(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have  
   if matlabpool('size') == 0
     matlabpool('open');
   end
   
-  numChains = size(model.start,1);
   if ~isfield(model, 'prior')
     model.prior = @(params)(1);
   end
-  
+
+  numChains = size(model.start,1);  
   parfor c=1:numChains
     chainStored(c) = ....
       MCMC_Chain(data, model.pdf, model.prior, model.start(c,:), ...
@@ -37,10 +37,6 @@ function [params,stored] = MCMC(data, model)
     stored.like = [stored.like; chainStored(c).like];
     stored.chain = [stored.chain; ones(size(chainStored(c).like)).*c];
   end
-  
-  % Find MAP estimate
-  [~,b]=max(stored.like);
-  params = stored.vals(b,:);
 end
 
 %---------------------------------------------------------------------
@@ -48,15 +44,12 @@ function stored = MCMC_Chain(data, pdf, prior, ...
     start, lowerbound, upperbound, movestd)
   
   % Parameters
-  numMonte = 3000;
+  numMonte = 2000;
   numBurn = 1000;
-  numCovarianceTuning = 500; % number of burn in trials used to estimate cov matrix
+  numCovarianceTuning = 300; % number of burn in trials used to estimate cov matrix
   probabilityOfBigMove = 0.1; % probability of taking a big jump
   sizeFactorOfBigMove = 5; % a big move is bigMoveSize times bigger than normal
-  
-  % Set acceptance counter to 0
-  numAcceptances = 0;
-  
+    
   % Set initial state
   cur = start;
   asCell = num2cell(cur);
@@ -67,6 +60,9 @@ function stored = MCMC_Chain(data, pdf, prior, ...
   stored.vals = zeros(numMonte, length(cur));
   stored.like = zeros(numMonte, 1);
   
+  % Track acceptance
+  acceptance = zeros(numMonte,1);
+  
   % Do MCMC
   for m=1:numMonte
     if (mod(m,100)==0)
@@ -75,17 +71,26 @@ function stored = MCMC_Chain(data, pdf, prior, ...
     end
     
     % Pick move
-    if m > numBurn % pick moves according to multivariate normal with correlated components
-      movement = mvnrnd(zeros(1, length(cur)), burnCovariance);
-    else % pick move according to multivariate normal with independent components
-      movement = randn(1,length(cur)).*movestd;
-    end
-    
-    % Propose move
-    if rand > probabilityOfBigMove
-      new = cur + movement;
-    else
-      new = cur + sizeFactorOfBigMove.*movement;
+    % - Proposal distribution here is implicitly a mvnormal that is
+    % renormalized to be truncated by the edges of the legal parameter
+    % values
+    tryAgain = 1;
+    while tryAgain == 1
+      if m > numBurn % Pick moves according to multivariate normal with correlated components
+        movement = mvnrnd(zeros(1, length(cur)), burnCovariance);
+      else % Pick move according to multivariate normal with independent components
+        movement = randn(1,length(cur)).*movestd;
+      end
+      
+      % Propose move
+      if rand > probabilityOfBigMove
+        new = cur + movement;
+      else
+        new = cur + sizeFactorOfBigMove.*movement;
+      end
+      
+      % If any parameter is out of bounds, regenerate proposal
+      tryAgain = any(new<lowerbound) || any(new>upperbound);
     end
     
     % Calc likelihood of new position
@@ -101,10 +106,7 @@ function stored = MCMC_Chain(data, pdf, prior, ...
     if rand < exp(like - curLike)
       cur = new;
       curLike = like;
-      
-      if(m > numBurn) % if we're past the burn in, count this as an acceptance
-        numAcceptances = numAcceptances + 1;
-      end
+      acceptance(m) = 1; 
     end
     
     % Store trace of current position
@@ -118,7 +120,7 @@ function stored = MCMC_Chain(data, pdf, prior, ...
   end
   
   disp('MCMC chain acceptance rate:');
-  disp(numAcceptances/(numMonte-numBurn));
+  disp(mean(acceptance(numBurn+1:end)));
   
   % Throw out first newBurn samples as burn-in period
   stored.vals = stored.vals(numBurn+1:end,:);
