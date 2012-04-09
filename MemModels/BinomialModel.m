@@ -5,6 +5,7 @@ function model = BinomialModel()
   model.movestd = [0.1, 2, 0.05, 2];
   model.pdf = @binomialpdf;
   model.start = [0.0, 10, 0.2, 11];
+  %model.generator = @
 end
   
 function y = binomialpdf(data,g,nQ,p,s)
@@ -22,6 +23,8 @@ function y = binomialpdf(data,g,nQ,p,s)
     yBinomial = 0;
     for i = 0:nQ
        yBinomial = yBinomial + bino(i+1).*vonmisespdf(data,0,sd2k(q./sqrt(i)));
-    end 
+    end
+    
+    % combine
     y = (1-g).*yBinomial + (g).*yUniform;
 end
