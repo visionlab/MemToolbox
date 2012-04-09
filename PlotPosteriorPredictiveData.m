@@ -42,7 +42,7 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data)
   set(h, 'LineWidth', 2);
   line([-pi pi], [0 0], 'LineStyle', '--', 'Color', [.5 .5 .5]);
   xlim([-pi pi]);
-  title('Difference between simulated model data and real data');
+  title('Difference between real data and simulated data');
   palettablehistogram();
 end
 
