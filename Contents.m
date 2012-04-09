@@ -4,7 +4,7 @@
 % The MemToolbox is a collection of MATLAB functions that ...
 % 
 % If you want to acknowledge use of this software when you publish your
-% research, you might say something like this, "Data analysis was performed
+% research, you might say something like, "Data analysis was performed
 % in MATLAB using the MemToolbox (citation)."
 %
 % Citation goes here
