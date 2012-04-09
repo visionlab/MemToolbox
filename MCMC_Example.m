@@ -1,8 +1,5 @@
 function MCMC_Example()
   close all;
-  addpath('MemModels');
-  addpath('Helpers');
-  addpath('MemVisualizations');
     
   % Example data
   d = load('MemData/3000+trials_3items_SUBJ#1.mat');
@@ -10,12 +7,14 @@ function MCMC_Example()
   % Choose a model
   %model = StandardMixtureModel();
   %model = NoGuessingModel();
-  model = StandardMixtureModelWithBias();
+  %model = StandardMixtureModelWithBias();
   %model = InfiniteScaleMixtureModel('wrappednormal','gamma');
+  model = BinomialModel();
   
   % Run MCMC
-  MCMCMemoized = MemoizeToDisk(@MCMC);
-  [params, stored] = MCMCMemoized(d.data(:), model);
+  %MCMCMemoized = MemoizeToDisk(@MCMC_Convergence);
+  stored = MCMC_Convergence(d.data(:), model);
+  params = getfield(MCMC_Summarize(stored), 'maxPosterior');
   
   % Maximum posterior parameters from MCMC
   disp('MAP from MCMC():');
