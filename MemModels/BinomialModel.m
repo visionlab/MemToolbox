@@ -1,14 +1,14 @@
 function model = BinomialModel()
-  model.paramNames = {'g', 'nQ', 'p', 's'};
-  model.lowerbound = [0 1 0 0]; % Lower bounds for the parameters
-  model.upperbound = [1 100 1 Inf]; % Upper bounds for the parameters
-  model.movestd = [0.1, 2, 0.05, 2];
+  model.paramNames = {'g', 'nQ', 'p', 's', 'mu'};
+  model.lowerbound = [0 1 0 0 -pi]; % Lower bounds for the parameters
+  model.upperbound = [1 100 1 Inf pi]; % Upper bounds for the parameters
+  model.movestd = [0.1, 2, 0.05, 2, 0.01];
   model.pdf = @binomialpdf;
-  model.start = [0.0, 10, 0.2, 11];
+  model.start = [0.0, 10, 0.2, 11, 0];
   %model.generator = @
 end
   
-function y = binomialpdf(data,g,nQ,p,s)
+function y = binomialpdf(data,g,nQ,p,s,mu)
         
     nQ = round(nQ); % assert an integral number of quanta
     q = s*sqrt(nQ); % the precision of 1 quantum
@@ -22,7 +22,7 @@ function y = binomialpdf(data,g,nQ,p,s)
     % compute binomial component
     yBinomial = 0;
     for i = 0:nQ
-       yBinomial = yBinomial + bino(i+1).*vonmisespdf(data,0,sd2k(q./sqrt(i)));
+       yBinomial = yBinomial + bino(i+1).*vonmisespdf(data,mu,sd2k(q./sqrt(i)));
     end
     
     % combine
