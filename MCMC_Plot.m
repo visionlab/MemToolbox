@@ -7,13 +7,13 @@ function figHand = MCMC_Plot(stored, paramNames)
         for p2=1:(p-1)
             subplot(N,N,sub2ind([N N],p,p2));
             [V,C] = hist3(stored.vals(:,[p p2]), [20 20]);
-            imagesc(C{1}, C{2}, V);
+            imagesc(C{1}, C{2}, V');
             set(gca,'YDir','normal');
             axis tight;
             
             subplot(N,N,sub2ind([N N],p2,p));
             [V,C] = hist3(stored.vals(:,[p p2]), [20 20]);
-            imagesc(C{2}, C{1}, V');
+            imagesc(C{2}, C{1}, V);
             set(gca,'YDir','normal');
             axis tight;
         end
