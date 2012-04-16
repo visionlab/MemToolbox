@@ -15,79 +15,79 @@ try
 	prepareEnvironment;
 	window = openWindow();
 	prefs = getPreferences()
-	
+
 	% put up instructions and wait for keypress
 	drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
 	drawColorWheel(window, prefs);
 	instruct(window);
 	returnToFixation(window, window.centerX, window.centerY, prefs.fixationSize)
-	
+
 	WaitSecs(1);
-	
+
 	% get rects for items
 	rects = circularArrayRects([0, 0, prefs.squareSize, prefs.squareSize], prefs.nItems, prefs.radius, window.centerX, window.centerY)';
 
 	% pick colors for every trial
-	colorsInDegrees = random('Uniform', 0, 360, prefs.nTrials, prefs.nItems);
-	colors = colorsInDegrees ./ 360;
-	
-	colorWheelLocations = [cosd([1:360]).*prefs.colorWheelRadius + window.centerX; sind([1:360]).*prefs.colorWheelRadius + window.centerY];
-	colorWheelColors = [[1:360]/360; ones(1, 360); ones(1, 360)];
-	
+	colorsInDegrees = ceil(random('Uniform', 0, 360, prefs.nTrials, prefs.nItems));
+
+	colorWheelLocations = colorwheelLocations(window,prefs);
+
 	itemToTest = RandSample(1:prefs.nItems, [1 prefs.nTrials]);
 
 	for trialIndex = 1:prefs.nTrials
-		
-		colorsToDisplay = round(hsv2rgb([colors(trialIndex, :); ones(1, prefs.nItems); ones(1, prefs.nItems)]')*255)'; % degrees on color wheel
 				
 		% draw fixation
 		drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
-		
+	
 		% draw stimulus
+		colorsToDisplay = prefs.colorwheel(colorsInDegrees(trialIndex,:), :)';
 		Screen('FillRect', window.onScreen, colorsToDisplay, rects);
-		
+	
 		% post stimulus and wait
 		Screen('Flip', window.onScreen);
 		WaitSecs(prefs.stimulusDuration);
-		
+	
 		% remove stimulus, return to blank, wait for retention interval to pass
 		returnToFixation(window, window.centerX, window.centerY, prefs.fixationSize);
 		WaitSecs(prefs.retentionInterval);
-		
+	
 		% choose a circle to test, then display response screen
 		presentedColor(trialIndex) = colorsInDegrees(trialIndex, itemToTest(trialIndex));
 		colorsOfTest = repmat([120 120 120], prefs.nItems, 1);
 		colorsOfTest(itemToTest(trialIndex), :) = [145 145 145];
 		drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
 		Screen('FillRect', window.onScreen, colorsOfTest', rects);
-		
+	
 		drawColorWheel(window, prefs);
 		SetMouse(window.centerX, window.centerY);
 		ShowCursor('Arrow');
-		
+	
 		everMovedFromCenter = false;
-		
+	
+		% if mouse button is already down, wait for release
 		[x,y,buttons] = GetMouse(window.onScreen);
-		while any(buttons) % if already down, wait for release
+		while any(buttons)
 			[x,y,buttons] = GetMouse(window.onScreen);
 		end
-		while ~any(buttons) % wait for press
-		
+	
+		% wait for click
+		while ~any(buttons)
+	
 			drawColorWheel(window, prefs);
 
 			[x,y,buttons] = GetMouse(window.onScreen);
 			[minDistance, minDistanceIndex] = min(sqrt((colorWheelLocations(1, :) - x).^2 + (colorWheelLocations(2, :) - y).^2));
-						
+					
 			if(minDistance < 250)
 				everMovedFromCenter = true;
 			end
-			
+		
 			if(everMovedFromCenter)
-				colorsOfTest(itemToTest(trialIndex), :) = round(hsv2rgb(colorWheelColors(:, minDistanceIndex)')*255);
+				colorsOfTest(itemToTest(trialIndex), :) = prefs.colorwheel(minDistanceIndex,:);
 			else
 				colorsOfTest(itemToTest(trialIndex), :) = [145 145 145];
 			end
-			
+		
 			drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
 			Screen('FillRect', window.onScreen, colorsOfTest', rects);
 			drawColorWheel(window, prefs);
@@ -97,57 +97,72 @@ try
 		while any(buttons) % wait for releasessssss
 			[x,y,buttons] = GetMouse(window.onScreen);
 		end
-		
+	
 		HideCursor
-		
+	
 		% return to fixation
 		returnToFixation(window, window.centerX, window.centerY, prefs.fixationSize);
 		WaitSecs(0.5);
 	end
-	
+
 	clear ans buttons x y minDistance minDistanceIndex trialIndex everMovedFromCenter colorsOfTest
 	whos
 
 	save data.mat
 	postpareEnvironment;	
+	
 catch
 	postpareEnvironment;
 	psychrethrow(psychlasterror);
-end
+	
+end % end try/catch
+end % end whole colorworkingmemoryscript
 	
 function prepareEnvironment
+    
 	clear all;
 	HideCursor;
-	commandwindow;
-	rand('twister', sum(100*clock)); % seed the random number generator
-	ListenChar(2);
+	
+	commandwindow; % select the command window to avoid typing in open scripts
+		
+	% seed the random number generator
+    RandStream.setDefaultStream(RandStream('mt19937ar','seed',sum(100*clock)));
+    
+	ListenChar(2); % don't print to MATLAB command window
+end
 
 function postpareEnvironment
 	ShowCursor;
 	ListenChar(0);
 	Screen('CloseAll');
+end
 	
 function instruct(window)
 	Screen('TextSize', window.onScreen, window.fontsize);
 	Screen('DrawText', window.onScreen, 'Remember the colors. Click to begin.', 100, 100, 255);
 	Screen('Flip', window.onScreen);
 	[clicks,x,y,whichButton] = GetClicks(window.onScreen);
+end
 	
 function drawFixation(window, fixationX, fixationY, fixationSize)
 	Screen('DrawDots', window.onScreen, [fixationX, fixationY], fixationSize, 255);
+end
 	
 function offsets = circularArrayOffsets(n, centerX, centerY, radius, rotation)
 	degreeStep = 360/n;
 	offsets = [sind([0:degreeStep:(360-degreeStep)] + rotation)'.* radius, cosd([0:degreeStep:(360-degreeStep)] + rotation)'.* radius];
+end
 	
 function rects = circularArrayRects(rect, nItems, radius, centerX, centerY)
 	coor = circularArrayOffsets(nItems, centerX, centerY, radius, 0) + repmat([centerX centerY], nItems, 1);	
 	rects = [coor(:, 1)-rect(3)/2 , coor(:, 2)-rect(3)/2, coor(:, 1)+rect(3)/2, coor(:, 2)+rect(3)/2];
+end
 
 function returnToFixation(window, fixationX, fixationY, fixationSize)
 	Screen('FillRect', window.onScreen, window.bcolor);
 	Screen('DrawDots', window.onScreen, [fixationX, fixationY], fixationSize, 255);
 	Screen('Flip', window.onScreen);	
+end
 
 function window = openWindow()
 	window.screenNumber = max(Screen('Screens'));
@@ -166,12 +181,18 @@ function window = openWindow()
 	window.gray     = mean([window.black window.white]);
 	window.fontsize = 24;
 	window.bcolor   = window.gray;	
+end
 	
 function drawColorWheel(window, prefs)
-	colorWheelColors = [[1:360]/360; ones(1, 360); ones(1, 360)];
 	colorWheelLocations = [cosd([1:360]).*prefs.colorWheelRadius + window.centerX; sind([1:360]).*prefs.colorWheelRadius + window.centerY];
-	colorWheelSizes = round(random('Uniform', 20, 20, 1, 360));
-	Screen('DrawDots', window.onScreen, colorWheelLocations, colorWheelSizes, round(hsv2rgb(colorWheelColors')*255)', [], 1);
+	colorWheelSizes = 20;
+	Screen('DrawDots', window.onScreen, colorWheelLocations, colorWheelSizes, prefs.colorwheel', [], 1);
+end
+
+function L = colorwheelLocations(window,prefs)
+    L = [cosd([1:360]).*prefs.colorWheelRadius + window.centerX; ...
+         sind([1:360]).*prefs.colorWheelRadius + window.centerY];
+end
 
 function prefs = getPreferences()
 	prefs.nTrials = 3;
@@ -182,4 +203,8 @@ function prefs = getPreferences()
 	prefs.radius = 160;
 	prefs.fixationSize = 3;
 	prefs.colorWheelRadius = 350;
-
+	
+	% load the colorwheel file
+	prefs.colorwheel = load('colorwheel360.mat', 'fullcolormatrix');
+	prefs.colorwheel = prefs.colorwheel.fullcolormatrix;
+end
