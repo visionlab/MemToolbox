@@ -17,8 +17,6 @@ try
 	prefs = getPreferences()
 
 	% put up instructions and wait for keypress
-	drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
-	drawColorWheel(window, prefs);
 	instruct(window);
 	returnToFixation(window, window.centerX, window.centerY, prefs.fixationSize)
 
@@ -52,7 +50,7 @@ try
 		WaitSecs(prefs.retentionInterval);
 	
 		% choose a circle to test, then display response screen
-		presentedColor(trialIndex) = colorsInDegrees(trialIndex, itemToTest(trialIndex));
+		data.presentedColor(trialIndex) = deg2rad(colorsInDegrees(trialIndex, itemToTest(trialIndex)));
 		colorsOfTest = repmat([120 120 120], prefs.nItems, 1);
 		colorsOfTest(itemToTest(trialIndex), :) = [145 145 145];
 		drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
@@ -93,7 +91,7 @@ try
 			drawColorWheel(window, prefs);
 			Screen('Flip', window.onScreen);
 		end
-		reportedColor(trialIndex) = minDistanceIndex;
+		data.reportedColor(trialIndex) = deg2rad(minDistanceIndex);
 		while any(buttons) % wait for releasessssss
 			[x,y,buttons] = GetMouse(window.onScreen);
 		end
@@ -104,8 +102,12 @@ try
 		returnToFixation(window, window.centerX, window.centerY, prefs.fixationSize);
 		WaitSecs(0.5);
 	end
+	
+	% initial analysis of results
+	data.error = angle(exp(1i*data.reportedColor)./exp(1i*data.presentedColor));
 
-	clear ans buttons x y minDistance minDistanceIndex trialIndex everMovedFromCenter colorsOfTest
+	clear buttons x y minDistance minDistanceIndex trialIndex ...
+	      ans everMovedFromCenter colorsOfTest colorsToDisplay colorsInDegrees
 	whos
 
 	save data.mat
@@ -196,11 +198,11 @@ end
 
 function prefs = getPreferences()
 	prefs.nTrials = 3;
-	prefs.nItems = 5;
-	prefs.stimulusDuration = 0.100;
+	prefs.nItems = 8;
+	prefs.stimulusDuration = 0.250;
 	prefs.retentionInterval = 0.900;	
 	prefs.squareSize = 75; % in pixels
-	prefs.radius = 160;
+	prefs.radius = 180;
 	prefs.fixationSize = 3;
 	prefs.colorWheelRadius = 350;
 	
