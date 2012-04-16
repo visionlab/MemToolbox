@@ -4,7 +4,6 @@
 % To do:
 %		2. ensure accurate timing (i.e., kill missed flip deadlines)
 %		3. add option to remove contantly present color wheel
-%		4. expand timing options
 %		5. add optional data visualization and analysis`
 
 function colorworkingmemory()	
@@ -34,7 +33,7 @@ try
 	    retentionInterval = prefs.retentionIntervals(prefs.fullFactorialDesign(prefs.order(trialIndex), 2));
 	    
 	    % pick item to test
-	    itemToTest{trialIndex} = RandSample(1:nItems);
+	    itemToTest(trialIndex) = RandSample(1:nItems);
 	    
 	    % pick colors for this trial
     	colorsInDegrees{trialIndex} = ceil(random('Uniform', 0, 360, 1, nItems));
@@ -55,9 +54,9 @@ try
 		WaitSecs(retentionInterval);
 	
 		% choose a circle to test, then display response screen
-		data.presentedColor(trialIndex) = deg2rad(colorsInDegrees{trialIndex}(itemToTest{trialIndex}));
+		data.presentedColor(trialIndex) = deg2rad(colorsInDegrees{trialIndex}(itemToTest(trialIndex)));
 		colorsOfTest = repmat([120 120 120], nItems, 1);
-		colorsOfTest(itemToTest{trialIndex}, :) = [145 145 145];
+		colorsOfTest(itemToTest(trialIndex), :) = [145 145 145];
 		drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
 		Screen('FillRect', window.onScreen, colorsOfTest', rects{nItems});
 	
@@ -87,9 +86,9 @@ try
 			end
 		
 			if(everMovedFromCenter)
-				colorsOfTest(itemToTest{trialIndex}, :) = prefs.colorwheel(minDistanceIndex,:);
+				colorsOfTest(itemToTest(trialIndex), :) = prefs.colorwheel(minDistanceIndex,:);
 			else
-				colorsOfTest(itemToTest{trialIndex}, :) = [145 145 145];
+				colorsOfTest(itemToTest(trialIndex), :) = [145 145 145];
 			end
 		
 			drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
@@ -111,9 +110,13 @@ try
 	
 	% initial analysis of results
 	data.error = angle(exp(1i*data.reportedColor)./exp(1i*data.presentedColor));
+	
+	data.setSize = prefs.setSizes(prefs.fullFactorialDesign(prefs.order, 1));
+	data.retentionInterval = prefs.retentionIntervals(prefs.fullFactorialDesign(prefs.order,2));
 
 	clear buttons x y minDistance minDistanceIndex trialIndex ...
-	      ans everMovedFromCenter colorsOfTest colorsToDisplay colorsInDegrees
+	      ans everMovedFromCenter colorsOfTest colorsToDisplay colorsInDegrees ...
+	      colorWheelLocations i rects
 	whos
 
 	save data.mat
@@ -204,22 +207,23 @@ function L = colorwheelLocations(window,prefs)
 end
 
 function prefs = getPreferences()
+    
 	prefs.nTrialsPerCondition = 2;
-	prefs.nItems = 3;
 	prefs.setSizes = [2,4];
-	prefs.retentionIntervals = [0.250, 0.5, 1]
+	prefs.retentionIntervals = [0.250, 0.5, 1];
 	prefs.fullFactorialDesign = fullfact([length(prefs.setSizes), ...
 	                                      length(prefs.retentionIntervals), ...
-	                                      prefs.nTrialsPerCondition])
-	prefs.nTrials = length(prefs.fullFactorialDesign)
-    prefs.order = Shuffle(1:length(prefs.fullFactorialDesign))
+	                                      prefs.nTrialsPerCondition]);
 	prefs.stimulusDuration = 0.250;
 	prefs.squareSize = 75; % in pixels
 	prefs.radius = 180;
 	prefs.fixationSize = 3;
-	prefs.colorWheelRadius = 350;
 	
-	% load the colorwheel file
+	% colorwheel details
+	prefs.colorWheelRadius = 350;
 	prefs.colorwheel = load('colorwheel360.mat', 'fullcolormatrix');
 	prefs.colorwheel = prefs.colorwheel.fullcolormatrix;
+	
+	prefs.order = Shuffle(1:length(prefs.fullFactorialDesign));
+	prefs.nTrials = length(prefs.fullFactorialDesign);
 end
