@@ -1,13 +1,11 @@
 % Runs a color working memory task, a la Zhang & Luck (2008).
-%	Preferences can be found down at the bottom, beginning on line 182.
+%	Preferences can be found down at the bottom, beginning on line 197.
 %
 % To do:
-%		1. add option for hsv vs. lab color space
 %		2. ensure accurate timing (i.e., kill missed flip deadlines)
 %		3. add option to remove contantly present color wheel
 %		4. expand timing options
-%		5. add optional data visualization and analysis
-%
+%		5. add optional data visualization and analysis`
 
 function colorworkingmemory()	
 
@@ -23,23 +21,30 @@ try
 	WaitSecs(1);
 
 	% get rects for items
-	rects = circularArrayRects([0, 0, prefs.squareSize, prefs.squareSize], prefs.nItems, prefs.radius, window.centerX, window.centerY)';
-
-	% pick colors for every trial
-	colorsInDegrees = ceil(random('Uniform', 0, 360, prefs.nTrials, prefs.nItems));
+	for i = 1:max(prefs.setSizes)
+	    rects{i} = circularArrayRects([0, 0, prefs.squareSize, prefs.squareSize], i, prefs.radius, window.centerX, window.centerY)';
+    end
 
 	colorWheelLocations = colorwheelLocations(window,prefs);
 
-	itemToTest = RandSample(1:prefs.nItems, [1 prefs.nTrials]);
-
-	for trialIndex = 1:prefs.nTrials
+	for trialIndex = 1:length(prefs.fullFactorialDesign)
+	    
+	    % figure out how many items on this trial and the duration
+	    nItems = prefs.setSizes(prefs.fullFactorialDesign(prefs.order(trialIndex), 1));
+	    retentionInterval = prefs.retentionIntervals(prefs.fullFactorialDesign(prefs.order(trialIndex), 2));
+	    
+	    % pick item to test
+	    itemToTest{trialIndex} = RandSample(1:nItems);
+	    
+	    % pick colors for this trial
+    	colorsInDegrees{trialIndex} = ceil(random('Uniform', 0, 360, 1, nItems));
 				
 		% draw fixation
 		drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
 	
 		% draw stimulus
-		colorsToDisplay = prefs.colorwheel(colorsInDegrees(trialIndex,:), :)';
-		Screen('FillRect', window.onScreen, colorsToDisplay, rects);
+		colorsToDisplay = prefs.colorwheel(colorsInDegrees{trialIndex}, :)';
+		Screen('FillRect', window.onScreen, colorsToDisplay, rects{nItems});
 	
 		% post stimulus and wait
 		Screen('Flip', window.onScreen);
@@ -47,20 +52,21 @@ try
 	
 		% remove stimulus, return to blank, wait for retention interval to pass
 		returnToFixation(window, window.centerX, window.centerY, prefs.fixationSize);
-		WaitSecs(prefs.retentionInterval);
+		WaitSecs(retentionInterval);
 	
 		% choose a circle to test, then display response screen
-		data.presentedColor(trialIndex) = deg2rad(colorsInDegrees(trialIndex, itemToTest(trialIndex)));
-		colorsOfTest = repmat([120 120 120], prefs.nItems, 1);
-		colorsOfTest(itemToTest(trialIndex), :) = [145 145 145];
+		data.presentedColor(trialIndex) = deg2rad(colorsInDegrees{trialIndex}(itemToTest{trialIndex}));
+		colorsOfTest = repmat([120 120 120], nItems, 1);
+		colorsOfTest(itemToTest{trialIndex}, :) = [145 145 145];
 		drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
-		Screen('FillRect', window.onScreen, colorsOfTest', rects);
+		Screen('FillRect', window.onScreen, colorsOfTest', rects{nItems});
 	
 		drawColorWheel(window, prefs);
+		
+		% wait for click
+		
 		SetMouse(window.centerX, window.centerY);
 		ShowCursor('Arrow');
-	
-		everMovedFromCenter = false;
 	
 		% if mouse button is already down, wait for release
 		[x,y,buttons] = GetMouse(window.onScreen);
@@ -68,7 +74,7 @@ try
 			[x,y,buttons] = GetMouse(window.onScreen);
 		end
 	
-		% wait for click
+		everMovedFromCenter = false;
 		while ~any(buttons)
 	
 			drawColorWheel(window, prefs);
@@ -81,13 +87,13 @@ try
 			end
 		
 			if(everMovedFromCenter)
-				colorsOfTest(itemToTest(trialIndex), :) = prefs.colorwheel(minDistanceIndex,:);
+				colorsOfTest(itemToTest{trialIndex}, :) = prefs.colorwheel(minDistanceIndex,:);
 			else
-				colorsOfTest(itemToTest(trialIndex), :) = [145 145 145];
+				colorsOfTest(itemToTest{trialIndex}, :) = [145 145 145];
 			end
 		
 			drawFixation(window, window.centerX, window.centerY, prefs.fixationSize);
-			Screen('FillRect', window.onScreen, colorsOfTest', rects);
+			Screen('FillRect', window.onScreen, colorsOfTest', rects{nItems});
 			drawColorWheel(window, prefs);
 			Screen('Flip', window.onScreen);
 		end
@@ -186,7 +192,8 @@ function window = openWindow()
 end
 	
 function drawColorWheel(window, prefs)
-	colorWheelLocations = [cosd([1:360]).*prefs.colorWheelRadius + window.centerX; sind([1:360]).*prefs.colorWheelRadius + window.centerY];
+	colorWheelLocations = [cosd([1:360]).*prefs.colorWheelRadius + window.centerX; ...
+	                       sind([1:360]).*prefs.colorWheelRadius + window.centerY];
 	colorWheelSizes = 20;
 	Screen('DrawDots', window.onScreen, colorWheelLocations, colorWheelSizes, prefs.colorwheel', [], 1);
 end
@@ -197,10 +204,16 @@ function L = colorwheelLocations(window,prefs)
 end
 
 function prefs = getPreferences()
-	prefs.nTrials = 3;
-	prefs.nItems = 8;
+	prefs.nTrialsPerCondition = 2;
+	prefs.nItems = 3;
+	prefs.setSizes = [2,4];
+	prefs.retentionIntervals = [0.250, 0.5, 1]
+	prefs.fullFactorialDesign = fullfact([length(prefs.setSizes), ...
+	                                      length(prefs.retentionIntervals), ...
+	                                      prefs.nTrialsPerCondition])
+	prefs.nTrials = length(prefs.fullFactorialDesign)
+    prefs.order = Shuffle(1:length(prefs.fullFactorialDesign))
 	prefs.stimulusDuration = 0.250;
-	prefs.retentionInterval = 0.900;	
 	prefs.squareSize = 75; % in pixels
 	prefs.radius = 180;
 	prefs.fixationSize = 3;
