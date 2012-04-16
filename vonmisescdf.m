@@ -1,4 +1,22 @@
 function cdf = vonmisescdf ( x, a, b )
+  if numel(x) > 1000
+    % For large numbers of points, itis faster to just integrate by hand
+    % and interpolate
+    xvals = linspace(-pi,pi,5000);
+    y = vonmisespdf(xvals, 0, b);
+    cdfVals = cumtrapz(xvals,y);
+    cdf = interp1(xvals, cdfVals, x-a);
+  else
+    % For smaller numbers of points, use the von mises cdf approximation,
+    % below, which isn't vectorized
+    cdf = zeros(size(x));
+    for i=1:length(x)
+      cdf(i) = vonmisescdf_notvectorized(x(i),a,b);
+    end
+  end
+end
+
+function cdf = vonmisescdf_notvectorized(x,a,b)
   %*****************************************************************************80
   %
   % VON_MISES_CDF evaluates the von Mises CDF.
@@ -46,14 +64,6 @@ function cdf = vonmisescdf ( x, a, b )
   %    0.0 < B.
   %
   %    Output, real CDF, the value of the CDF.
-  %
-  cdf = zeros(size(x));
-  for i=1:length(x)
-    cdf(i) = vonmisescdf_notvectorized(x(i),a,b);
-  end
-end
-
-function cdf = vonmisescdf_notvectorized(x,a,b)
   a1 = 12.0;
   a2 = 0.8;
   a3 = 8.0;
