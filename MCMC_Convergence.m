@@ -10,10 +10,12 @@
 %    3. What do you think about returning credible intervals?
 %
 %---------------------------------------------------------------------
-function stored = MCMC_Convergence(data, model)
+function stored = MCMC_Convergence(data, model, verbosity)
     
   % Verbose mode prints progress and other info to the command window    
-  verbose = true;
+  if nargin < 3
+      verbosity = true;
+  end
     
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
@@ -37,7 +39,10 @@ function stored = MCMC_Convergence(data, model)
     startInfo(c).curLike = 0;
   end
   
-  fprintf('\nStarting %d chains..\n\n', numChains);
+  if verbosity
+      fprintf('\nStarting %d chains..\n\n', numChains);
+  end
+  
   converged = false;
   count = 0;
   while ~converged
@@ -54,11 +59,11 @@ function stored = MCMC_Convergence(data, model)
         cov(chainStored(c).vals(:, :)) .* 0.5;
     end
     count = count+1;
-    if ~converged && verbose
+    if ~converged && verbosity
       fprintf(' ... not converged (%d)\n', count*1000);
     end
   end
-  if verbose
+  if verbosity
       fprintf('Chains converged after %d samples!\n\n', count*1000);
   end
   
