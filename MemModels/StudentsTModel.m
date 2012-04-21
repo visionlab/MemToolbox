@@ -6,6 +6,7 @@
 % TODO: Convert to use Memoize() instead of this way of caching
 
 function model = StudentsTModel()
+    model.name = 'Student''s t model';
 	model.paramNames = {'g', 'sigma', 'df'};
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
 	model.upperbound = [1 Inf Inf]; % Upper bounds for the parameters

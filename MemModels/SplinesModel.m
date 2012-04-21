@@ -1,4 +1,5 @@
 function model = SplinesModel()
+  model.name = 'Splines model';
   model.knotX = [0:3:33 40 50 75 100 150 300 360] ./ 180 .* pi;
   model.stdX = linspace(0.05,max(model.knotX),100);
   model.paramNames = repmat({'knot'}, size(model.knotX));

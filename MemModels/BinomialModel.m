@@ -1,4 +1,5 @@
 function model = BinomialModel()
+  model.name = 'Binomial pure death model';
   model.paramNames = {'g', 'nQ', 'p', 's', 'mu'};
   model.lowerbound = [0 1 0 0 -pi]; % Lower bounds for the parameters
   model.upperbound = [1 100 1 Inf pi]; % Upper bounds for the parameters

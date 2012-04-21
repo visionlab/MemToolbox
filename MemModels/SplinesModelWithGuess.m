@@ -1,5 +1,5 @@
 function model = SplinesModelWithGuess()
-  
+  model.name = 'Splines model with guessing';
   model.knotX = [0:3:33 40 50 75 100] ./ 180 .* pi;
   model.stdX = linspace(0.05,max(model.knotX),100);
   

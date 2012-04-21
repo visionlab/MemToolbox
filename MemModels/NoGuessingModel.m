@@ -2,6 +2,7 @@
 % as StandardMixtureModel, but without a guess state.
 
 function model = NoGuessingModel()
+    model.name = 'No guessing model';
 	model.paramNames = {'K'};
 	model.lowerbound = [0]; % Lower bounds for the parameters
 	model.upperbound = [Inf]; % Upper bounds for the parameters

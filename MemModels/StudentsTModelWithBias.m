@@ -8,6 +8,7 @@
 % TODO: Convert to use Memoize() instead of this way of caching
 
 function model = StudentsTModelWithBias()
+    model.name = 'Student''s t model with bias';
 	model.paramNames = {'mu', 'g', 'sigma', 'df'};
 	model.lowerbound = [-pi 0 0 0]; % Lower bounds for the parameters
 	model.upperbound = [pi 1 Inf Inf]; % Upper bounds for the parameters
