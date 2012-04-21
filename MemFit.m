@@ -85,8 +85,9 @@ function fit = MemFit(varargin)
         end
         
         fprintf('\n');
-        r = input(['Would you like to visualize the MCMC chains, tradeoffs ...' ...
-                   'between parameters, and a posterior predictive check? (y/n) '], 's');
+        r = input(['Would you like to visualize the MCMC chains, tradeoffs ' ...
+                   'between parameters, samples from the posterior distribution '...
+                   'and a posterior predictive check? (y/n) '], 's');
         if(strcmp(r,'y'))
             h = MCMC_Convergence_Plot(stored, model.paramNames);
             subfigure(2,2,1, h);
