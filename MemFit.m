@@ -79,7 +79,7 @@ function fit = MemFit(varargin)
         end
         
         fprintf('\n');
-        r = input('Would you like to visualize the fit? (y/n) ', 's');
+        r = input('Would you like to visualize the fit? (y/n): ', 's');
         if(strcmp(r,'y'))
             PlotModelFitInteractive(model, fit.maxPosterior, data)
         end
@@ -87,7 +87,7 @@ function fit = MemFit(varargin)
         fprintf('\n');
         r = input(['Would you like to visualize the MCMC chains, tradeoffs ' ...
                    'between parameters, samples from the posterior distribution '...
-                   'and a posterior predictive check? (y/n) '], 's');
+                   'and a posterior predictive check? (y/n): '], 's');
         if(strcmp(r,'y'))
             h = MCMC_Convergence_Plot(stored, model.paramNames);
             subfigure(2,2,1, h);
@@ -105,7 +105,7 @@ function fit = MemFit(varargin)
             subfigure(2,2,4, h);        
         end
         
-        fprintf('\nModeling complete. This analysis was performed using MemToolbox 0.1.')
+        fprintf('\nModeling complete. This analysis was performed using MemToolbox 0.1.\n')
         
         return
     end
@@ -152,10 +152,7 @@ function err = response2error(response, target)
     err = angle(exp(1i*response)./exp(1i*target));
 end
 
-function msg = welcomeToMTB()
-    msg = 'Welcome to the '
-end
-
+% converts a cell array of strings {'a', 'b', 'c'} to string 'a, b, c'
 function str = paramNames2str(paramNames)
     str = [];
     for i = 1:length(paramNames)
