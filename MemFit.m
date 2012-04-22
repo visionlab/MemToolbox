@@ -7,8 +7,9 @@
 % d = load('MemData/3000+trials_3items_SUBJ#1.mat');
 % fit = MemFit(d.data);
 %
-% MemFit(errors)
-% MemFit(errors,model)
+% MemFit(data)
+% MemFit(data,model)
+% MemFit(data, {model1, model2, model3, ...})
 % MemFit(responses, stimuli, whichIsTarget)
 %
 % Lots of todo's, including:
@@ -48,7 +49,40 @@ function fit = MemFit(varargin)
         elseif(isstruct(varargin{1}) && isnumeric(varargin{2}))
             data = varargin{2};
             model = varargin{1};
-        
+                
+        % (data, {model1,model2,model3, ...})
+        elseif(isnumeric(varargin{1}) && iscell(varargin{2}))
+            
+            allModels = varargin{2};
+            
+            % Introduction & model listing
+            
+            fprintf('\nYou''ve chosen to compare the following models:\n')
+            for modelIndex = 1:length(allModels)
+               fprintf('  %d. %s\n', modelIndex, allModels{modelIndex}.name); 
+            end
+            
+            fprintf('\nJust a moment while MTB fits these models to your data...\n\n');
+            
+            
+            % Model comparison % results
+            
+            [MD, params, stored] = ModelComparison_BayesFactor(varargin{1}, allModels);
+            
+            fprintf('model\tlog L\tprop. preferred\tlog Bayes factor\n')
+            fprintf('-----\t-----\t---------------\t----------------\n')
+            for modelIndex = 1:length(allModels)
+               fprintf('%d\t%0.f\t%0.4f\t\t%3.2f\n',  ...
+                       modelIndex, ...
+                       max(stored{modelIndex}.like),  ...
+                       MD(modelIndex), ...
+                       log(MD(modelIndex)) - log(sum(MD([1:(modelIndex-1) (modelIndex+1):end]))))
+            end
+
+            fprintf('\nBest parameters:\n');
+            disp(params);
+
+            return
         else
             error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.'); 
         end
