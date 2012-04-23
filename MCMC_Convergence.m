@@ -28,15 +28,21 @@ function stored = MCMC_Convergence(data, model, verbosity)
     model.prior = @(params)(1);
   end
   
+  % if no logpdf, create one from pdf
+  if ~isfield(model, 'logpdf')
+    model.logpdf = @(varargin)(sum(log(model.pdf(varargin))));
+  end
+  
   % Setup initial values for all chains
   numChains = size(model.start,1);
   for c=1:numChains
-    startInfo(c).numMonte = 1000;
+    startInfo(c).numMonte = 2000;
     startInfo(c).cur = model.start(c,:);
     coMatrix = eye(length(model.movestd));
     coMatrix(coMatrix==1) = model.movestd;
     startInfo(c).burnCovariance = coMatrix;
     startInfo(c).curLike = 0;
+    startInfo(c).acceptance = 0;
   end
   
   if verbosity
@@ -47,31 +53,36 @@ function stored = MCMC_Convergence(data, model, verbosity)
   count = 0;
   while ~converged
     if count>0
-      converged = IsConverged(chainStored);
+      converged = IsConverged(chainStored, verbosity);
     end
     parfor c=1:numChains
       % Run chain
       [chainStored(c), startInfo(c)] = ....
-        MCMC_Chain(data, model, startInfo(c));
+        MCMC_Chain(data, model, startInfo(c), verbosity);
       
       % Learn about covariance
-      startInfo(c).burnCovariance = startInfo(c).burnCovariance .* 0.5 + ...
-        cov(chainStored(c).vals(:, :)) .* 0.5;
+      startInfo(c).burnCovariance = startInfo(c).burnCovariance .* 0.75 + ...
+        cov(chainStored(c).vals(:, :)) .* 0.25;
+      
+      % Increase acceptance rate
+      if startInfo(c).acceptance < 0.15
+        startInfo(c).burnCovariance = startInfo(c).burnCovariance ./ 3;
+      end
     end
     count = count+1;
     if ~converged && verbosity
-      fprintf(' ... not converged (%d)\n', count*1000);
+      fprintf(' ... not converged (%d)\n', count*startInfo(1).numMonte);
     end
   end
   if verbosity
-      fprintf('Chains converged after %d samples!\n\n', count*1000);
+      fprintf('Chains converged after %d samples!\n\n', count*startInfo(2).numMonte);
   end
   
-  % Collect 2000 samples from converged chains
+  % Collect 5000 samples from converged chains
   parfor c=1:numChains
     startInfo(c).numMonte = 5000;
     [chainStored(c), startInfo(c)] = ....
-        MCMC_Chain(data, model, startInfo(c));
+        MCMC_Chain(data, model, startInfo(c), verbosity);
   end
   
   % Combine values across chains
@@ -86,7 +97,7 @@ function stored = MCMC_Convergence(data, model, verbosity)
 end
 
 %---------------------------------------------------------------------
-function [stored, startInfo] = MCMC_Chain(data, model, startInfo)
+function [stored, startInfo] = MCMC_Chain(data, model, startInfo, verbosity)
   
   % Parameters
   probabilityOfBigMove = 0.1; % probability of taking a big jump
@@ -94,7 +105,7 @@ function [stored, startInfo] = MCMC_Chain(data, model, startInfo)
   
   % Set initial state
   asCell = num2cell(startInfo.cur);
-  startInfo.curLike = sum(log(model.pdf(data, asCell{:}))) + ...
+  startInfo.curLike = model.logpdf(data, asCell{:}) + ...
     sum(log(model.prior(startInfo.cur)));
   
   % Initialize storage of param vals
@@ -131,7 +142,7 @@ function [stored, startInfo] = MCMC_Chain(data, model, startInfo)
       like = -Inf;
     else
       asCell = num2cell(new);
-      like = sum(log(model.pdf(data, asCell{:}))) + ...
+      like = model.logpdf(data, asCell{:}) + ...
         sum(log(model.prior(new)));
     end
     
@@ -147,13 +158,15 @@ function [stored, startInfo] = MCMC_Chain(data, model, startInfo)
     stored.like(m) = startInfo.curLike;
   end
   
-  %disp('MCMC chain acceptance rate:');
-  %disp(mean(acceptance));
+  startInfo.acceptance = mean(acceptance);
+  if verbosity > 1
+    fprintf('MCMC chain acceptance rate: %0.2f\n', mean(acceptance));
+  end
 end
 
 
 %---------------------------------------------------------------------
-function b = IsConverged(stored)
+function b = IsConverged(stored, verbosity)
   nChains = length(stored);
   numPerChain = size(stored(1).vals,1);
   nParams = size(stored(1).vals,2);
@@ -175,6 +188,10 @@ function b = IsConverged(stored)
     Sp = (numPerChain-1)/(numPerChain) * W + (1/numPerChain) * B;
     r(v) = sqrt(Sp/W);
   end
-  b = all(r<1.1 | isnan(r));
+  if verbosity > 1
+    fprintf('%0.1f ', r);
+    fprintf('\n');
+  end
+  b = all(r<1.2 | isnan(r));
 end
 
