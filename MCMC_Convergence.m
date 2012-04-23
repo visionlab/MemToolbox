@@ -1,14 +1,8 @@
 %MCMC Markov chain Monte Carlo with tuned proposals and alternative parameterization
-%    [params,stored] = MCMC(data, model)
+%    [params,stored] = MCMC_Convergence(data, model)
 %
-% To do:
-%    1. Consider using an exponentially-weighted moving average covariance matrix
-%       for the proposal distribution, rather than just chopping off the early burn in.
-%    2. Do we want to encourage use of the MAP estimate, or something else like
-%       the posterior mean or median? One option is to return all three in a params struct,
-%       like params.posteriorMode, params.posteriorMean, and params.posteriorMedian.
-%    3. What do you think about returning credible intervals?
-%
+% MCMC function that automatically detects convergence using the technique
+% of Gelman and Rubin (1992)
 %---------------------------------------------------------------------
 function stored = MCMC_Convergence(data, model, verbosity)
     
@@ -30,11 +24,18 @@ function stored = MCMC_Convergence(data, model, verbosity)
   
   % if no logpdf, create one from pdf
   if ~isfield(model, 'logpdf')
-    model.logpdf = @(varargin)(sum(log(model.pdf(varargin))));
+    model.logpdf = @(varargin)(sum(log(model.pdf(varargin{:}))));
+  end
+  
+  % How many chains to run?
+  numChains = size(model.start,1);
+  if numChains < 2
+    error('MemToolbox:MCMC_Convergence:TooFewChains', ...
+      ['MCMC_Convergence requires at least 2 chains to detect convergence. ' ...
+      'Please pass a model with multiple rows in model.start().']);
   end
   
   % Setup initial values for all chains
-  numChains = size(model.start,1);
   for c=1:numChains
     startInfo(c).numMonte = 2000;
     startInfo(c).cur = model.start(c,:);
@@ -49,6 +50,7 @@ function stored = MCMC_Convergence(data, model, verbosity)
       fprintf('\nStarting %d chains..\n\n', numChains);
   end
   
+  % Run chains until convergence detected
   converged = false;
   count = 0;
   while ~converged
@@ -75,7 +77,7 @@ function stored = MCMC_Convergence(data, model, verbosity)
     end
   end
   if verbosity
-      fprintf('Chains converged after %d samples!\n\n', count*startInfo(2).numMonte);
+      fprintf('Chains converged after %d samples!\n\n', count*startInfo(1).numMonte);
   end
   
   % Collect 5000 samples from converged chains
