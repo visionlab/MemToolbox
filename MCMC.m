@@ -10,7 +10,13 @@
 %    3. What do you think about returning credible intervals?
 %
 %---------------------------------------------------------------------
-function stored = MCMC(data, model)
+function stored = MCMC(data, model, verbosity)
+    
+  % Verbose mode prints progress and other info to the command window    
+  if nargin < 3
+    verbosity = true;
+  end
+    
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have  
   if matlabpool('size') == 0
@@ -25,7 +31,7 @@ function stored = MCMC(data, model)
   parfor c=1:numChains
     chainStored(c) = ....
       MCMC_Chain(data, model.pdf, model.prior, model.start(c,:), ...
-         model.lowerbound, model.upperbound, model.movestd);
+         model.lowerbound, model.upperbound, model.movestd, verbosity);
   end
   
   % Combine values across chains
@@ -41,7 +47,7 @@ end
 
 %---------------------------------------------------------------------
 function stored = MCMC_Chain(data, pdf, prior, ...
-    start, lowerbound, upperbound, movestd)
+    start, lowerbound, upperbound, movestd, verbosity)
   
   % Parameters
   numMonte = 2000;
@@ -119,8 +125,10 @@ function stored = MCMC_Chain(data, pdf, prior, ...
     end
   end
   
-  disp('MCMC chain acceptance rate:');
-  disp(mean(acceptance(numBurn+1:end)));
+  if verbosity
+    disp('MCMC chain acceptance rate:');
+    disp(mean(acceptance(numBurn+1:end)));
+  end
   
   % Throw out first newBurn samples as burn-in period
   stored.vals = stored.vals(numBurn+1:end,:);
