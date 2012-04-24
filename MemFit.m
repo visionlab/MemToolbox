@@ -12,9 +12,8 @@
 % MemFit(data, {model1, model2, model3, ...})
 % MemFit(responses, stimuli, whichIsTarget)
 %
-% Lots of todo's, including:
-%   1. Add support for model comparison if user gives a list of models
-%   2. If called with no parameters, give a tutorial-like walkthrough
+% To dos include:
+%   1. If called with no parameters, give a tutorial-like walkthrough
 
 function fit = MemFit(varargin)
     
@@ -43,15 +42,20 @@ function fit = MemFit(varargin)
         % (errors, model)
         if(isnumeric(varargin{1}) && isstruct(varargin{2}))
             data = varargin{1};
+            [data, pass] = validateData(data);
             model = varargin{2};
         
         % (model, errors)
         elseif(isstruct(varargin{1}) && isnumeric(varargin{2}))
             data = varargin{2};
+            [data, pass] = validateData(data);
             model = varargin{1};
                 
         % (data, {model1,model2,model3, ...})
         elseif(isnumeric(varargin{1}) && iscell(varargin{2}))
+          
+            data = varargin{1};
+            [data, pass] = validateData(data);
             
             allModels = varargin{2};
             
@@ -65,7 +69,7 @@ function fit = MemFit(varargin)
             fprintf('\nJust a moment while MTB fits these models to your data...\n\n');
             
             
-            % Model comparison % results
+            % Model comparison & results
             
             [MD, params, stored] = ModelComparison_BayesFactor(varargin{1}, allModels);
             
@@ -87,7 +91,7 @@ function fit = MemFit(varargin)
             error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.'); 
         end
 
-        % tell the user what's the come
+        % tell the user what's to come
         fprintf('\nJust a moment while MTB fits a model to your data...\n\n');
         fprintf('Error histogram:   ')
         hist_ascii(data);
@@ -112,12 +116,14 @@ function fit = MemFit(varargin)
                     fit.upperCredible(paramIndex));
         end
         
+        % optional interactive visualization
         fprintf('\n');
         r = input('Would you like to visualize the fit? (y/n): ', 's');
         if(strcmp(r,'y'))
             PlotModelFitInteractive(model, fit.maxPosterior, data)
         end
         
+        % optional convergence visualization
         fprintf('\n');
         r = input(['Would you like to visualize the MCMC chains, tradeoffs ' ...
                    'between parameters, samples from the posterior distribution '...
@@ -169,12 +175,6 @@ function fit = MemFit(varargin)
     fit = -1;
 end
 
-% checks to make sure that the data is in the expected format (in the range 
-% [-pi,pi]. if it's not, throw warnings and massage into the right format.
-function legal = isLegalData(data)
-    legal = -1;
-end
-
 % RESPONSE2ERROR(RESPONSE,TARGET) returns the error given the target and response.
 % Wants things in radians. This is just the circular distance formula...
 function err = response2error(response, target)
@@ -195,4 +195,46 @@ function str = paramNames2str(paramNames)
             str = [str ', '];
         end
     end
+end
+
+% checks to make sure that the data is in the expected format (in the range 
+% [-pi,pi]. if it's not, throws errors. 
+function [data, pass] = validateData(data)
+
+    pass = false; % assume failure, unless...
+    
+    if(~isnumeric(data))
+        throwRangeError();   
+          
+    % vomit if range is unintelligeble
+    elseif(any(data < -pi | data > pi))
+        throwRangeError()
+        
+    else
+      pass = true;
+      
+    end
+
+    %   
+    % % otherwise, assume it's (-pi,pi), (0,2*pi), (-180,180), or (0, 360),
+    % % throw a warning if it isn't (-pi,pi), and convert to -pi,pi.
+    % if(any(data < -pi)) % then it must be in range (-180, 180)
+    %     throwRangeWarning();
+    %     data = deg2rad(data);
+    % 
+    % elseif(any(data > 180)) % then it must be in range (0,360)
+    %     throwRangeWarning();
+    %     data = deg2rad(data-180);
+    % 
+    % elseif(any(data > pi)) % then it must be in range (0, 2*pi)
+    %     throwRangeWarning();
+    %     data = data-pi;
+    %     
+    % else % okay, it's in the range (-pi,pi), so leave it be.
+    %     pass = true;
+    % end
+end
+
+function throwRangeError()
+    error('Yuck. Data should be in the range (-pi, pi)');
 end
