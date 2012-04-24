@@ -2,10 +2,11 @@ function model = BinomialModel()
   model.name = 'Binomial pure death model';
   model.paramNames = {'g', 'nQ', 'p', 's', 'mu'};
   model.lowerbound = [0 1 0 0 -pi]; % Lower bounds for the parameters
-  model.upperbound = [1 100 1 Inf pi]; % Upper bounds for the parameters
+  model.upperbound = [1 1000 1 Inf pi]; % Upper bounds for the parameters
   model.movestd = [0.1, 2, 0.05, 2, 0.01];
   model.pdf = @binomialpdf;
-  model.start = [0.0, 10, 0.2, 11, 0];
+  model.start = [0.0, 10, 0.2, 11, 0; ...
+                 0.0, 10, 0.2, 11, 0];
   %model.generator = @
 end
   
