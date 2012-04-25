@@ -6,21 +6,22 @@ function [params, stored] = MLE(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
   options = statset('MaxIter',5000, 'MaxFunEvals',5000,'UseParallel','always');
+  
+  if ~isfield(model, 'logpdf')
+    model.logpdf = @(varargin)(sum(log(model.pdf(varargin{:}))));
+  end
+    
+  % mle() doesn't like multiple rows, so wrap the data in a cell array
+  dataWrapper = {data};
+  wrapper = @(varargin)(model.logpdf(varargin{1}{1}, varargin{2:end}));
+  
   numChains = size(model.start,1);
   for c=1:numChains
-    if isfield(model, 'logpdf')
-      vals{c} = mle(data, 'logpdf', model.logpdf, 'start', model.start(c,:), ...
-        'lowerbound', model.lowerbound, 'upperbound', model.upperbound, ...
-        'options', options);
-      asCell = num2cell(vals{c});
-      like(c) = model.logpdf(data, asCell{:});
-    else
-      vals{c} = mle(data, 'pdf', model.pdf, 'start', model.start(c,:), ...
-        'lowerbound', model.lowerbound, 'upperbound', model.upperbound, ...
-        'options', options);
-      asCell = num2cell(vals{c});
-      like(c) = sum(log(model.pdf(data, asCell{:})));
-    end
+    vals{c} = mle(dataWrapper, 'logpdf', wrapper, 'start', model.start(c,:), ...
+      'lowerbound', model.lowerbound, 'upperbound', model.upperbound, ...
+      'options', options);
+    asCell = num2cell(vals{c});
+    like(c) = model.logpdf(data, asCell{:});
   end
   
   % Combine values across chains
