@@ -1,7 +1,7 @@
 % STANDARDMIXTUREMODEL returns a structure for a two-component mixture model
 
 function model = StandardMixtureModelWithBias()
-    model.name = 'Standard mixture model with bias';
+  model.name = 'Standard mixture model with bias';
 	model.paramNames = {'mu', 'g', 'K'};
 	model.lowerbound = [-pi 0 0]; % Lower bounds for the parameters
 	model.upperbound = [pi 1 Inf]; % Upper bounds for the parameters
