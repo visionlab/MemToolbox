@@ -12,6 +12,11 @@ function PlotModelFit(model, params, data, pdfColor, nBins)
     params = params.vals;
   end
   
+  % If there's no model.pdf, create one using model.logpdf
+  if ~isfield(model, 'pdf')
+    model.pdf = @(varargin)(exp(model.logpdf(varargin{:})));
+  end
+  
   % Plot data histogram
   set(gcf, 'Color', [1 1 1]);
   x = linspace(-pi, pi, nBins)';
@@ -36,7 +41,7 @@ function PlotModelFit(model, params, data, pdfColor, nBins)
     h = boundedline(vals, bounds(:,2) .* multiplier, ...
       [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)] .* multiplier, ...
       pdfColor, 'alpha');
-    set(h, 'LineWidth', 2);
+    %set(h, 'LineWidth', 2);
   else
     paramsAsCell = num2cell(params);
     p = model.pdf(vals, paramsAsCell{:});
