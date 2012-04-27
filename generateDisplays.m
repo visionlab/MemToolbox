@@ -10,7 +10,7 @@ function displays = generateDisplays(trials, itemsPerTrial, mode)
 	  displays = unifrnd(-pi, pi, trials, itemsPerTrial);
 	else
 	  warning('No such mode, defaulting to iid vm.')
-	  displays = generateDisplays(trials,itemsPerTrial,0);
+	  displays = generateDisplays(trials,itemsPerTrial,1);
   end
 
 end
