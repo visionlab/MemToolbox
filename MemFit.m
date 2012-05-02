@@ -14,6 +14,11 @@
 %
 % To dos include:
 %   1. If called with no parameters, give a tutorial-like walkthrough
+%   2. There's another way to organize this function, which is to have only
+%      the most general case actually do any of the work, i.e.,
+%               MemFit({dataStructS1, dataStructS2, ...}, {modelStruct1, modelStruct2, ...})
+%      with all of the other cases massaging the input into the above format,
+%      and then recursively calling MemFit again.
 
 function fit = MemFit(varargin)
     
@@ -41,22 +46,20 @@ function fit = MemFit(varargin)
         
         % (errors, model)
         if(isnumeric(varargin{1}) && isstruct(varargin{2}))
-            data = varargin{1};
-            [data, pass] = validateData(data);
+            
+            [data, pass] = validateData(varargin{1});
             model = varargin{2};
         
         % (model, errors)
         elseif(isstruct(varargin{1}) && isnumeric(varargin{2}))
-            data = varargin{2};
-            [data, pass] = validateData(data);
+            
+            [data, pass] = validateData(varargin{2});
             model = varargin{1};
                 
         % (data, {model1,model2,model3, ...})
         elseif(isnumeric(varargin{1}) && iscell(varargin{2}))
-          
-            data = varargin{1};
-            [data, pass] = validateData(data);
             
+            [data, pass] = validateData(varargin{1});
             allModels = varargin{2};
             
             % Introduction & model listing
@@ -87,6 +90,19 @@ function fit = MemFit(varargin)
             disp(params);
 
             return
+        
+        % (dataStruct, modelStruct)
+        elseif(isDataStruct(varargin{1}) && isModelStruct(varargin{2}))
+            
+            [data, pass] = validateData(varargin{1}.error);
+            model = varargin{2};
+            
+        % (modelStruct, dataStruct)
+        elseif(isModelStruct(varargin{1}) && isDataStruct(varargin{2}))
+            
+            [data, pass] = validateData(varargin{2}.error);
+            model = varargin{1};
+        
         else
             error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.'); 
         end
@@ -198,43 +214,76 @@ function str = paramNames2str(paramNames)
 end
 
 % checks to make sure that the data is in the expected format (in the range 
-% [-pi,pi]. if it's not, throws errors. 
+% [-pi,pi]. if unsalvageable, it throws errors. otherwise, throws warnings
+% and does its best to massage data into the range (-pi, pi)
 function [data, pass] = validateData(data)
 
     pass = false; % assume failure, unless...
     
-    if(~isnumeric(data))
+    if(isempty(data))
+        error('You did not give me any data!');
+    
+    elseif(~isnumeric(data))
         throwRangeError();   
-          
+   
     % vomit if range is unintelligeble
-    elseif(any(data < -pi | data > pi))
-        throwRangeError()
+    elseif(any(data < -180 | data > 360))
+        throwRangeError();      
+    
+    % otherwise, massage
+    elseif(any(data < -pi)) % then it must be in the range (-180,180)
+        throwRangeWarning();
+        data = deg2rad(data);
         
+    elseif(any(data > 180)) % then it must be in the range (0,360)
+        throwRangeWarning();
+        data = deg2rad(data - 180);
+    
+    elseif(any(data > pi)) % then it must be in the range (0, 2*pi)
+        throwRangeWarning();
+        data = data - pi;
+
     else
-      pass = true;
+        pass = true;
       
     end
-
-    %   
-    % % otherwise, assume it's (-pi,pi), (0,2*pi), (-180,180), or (0, 360),
-    % % throw a warning if it isn't (-pi,pi), and convert to -pi,pi.
-    % if(any(data < -pi)) % then it must be in range (-180, 180)
-    %     throwRangeWarning();
-    %     data = deg2rad(data);
-    % 
-    % elseif(any(data > 180)) % then it must be in range (0,360)
-    %     throwRangeWarning();
-    %     data = deg2rad(data-180);
-    % 
-    % elseif(any(data > pi)) % then it must be in range (0, 2*pi)
-    %     throwRangeWarning();
-    %     data = data-pi;
-    %     
-    % else % okay, it's in the range (-pi,pi), so leave it be.
-    %     pass = true;
-    % end
 end
 
 function throwRangeError()
     error('Yuck. Data should be in the range (-pi, pi)');
+end
+
+function throwRangeWarning()
+    warning('I would prefer data in the range (-pi, pi), but I''ll do my best.');
+end
+
+% is the object an MTB model struct? passes iff the object is a struct 
+% containing a field called 'pdf' or 'logpdf'. 
+function pass = isModelStruct(object)
+    pass = (isstruct(object) && any(isfield(object,{'pdf','logpdf'})));
+end
+
+% is the object an MTB data struct? passes iff the object is a struct
+% containing a field called 'error'.
+function pass = isDataStruct(object)
+    pass = (isstruct(object) && isfield(object,'error'));
+end
+
+function pass = isCellArrayOfModelStructs(object)
+    pass = isCellArrayOfType(object,@isModelStruct)
+end
+
+function pass = isCellArrayOfDataStructs(object)
+   pass = isCellArrayOfType(object,@isDataStruct);
+end
+
+% is object a cell array whose elements all return true
+% when the function typeChecker is applied to them?
+function pass = isCellArrayOfType(object,typeChecker)
+    c1 = iscell(object);
+    c2 = false(length(object));
+    for i = 1:length(object)
+        c2(i) = typeChecker(object{i});
+    end
+    pass = c1 && all(c2);
 end
