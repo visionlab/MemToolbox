@@ -13,7 +13,7 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data, modelColor)
   
   % How to bin
   x = linspace(-pi, pi, 55)';
-  nData = hist(data, x)';
+  nData = hist(data.errors, x)';
   nData = nData ./ sum(nData(:));
   
   % Plot samples
@@ -22,7 +22,7 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data, modelColor)
   for i=1:length(which)
     % Generate random data from this distrib. with these parameters
     asCell = num2cell(stored.vals(which(i),:));
-    yrep = modelrnd(model, asCell, size(data));
+    yrep = modelrnd(model, asCell, size(data.errors));
    
     % Bin data and model
     n = hist(yrep, x)';

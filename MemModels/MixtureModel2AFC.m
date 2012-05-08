@@ -23,6 +23,6 @@ end
 % Row 2 is the size, in radians, of the change that observers were shown
 % (the difference between color 1 and color 2)
 function p = Mixture2AFCpdf(data, g, k) 
-  thetas = vonmisescdf(data(2,:)./2, 0, k).*(1-g) + g/2;
-  p = binopdf(data(1,:), 1, thetas);
+  thetas = vonmisescdf(data.errors(2,:)./2, 0, k).*(1-g) + g/2;
+  p = binopdf(data.errors(1,:), 1, thetas);
 end

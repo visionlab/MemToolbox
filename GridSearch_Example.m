@@ -1,6 +1,5 @@
 function GridSearch_Example()
-  d = load('MemData/data.mat');
-  data = d.data(:);
+  data = load('MemData/data.mat');
   model = StandardMixtureModelWithBias();
  
   % First do grid search over the entire parameter space:

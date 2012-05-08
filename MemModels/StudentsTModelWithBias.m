@@ -14,7 +14,8 @@ function model = StudentsTModelWithBias()
 	model.upperbound = [pi 1 Inf Inf]; % Upper bounds for the parameters
 	model.movestd = [0.01, 0.02, 0.1, 0.25];
 	model.pdf = @(data, mu, g, sigma, df) ...
-    (1-g).*tDistWrapped(data,mu,sigma,df)' + (g).*unifpdf(data,-pi,pi);
+    (1-g).*tDistWrapped(data.errors,mu,sigma,df)' + ...
+      (g).*unifpdf(data.errors(:),-pi,pi);
 	model.start = [0.1,  0.0, 0.2, 0.2;
                   -0.1,  0.2, 0.3, 1.0;
                    0.05, 0.4, 0.1, 2.0;

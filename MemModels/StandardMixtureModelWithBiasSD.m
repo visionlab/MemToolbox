@@ -6,10 +6,11 @@ function model = StandardMixtureModelWithBiasSD()
 	model.lowerbound = [-pi 0 0]; % Lower bounds for the parameters
 	model.upperbound = [pi 1 Inf]; % Upper bounds for the parameters
 	model.movestd = [0.01, 0.02, 0.1];
-	model.pdf = @(data, mu, g, sd) ((1-g).*vonmisespdf(data,mu,sd2k(sd)) + (g).*unifpdf(data,-pi,pi));
+	model.pdf = @(data, mu, g, sd) ((1-g).*vonmisespdf(data.errors(:),mu,sd2k(sd)) + ...
+	                                  (g).*unifpdf(data.errors(:),-pi,pi));
 	model.start = [0.1, .2, 0.3;  % mu, g, sd
-                   0.00, .4, 0.25;  % mu, g, sd
-                  -0.1, .1, 0.20]; % mu, g, sd
+                 0.0, .4, 0.25;  % mu, g, sd
+                -0.1, .1, 0.20]; % mu, g, sd
   model.generator = @StandardMixtureModelWithBiasGenerator;
 end
 

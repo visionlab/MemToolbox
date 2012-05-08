@@ -32,11 +32,14 @@ function fit = MemFit(varargin)
     if nargin == 1
 
         if(isnumeric(varargin{1}))
-            fit = MemFit(varargin{1}, StandardMixtureModelWithBias);
-            return
+            data = struct('errors', varargin{1});
+        elseif(isfield(varargin{1}, 'errors'))
+            data = varargin{1};
         else
             error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.'); 
         end
+        fit = MemFit(data, StandardMixtureModelWithBias);
+        return
     end
     
     %
@@ -94,13 +97,13 @@ function fit = MemFit(varargin)
         % (dataStruct, modelStruct)
         elseif(isDataStruct(varargin{1}) && isModelStruct(varargin{2}))
             
-            [data, pass] = validateData(varargin{1}.error);
+            [data, pass] = validateData(varargin{1});
             model = varargin{2};
             
         % (modelStruct, dataStruct)
         elseif(isModelStruct(varargin{1}) && isDataStruct(varargin{2}))
             
-            [data, pass] = validateData(varargin{2}.error);
+            [data, pass] = validateData(varargin{2});
             model = varargin{1};
         
         else
@@ -110,12 +113,12 @@ function fit = MemFit(varargin)
         % tell the user what's to come
         fprintf('\nJust a moment while MTB fits a model to your data...\n\n');
         fprintf('Error histogram:   ')
-        hist_ascii(data);
+        hist_ascii(data.errors);
         fprintf('          Model:   %s\n', model.name);
         fprintf('     Parameters:   %s\n', paramNames2str(model.paramNames));
         
         % do the fitting
-        stored = MCMC_Convergence(data, model, false);
+        stored = MCMC_Convergence(data, model, true);
         fit = MCMC_Summarize(stored);
         fit.stored = stored;
         
@@ -220,33 +223,37 @@ function [data, pass] = validateData(data)
 
     pass = false; % assume failure, unless...
     
-    if(isempty(data))
+    if(isempty(data.errors))
         error('You did not give me any data!');
     
-    elseif(~isnumeric(data))
+    elseif(~isnumeric(data.errors))
         throwRangeError();   
    
     % vomit if range is unintelligeble
-    elseif(any(data < -180 | data > 360))
+    elseif(any(data.errors < -180 | data.errors > 360))
         throwRangeError();      
     
     % otherwise, massage
-    elseif(any(data < -pi)) % then it must be in the range (-180,180)
+    elseif(any(data.errors < -pi)) % then it must be in the range (-180,180)
         throwRangeWarning();
-        data = deg2rad(data);
+        data.errors = deg2rad(data.errors);
         
-    elseif(any(data > 180)) % then it must be in the range (0,360)
+    elseif(any(data.errors > 180)) % then it must be in the range (0,360)
         throwRangeWarning();
-        data = deg2rad(data - 180);
+        data.errors = deg2rad(data.errors - 180);
     
-    elseif(any(data > pi)) % then it must be in the range (0, 2*pi)
+    elseif(any(data.errors > pi)) % then it must be in the range (0, 2*pi)
         throwRangeWarning();
-        data = data - pi;
+        data.errors = data.errors - pi;
 
     else
         pass = true;
-      
     end
+    
+    % add in some checking of auxilliary data struct fields. for example,
+    % it would probably be good to make sure that any field called RT has
+    % only non-negative numbers.
+    
 end
 
 function throwRangeError()
@@ -266,7 +273,7 @@ end
 % is the object an MTB data struct? passes iff the object is a struct
 % containing a field called 'error'.
 function pass = isDataStruct(object)
-    pass = (isstruct(object) && isfield(object,'error'));
+    pass = (isstruct(object) && isfield(object,'errors'));
 end
 
 function pass = isCellArrayOfModelStructs(object)

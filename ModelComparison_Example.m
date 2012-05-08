@@ -1,7 +1,6 @@
 function ModelComparison_Example()
   % Example data
-  d = load('MemData/data.mat');
-  data = d.data(:);
+  data = load('MemData/data.mat');
   
   addpath('MemModels');
   model1 = StandardMixtureModel();
@@ -71,14 +70,14 @@ function PlotData(params, data, pdf)
   
   % Plot data histogram
   x = linspace(-pi, pi, 55)';
-  n = histc(data, x);
+  n = histc(data.errors(:), x);
   bar(x, n./sum(n), 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
   xlim([-pi pi]); hold on;
   
   % Plot scaled version of the prediction
   vals = linspace(-pi, pi, 500)';
   asCell = num2cell(params);
-  p = pdf(vals, asCell{:});
+  p = pdf(struct('errors', vals), asCell{:});
   multiplier = length(vals)/length(x);
   plot(vals, p ./ sum(p(:)) * multiplier, 'b--', 'LineWidth', 2);
   xlabel('Error (radians)');

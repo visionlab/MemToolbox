@@ -16,7 +16,7 @@ function y = binomialpdf(data,g,nQ,p,s,mu)
     q = s*sqrt(nQ); % the precision of 1 quantum
     
     % precompute uniform component
-    yUniform = unifpdf(data,-pi,pi);
+    yUniform = unifpdf(data.errors(:),-pi,pi);
     
     % precompute binomial probabilities
     bino = binopdf([0:nQ], nQ, p);
@@ -24,7 +24,7 @@ function y = binomialpdf(data,g,nQ,p,s,mu)
     % compute binomial component
     yBinomial = 0;
     for i = 0:nQ
-       yBinomial = yBinomial + bino(i+1).*vonmisespdf(data,mu,sd2k(q./sqrt(i)));
+       yBinomial = yBinomial + bino(i+1).*vonmisespdf(data.errors(:),mu,sd2k(q./sqrt(i)));
     end
     
     % combine

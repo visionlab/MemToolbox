@@ -2,18 +2,18 @@ function MCMC_Example()
   close all;
     
   % Example data
-  d = load('MemData/3000+trials_3items_SUBJ#1.mat');
+  data = load('MemData/3000+trials_3items_SUBJ#1.mat');
   
   % Choose a model
-  %model = StandardMixtureModel();
+  model = StandardMixtureModel();
   %model = NoGuessingModel();
   %model = StandardMixtureModelWithBias();
   %model = InfiniteScaleMixtureModel('wrappednormal','gamma');
-  model = BinomialModel();
+  %model = BinomialModel();
   
   % Run MCMC
   %MCMCMemoized = MemoizeToDisk(@MCMC_Convergence);
-  stored = MCMC_Convergence(d.data(:), model);
+  stored = MCMC_Convergence(data, model);
   params = getfield(MCMC_Summarize(stored), 'maxPosterior');
   
   % Maximum posterior parameters from MCMC
@@ -32,17 +32,17 @@ function MCMC_Example()
   subfigure(2,2,2, h);
   
   % Show fit
-  h = PlotModelParametersAndData(model, stored, d.data(:));
+  h = PlotModelParametersAndData(model, stored, data);
   subfigure(2,2,3, h);
   
   % Posterior predictive
-  h = PlotPosteriorPredictiveData(model, stored, d.data(:));
+  h = PlotPosteriorPredictiveData(model, stored, data);
   subfigure(2,2,4, h);
   
   % Get MLE parameters using search
   disp('MLE from mle():');
   MLEMemoized = MemoizeToDisk(@MLE);
-  params_mle = MLEMemoized(d.data(:), model);
+  params_mle = MLEMemoized(data, model);
   disp(params_mle);
 end
 

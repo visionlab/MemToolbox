@@ -1,6 +1,6 @@
 %---------------------------------------------------------------------
 function [MD,params,stored] = ModelComparison_BayesFactor(data, models)
-    
+      
    % Fastest if your number of start positions is the same as the number
    % of cores/processors you have
    try, matlabpool, end
@@ -33,6 +33,7 @@ end
 
 %---------------------------------------------------------------------
 function [chainMD, stored] = MCMC_Chain(data, models, c)
+    
     % Parameters
     numMonte = 1200;
     numBurn = 500;

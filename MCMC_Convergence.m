@@ -17,6 +17,11 @@ function stored = MCMC_Convergence(data, model, verbosity)
     matlabpool('open');
   end
   
+  % If data is provided as a matrix of errors, wrap it in a struct
+  if(~isfield(data,'errors'))
+    data = struct('errors',data);
+  end
+  
   % If no prior, just put a uniform prior on all parameters
   if ~isfield(model, 'prior')
     model.prior = @(params)(1);

@@ -1,20 +1,17 @@
 %MCMC Markov chain Monte Carlo with tuned proposals and alternative parameterization
 %    [params,stored] = MCMC(data, model)
 %
-% To do:
-%    1. Consider using an exponentially-weighted moving average covariance matrix
-%       for the proposal distribution, rather than just chopping off the early burn in.
-%    2. Do we want to encourage use of the MAP estimate, or something else like
-%       the posterior mean or median? One option is to return all three in a params struct,
-%       like params.posteriorMode, params.posteriorMean, and params.posteriorMedian.
-%    3. What do you think about returning credible intervals?
-%
 %---------------------------------------------------------------------
 function stored = MCMC(data, model, verbosity)
     
   % Verbose mode prints progress and other info to the command window    
   if nargin < 3
     verbosity = true;
+  end
+  
+  % If data is provided as a matrix of errors, wrap it in a struct
+  if(~isfield(data,'errors'))
+    data = struct('errors',data);
   end
     
   % Fastest if your number of start positions is the same as the number

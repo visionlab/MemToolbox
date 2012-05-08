@@ -1,11 +1,11 @@
 % MixtureModelWithSwaps returns a structure for a three-component model
 % with guesses and swaps. Based on Bays et al. 2009 model.
 
-% Data format should be:
-%   Row 1: errors (radians), e.g., distance of response from target
-%   Row 2: distance of distractor 1 from target
+% Data struct should include:
+%   data.errors: errors (radians), e.g., distance of response from target
+%   data.distractors, Row 1: distance of distractor 1 from target
 %   ...
-%   Row N: distance of distractor N from target
+%   data.distractors, Row N: distance of distractor N from target
 
 function model = MixtureModelWithSwaps()
   model.name = 'Swap model';
@@ -27,12 +27,12 @@ function logLike = SwapModelPDF(data, g, B, K)
     logLike = -Inf;
     return;
   end
-  errors = data(1,:);
-  distractorLocs = data(2:end, :);
-  nDistractors = size(distractorLocs,1);
-  l = (1-g-B).*vonmisespdf(errors,0,K) + (g).*unifpdf(errors, -pi, pi);
+  %errors = data.errors(1,:);
+  %distractorLocs = data.distractors(2:end, :);
+  nDistractors = size(data.distractors,1);
+  l = (1-g-B).*vonmisespdf(data.errors(:),0,K) + (g).*unifpdf(data.errors(:), -pi, pi);
   for i=1:nDistractors
-    l = l + (B/nDistractors).*vonmisespdf(errors,distractorLocs(i,:),K);
+    l = l + (B/nDistractors).*vonmisespdf(data.errors(:),data.distractors(i,:),K);
   end
   logLike = sum(log(l)); 
 end
