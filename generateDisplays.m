@@ -7,7 +7,7 @@ function displays = generateDisplays(trials, itemsPerTrial, mode)
 	
 	% iid from ciruclar uniform
 	if mode == 1
-	  displays = unifrnd(-pi, pi, trials, itemsPerTrial);
+	  displays = unifrnd(-180, 180, trials, itemsPerTrial);
 	else
 	  warning('No such mode, defaulting to iid vm.')
 	  displays = generateDisplays(trials,itemsPerTrial,1);

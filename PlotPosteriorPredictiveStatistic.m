@@ -18,7 +18,7 @@ function figHand = PlotPosteriorPredictiveStatistic(model, stored, data)
   which = round(linspace(1, size(stored.vals,1), numSamplesToPlot));
   
   % How to bin
-  x = linspace(-pi, pi, 55)';
+  x = linspace(-180, 180, 55)';
   
   % Plot samples from posterior
   subplot(2,1,1);
@@ -49,7 +49,7 @@ function figHand = PlotPosteriorPredictiveStatistic(model, stored, data)
   nData = hist(data, x)';
   nData = nData ./ sum(nData(:));
   plot(x,nData,'r-','LineWidth',2);
-  xlim([-pi, pi]);
+  xlim([-180, 180]);
   
   % Plot histogram
   subplot(2,1,2);

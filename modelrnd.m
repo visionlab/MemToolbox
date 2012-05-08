@@ -37,6 +37,15 @@ function r = modelrnd(model, params, dims)
         return;
     end
     
+    % If there's no model.pdf, create one using model.logpdf
+		%  Jordan: Not sure this will work as-is for some of them;
+		%  some of the models I wrote use logpdf but only return a single
+		%  value, not one for each datapoint. We'll probably have to change
+		%  that to make this work for sampling...
+    if ~isfield(model, 'pdf')
+      model.pdf = @(varargin)(exp(model.logpdf(varargin{:})));
+    end
+    
     b = 10; % each round, generate b times as many samples as total n
     
     % preallocate arrays
@@ -44,14 +53,14 @@ function r = modelrnd(model, params, dims)
     pass = false(1,n*b);
     samples = [];
     
-    num = 1;
-    M = model.pdf(0, params{:}) * 2 * 2*pi;
+    num = 0;
+    M = model.pdf(struct('errors',0), params{:}) * 2 * 360;
     while num < n
       u = rand(n*b,1);
-      curSamples = rand(n*b,1).*2*pi - pi;
+      curSamples = rand(n*b,1).*360 - 180;
       pass = u < (model.pdf(curSamples, params{:})./M);
       sPass = sum(pass);
-      samples(num:num+sPass-1) = curSamples(pass);
+      samples(num+1:num+sPass) = curSamples(pass);
       num = num + sPass;
     end
 
@@ -61,7 +70,7 @@ end
 function r = mcmcParallel(pdf, params, dims)
   burn = 10;
   thin = 2;
-  proposals = rand(prod(dims)*thin+burn, 1).*2.*pi - pi;
+  proposals = rand(prod(dims)*thin+burn, 1).*360 - 180;
   pdfVals = pdf(proposals, params{:});
   curLike = pdfVals(1);
   cur = proposals(1);

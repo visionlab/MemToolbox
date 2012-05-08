@@ -109,7 +109,7 @@ try
 	end
 	
 	% initial analysis of results
-	data.error = angle(exp(1i*data.reportedColor)./exp(1i*data.presentedColor));
+	data.error = (180/pi) .* (angle(exp(1i*data.reportedColor)./exp(1i*data.presentedColor)));
 	
 	data.setSize = prefs.setSizes(prefs.fullFactorialDesign(prefs.order, 1));
 	data.retentionInterval = prefs.retentionIntervals(prefs.fullFactorialDesign(prefs.order,2));
@@ -211,11 +211,8 @@ function prefs = getPreferences()
 	prefs.nTrialsPerCondition = 2;
 	prefs.setSizes = [2,4];
 	prefs.retentionIntervals = [0.250, 0.5, 1];
-	prefs.fullFactorialDesign = fullfact([length(prefs.setSizes), ...
-	                                      length(prefs.retentionIntervals), ...
-	                                      prefs.nTrialsPerCondition]);
 	prefs.stimulusDuration = 0.250;
-	prefs.squareSize = 75; % in pixels
+	prefs.squareSize = 75; % size of each stimulus object, in pixels
 	prefs.radius = 180;
 	prefs.fixationSize = 3;
 	
@@ -224,6 +221,11 @@ function prefs = getPreferences()
 	prefs.colorwheel = load('colorwheel360.mat', 'fullcolormatrix');
 	prefs.colorwheel = prefs.colorwheel.fullcolormatrix;
 	
+	% randomize trial order of full factorial design order
+	prefs.fullFactorialDesign = fullfact([length(prefs.setSizes), ...
+	                                      length(prefs.retentionIntervals), ...
+	                                      prefs.nTrialsPerCondition]);
+	                                      
 	prefs.order = Shuffle(1:length(prefs.fullFactorialDesign));
 	prefs.nTrials = length(prefs.fullFactorialDesign);
 end

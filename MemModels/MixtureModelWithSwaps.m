@@ -30,7 +30,7 @@ function logLike = SwapModelPDF(data, g, B, K)
   %errors = data.errors(1,:);
   %distractorLocs = data.distractors(2:end, :);
   nDistractors = size(data.distractors,1);
-  l = (1-g-B).*vonmisespdf(data.errors(:),0,K) + (g).*unifpdf(data.errors(:), -pi, pi);
+  l = (1-g-B).*vonmisespdf(data.errors(:),0,K) + (g).*unifpdf(data.errors(:), -180, 180);
   for i=1:nDistractors
     l = l + (B/nDistractors).*vonmisespdf(data.errors(:),data.distractors(i,:),K);
   end

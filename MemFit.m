@@ -156,11 +156,11 @@ function fit = MemFit(varargin)
             subfigure(2,2,2, h);
 
             % Show fit
-            h = PlotModelParametersAndData(model, stored, data(:));
+            h = PlotModelParametersAndData(model, stored, data);
             subfigure(2,2,3, h);
 
             % Posterior predictive
-            h = PlotPosteriorPredictiveData(model, stored, data(:));
+            h = PlotPosteriorPredictiveData(model, stored, data);
             subfigure(2,2,4, h);        
         end
         
@@ -217,8 +217,8 @@ function str = paramNames2str(paramNames)
 end
 
 % checks to make sure that the data is in the expected format (in the range 
-% [-pi,pi]. if unsalvageable, it throws errors. otherwise, throws warnings
-% and does its best to massage data into the range (-pi, pi)
+% [-180,180]. if unsalvageable, it throws errors. otherwise, throws warnings
+% and does its best to massage data into the range (-180, 180)
 function [data, pass] = validateData(data)
 
     pass = false; % assume failure, unless...
@@ -229,22 +229,21 @@ function [data, pass] = validateData(data)
     elseif(~isnumeric(data.errors))
         throwRangeError();   
    
-    % vomit if range is unintelligeble
-    elseif(any(data.errors < -180 | data.errors > 360))
+    elseif(any(data.errors < -180 | data.errors > 360)) % vomit if unintelligeble
+    
         throwRangeError();      
-    
-    % otherwise, massage
-    elseif(any(data.errors < -pi)) % then it must be in the range (-180,180)
-        throwRangeWarning();
-        data.errors = deg2rad(data.errors);
         
-    elseif(any(data.errors > 180)) % then it must be in the range (0,360)
+    elseif(any(data.errors > 180)) % then assume (0,360)
         throwRangeWarning();
-        data.errors = deg2rad(data.errors - 180);
-    
-    elseif(any(data.errors > pi)) % then it must be in the range (0, 2*pi)
+        data.errors =  data.errors - 180;
+        
+    elseif(all((data.errors < pi) & (data.errors > -pi))) % then assume (-pi,pi)
         throwRangeWarning();
-        data.errors = data.errors - pi;
+        data.errors = rad2deg(data.errors);
+        
+    elseif(all((data.errors < 2*pi) & (data.errors > 0))) % then assume (0,2*pi)
+        throwRangeWarning();
+        data.errors = rad2deg(data.errors-pi);
 
     else
         pass = true;
@@ -257,11 +256,11 @@ function [data, pass] = validateData(data)
 end
 
 function throwRangeError()
-    error('Yuck. Data should be in the range (-pi, pi)');
+    error('Yuck. Data should be in the range (-180, 180)');
 end
 
 function throwRangeWarning()
-    warning('I would prefer data in the range (-pi, pi), but I''ll do my best.');
+    warning('I would prefer data in the range (-180, 180), but I''ll do my best.');
 end
 
 % is the object an MTB model struct? passes iff the object is a struct 

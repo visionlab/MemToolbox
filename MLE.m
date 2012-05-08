@@ -11,13 +11,13 @@ function [params, stored] = MLE(data, model)
     model.logpdf = @(varargin)(sum(log(model.pdf(varargin{:}))));
   end
     
-  % mle() doesn't like multiple rows, so wrap the data in a cell array
-  dataWrapper = {data};
-  wrapper = @(varargin)(model.logpdf(varargin{1}{1}, varargin{2:end}));
+  if(~isfield(data,'errors'))
+    data = struct('errors',data);
+  end
   
   numChains = size(model.start,1);
   for c=1:numChains
-    vals{c} = mle(dataWrapper, 'logpdf', wrapper, 'start', model.start(c,:), ...
+    vals{c} = mle(data, 'logpdf', model.logpdf, 'start', model.start(c,:), ...
       'lowerbound', model.lowerbound, 'upperbound', model.upperbound, ...
       'options', options);
     asCell = num2cell(vals{c});

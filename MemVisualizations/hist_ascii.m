@@ -10,7 +10,7 @@ function hist_ascii(data,n)
     end
    
     % bin the data
-    bins = linspace(-pi+(pi/(2*n)), pi-(pi/(2*n)), n);
+    bins = linspace(-180+(180/(2*n)), 180-(180/(2*n)), n);
     m = hist(data, bins);
     
     % figure out highest bin
@@ -18,12 +18,12 @@ function hist_ascii(data,n)
     
     % build the histogram
     symbols = {'_', '.', '-', ''''};
-    h = '-pi ';
+    h = '-180 ';
     for i = 1:n
         symbolToAdd = symbols{1+floor((m(i)/maxBin)*(length(symbols)-1))};
         h = [h, symbolToAdd];
     end
-    h = [h, ' pi'];
+    h = [h, ' +180'];
     
     % display the histogram
     disp(h);

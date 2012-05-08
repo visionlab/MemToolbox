@@ -7,7 +7,7 @@ function model = StandardMixtureModel()
 	model.upperbound = [1 Inf]; % Upper bounds for the parameters
 	model.movestd = [0.02, 0.1];
 	model.pdf = @(data, g, K) ((1-g).*vonmisespdf(data.errors(:),0,K) + ...
-	                             (g).*unifpdf(data.errors(:),-pi,pi));
+	                             (g).*unifpdf(data.errors(:),-180,180));
 	model.start = [.2, 10;  % g, K
                  .4, 15;  % g, K
                  .1, 20]; % g, K

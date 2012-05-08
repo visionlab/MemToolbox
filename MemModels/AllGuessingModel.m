@@ -7,10 +7,10 @@ function model = AllGuessingModel()
 	model.lowerbound = [1]; % Lower bounds for the parameters
 	model.upperbound = [1]; % Upper bounds for the parameters
 	model.movestd = [0.00];
-	model.pdf = @(data, g) (g)*unifpdf(data.errors(:),-pi,pi);
+	model.pdf = @(data, g) (g)*unifpdf(data.errors(:),-180,180);
 	model.start = [1;  % K
                  1;  % K
                  1]; % K
   
-  model.generator = @(parameters,dims) (unifrnd(-pi,pi,dims));
+  model.generator = @(parameters,dims) (unifrnd(-180,180,dims));
 end

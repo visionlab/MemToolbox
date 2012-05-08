@@ -69,13 +69,13 @@ function PlotData(params, data, pdf)
   figure;
   
   % Plot data histogram
-  x = linspace(-pi, pi, 55)';
+  x = linspace(-180, 180, 55)';
   n = histc(data.errors(:), x);
   bar(x, n./sum(n), 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
-  xlim([-pi pi]); hold on;
+  xlim([-180 180]); hold on;
   
   % Plot scaled version of the prediction
-  vals = linspace(-pi, pi, 500)';
+  vals = linspace(-180, 180, 500)';
   asCell = num2cell(params);
   p = pdf(struct('errors', vals), asCell{:});
   multiplier = length(vals)/length(x);
