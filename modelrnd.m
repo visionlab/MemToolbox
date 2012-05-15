@@ -30,6 +30,11 @@
 %    paramsOut = MCMC(simulatedData, model);
 
 function r = modelrnd(model, params, dims)
+  
+    if(nargin < 3)
+      dims = [1 1];
+    end
+  
     
     % if the model has an efficient generator, use it. otherwise use rejection sampling
     if(isfield(model, 'generator'))
