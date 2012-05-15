@@ -78,7 +78,7 @@ function stored = MCMC_Convergence(data, model, verbosity)
     end
     count = count+1;
     if ~converged && verbosity
-      fprintf(' ... not converged (%d)\n', count*startInfo(1).numMonte);
+      fprintf(' ... not yet converged (%d)\n', count*startInfo(1).numMonte);
     end
   end
   if verbosity
