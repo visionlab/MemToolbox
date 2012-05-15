@@ -8,11 +8,6 @@ function stored = MCMC(data, model, verbosity)
   if nargin < 3
     verbosity = true;
   end
-  
-  % If data is provided as a matrix of errors, wrap it in a struct
-  if(~isfield(data,'errors'))
-    data = struct('errors',data);
-  end
     
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have  
