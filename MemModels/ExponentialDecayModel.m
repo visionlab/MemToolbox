@@ -1,12 +1,14 @@
 % EXPONENTIALDECAYMODEL returns a struct for a model where objects drop out
 % of memory indepdendently at a constant rate over time, a la Zhang & Luck
-% (2009). (This is a pure death process over objects.)
+% (2009). Tau is the mean lifetime of an object, k is the capacity of working
+% memory, and sd is the precision with which items are stored. (This is a pure 
+% death process over objects.)
 %
 % Example usage:
 %
 %   data = memdata2mtb(MemData(16));
 %   model = ExponentialDecayModel();
-%   stored = MCMC_Convergence(data, model);
+%   stored = MCMC(data, model);
 %   MCMC_Summarize(stored);
 %
 function model = ExponentialDecayModel()
