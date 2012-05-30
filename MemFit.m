@@ -8,17 +8,15 @@
 % fit = MemFit(d.data);
 %
 % MemFit(data)
+% MemFit(errors)
 % MemFit(data,model)
 % MemFit(data, {model1, model2, model3, ...})
+% MemFit(subj1data)
 % MemFit(responses, stimuli, whichIsTarget)
 %
 % To dos include:
 %   1. If called with no parameters, give a tutorial-like walkthrough
-%   2. There's another way to organize this function, which is to have only
-%      the most general case actually do any of the work, i.e.,
-%               MemFit({dataStructS1, dataStructS2, ...}, {modelStruct1, modelStruct2, ...})
-%      with all of the other cases massaging the input into the above format,
-%      and then recursively calling MemFit again.
+
 
 function fit = MemFit(varargin)
     
@@ -58,9 +56,14 @@ function fit = MemFit(varargin)
             
             [data, pass] = validateData(varargin{2});
             model = varargin{1};
-                
-        % (data, {model1,model2,model3, ...})
+            
+        % (errors, {model1,model2,model3,...})
         elseif(isnumeric(varargin{1}) && iscell(varargin{2}))
+          
+            MemFit(struct('errors', varargin{1}), varargin{2});
+                
+        % (data, {model1,model2,model3,...})
+        elseif(isstruct(varargin{1}) && iscell(varargin{2}))
             
             [data, pass] = validateData(varargin{1});
             allModels = varargin{2};
@@ -222,9 +225,9 @@ end
 function [data, pass] = validateData(data)
 
     pass = false; % assume failure, unless...
-    
-    if(isempty(data.errors))
-        error('You did not give me any data!');
+        
+    if(~isDataStruct(data))
+        error('Data should be passed in as a struct with a field data.errors');
     
     elseif(~isnumeric(data.errors))
         throwRangeError();   
@@ -235,7 +238,7 @@ function [data, pass] = validateData(data)
         
     elseif(any(data.errors > 180)) % then assume (0,360)
         throwRangeWarning();
-        data.errors =  data.errors - 180;
+        data.errors = data.errors - 180;
         
     elseif(all((data.errors < pi) & (data.errors > -pi))) % then assume (-pi,pi)
         throwRangeWarning();
@@ -270,7 +273,7 @@ function pass = isModelStruct(object)
 end
 
 % is the object an MTB data struct? passes iff the object is a struct
-% containing a field called 'error'.
+% containing a field called 'errors'.
 function pass = isDataStruct(object)
     pass = (isstruct(object) && isfield(object,'errors'));
 end
