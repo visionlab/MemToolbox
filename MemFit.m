@@ -54,7 +54,7 @@ function fit = MemFit(varargin)
         else
             error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.'); 
         end
-        fit = MemFit(data, StandardMixtureModelWithBiasSD);
+        fit = MemFit(data, StandardMixtureModelWithBias);
         return
             
     %
