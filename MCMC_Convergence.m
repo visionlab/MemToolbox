@@ -8,7 +8,7 @@ function stored = MCMC_Convergence(data, model, verbosity)
     
   % Verbose mode prints progress and other info to the command window    
   if nargin < 3
-      verbosity = true;
+      verbosity = 1;
   end
     
   % Fastest if your number of start positions is the same as the number
@@ -46,7 +46,7 @@ function stored = MCMC_Convergence(data, model, verbosity)
     startInfo(c).acceptance = 0;
   end
   
-  if verbosity
+  if(verbosity)
       fprintf('\n   Running %d chains...\n', numChains);
   end
   
@@ -161,8 +161,8 @@ function [stored, startInfo] = MCMC_Chain(data, model, startInfo, verbosity)
   end
   
   startInfo.acceptance = mean(acceptance);
-  if verbosity > 1
-    fprintf('MCMC chain acceptance rate: %0.2f\n', mean(acceptance));
+  if verbosity > 2
+    fprintf('    MCMC chain acceptance rate: %0.2f\n', mean(acceptance));
   end
 end
 
@@ -190,7 +190,7 @@ function b = IsConverged(stored, verbosity)
     Sp = (numPerChain-1)/(numPerChain) * W + (1/numPerChain) * B;
     r(v) = sqrt(Sp/W);
   end
-  if verbosity > 1
+  if verbosity > 2
     fprintf('%0.1f ', r);
     fprintf('\n');
   end
