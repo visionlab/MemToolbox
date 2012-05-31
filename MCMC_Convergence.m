@@ -17,11 +17,6 @@ function stored = MCMC_Convergence(data, model, verbosity)
     matlabpool('open');
   end
   
-  % If data is provided as a matrix of errors, wrap it in a struct
-  if(~isfield(data,'errors'))
-    data = struct('errors',data);
-  end
-  
   % If no prior, just put a uniform prior on all parameters
   if ~isfield(model, 'prior')
     model.prior = @(params)(1);
@@ -52,7 +47,7 @@ function stored = MCMC_Convergence(data, model, verbosity)
   end
   
   if verbosity
-      fprintf('\nStarting %d chains..\n\n', numChains);
+      fprintf('\n   Running %d chains...\n', numChains);
   end
   
   % Run chains until convergence detected
@@ -78,11 +73,11 @@ function stored = MCMC_Convergence(data, model, verbosity)
     end
     count = count+1;
     if ~converged && verbosity
-      fprintf(' ... not yet converged (%d)\n', count*startInfo(1).numMonte);
+      fprintf('   ... not yet converged (%d)\n', count*startInfo(1).numMonte);
     end
   end
   if verbosity
-      fprintf('Chains converged after %d samples!\n\n', count*startInfo(1).numMonte);
+      fprintf('   ... chains converged after %d samples!\n', count*startInfo(1).numMonte);
   end
   
   % Collect 5000 samples from converged chains
