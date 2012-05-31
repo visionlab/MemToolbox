@@ -50,11 +50,11 @@ function [paramsOut, lowerCI, upperCI] = fullpipeline(model, paramsIn, numTrials
   for i = 1:length(numTrials)
     
     % generate displays
-    displays = generateDisplays(numTrials(i), numItems);
+    data.displays = generateDisplays(numTrials(i), numItems);
         
     fprintf('\nNow running pipeline with %d trials.\n', numTrials(i))
     
-    data = modelrnd(model, paramsIn, [numTrials(i),1]);
+    data.errors = modelrnd(model, paramsIn, [numTrials(i),1]);
     
     % now try to recover the parameters
     stored = MCMC_Convergence(data, model);

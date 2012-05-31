@@ -6,14 +6,14 @@ function Splines_Example()
   addpath('MemVisualizations');
     
   % Example data
-  %d = load('MemData/3000+trials_3items_SUBJ#1.mat');
-  d = load('MemData/data.mat');
+  data = load('MemData/3000+trials_3items_SUBJ#1.mat');
+  %data = load('MemData/data.mat');
   
   % Model
   model = SplinesModel();
   
   % Run MCMC
-  stored = MCMC_Convergence(d.data(:), model);
+  stored = MCMC_Convergence(data, model);
   params = getfield(MCMC_Summarize(stored), 'maxPosterior');
   
   % Print knots
@@ -21,7 +21,7 @@ function Splines_Example()
   disp(params);
     
   % Figure 1: Plot lines of best fit higher-order functions
-  PlotSamplesOfHigherOrder(model.stdX, model.knotX, stored, d.data(:));
+  PlotSamplesOfHigherOrder(model.stdX, model.knotX, stored, data);
   
   % Figure 2: Plot credible intervals of higher-order function
   PlotConfidenceHigherOrder(model.stdX, model.knotX, stored);
@@ -29,7 +29,7 @@ function Splines_Example()
   % Figure 3: Plot data fit
   precisionDist = interp1(model.knotX, mean(stored.vals), model.stdX, 'pchip');
   precisionDist = precisionDist ./ sum(precisionDist(:));
-  PlotData(model.stdX, precisionDist, d.data(:));
+  PlotData(model.stdX, precisionDist, data);
   
   keyboard
 end
@@ -130,7 +130,7 @@ function PlotData(X, precisionDist, data)
   end
   
   % Plot data histogram
-  n=hist(data, vals);
+  n=hist(data.errors(:), vals);
   x=vals';
   bar(x, n./sum(n), 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
   xlim([-pi pi]); hold on;

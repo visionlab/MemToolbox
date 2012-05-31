@@ -63,7 +63,7 @@ function p = WrappedNormal(x, m, s)
   n = 1./sqrt(2*pi.*s.*s);
   sm = 0;
   for j=-20:20 % sum from infinity to -infinity; larger sum = better approx.
-    sm = sm + exp((-(x-m-(2*pi*j)).^2)./(2.*s.*s));
+    sm = sm + exp((-((pi/180)*x-m-(2*pi*j)).^2)./(2.*s.*s));
   end
   p = n*sm;
 end
