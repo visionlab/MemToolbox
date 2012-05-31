@@ -7,27 +7,45 @@
 % d = load('MemData/3000+trials_3items_SUBJ#1.mat');
 % fit = MemFit(d.data);
 %
+% It can handle many different use cases, including:
 % MemFit(data)
 % MemFit(errors)
 % MemFit(data,model)
+% MemFit(model,data)
+% MemFit(errors,model)
+% MemFit(model,errors)
 % MemFit(data, {model1, model2, model3, ...})
-% MemFit(subj1data)
-% MemFit(responses, stimuli, whichIsTarget)
+% MemFit({subj1data,subj2data,...}, model)
+%
+% All of the 2-arugment versions can take a third parameter, verbosity, which
+% controls the amount of text printed to the command window. If verbosity is
+% 0, output is suppressed. If verbosity is 1, output is minimal. If verbosity
+% is 2, then MemFit is verbose. The default is 2.
 %
 % To dos include:
 %   1. If called with no parameters, give a tutorial-like walkthrough
 
-
 function fit = MemFit(varargin)
-    
-    if nargin < 1
-      error('MemToolbox:MemFit:TooFewInputs', 'MemFit requires at least 1 input argument.');
+  
+    % verbosity controls the amount of output. if verbosity is 0, output is
+    % suppressed completely. if verbosity is 1, output is minimal. if verbosity
+    % is 2, then it's verbose. here, check for verbosity and then chop it off.
+    if nargin == 3
+      verbosity = varargin{3};
+      nArguments = 2;
+    else
+      verbosity = 2;
+      nArguments = nargin;
     end
+
+
+    if nArguments < 1
+      error('MemToolbox:MemFit:TooFewInputs', 'MemFit requires at least 1 input argument.');
     
     %
     % One input argument, assumed to be (errors).
     %
-    if nargin == 1
+    elseif nArguments == 1
 
         if(isnumeric(varargin{1}))
             data = struct('errors', varargin{1});
@@ -36,165 +54,204 @@ function fit = MemFit(varargin)
         else
             error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.'); 
         end
-        fit = MemFit(data, StandardMixtureModelWithBias);
+        fit = MemFit(data, StandardMixtureModelWithBiasSD);
         return
-    end
-    
+            
     %
-    % Two input arguments, assumed to be either (model, errors), or (errors, model)
+    % Two input arguments, so many possibilities...
     %
-    if nargin == 2
+    % There are three arrangments that do the real work:
+    %    MemFit(data,model), which fits the model to the data
+    %    MemFit({data1,data2,...}, model), which fits a hierarchical model
+    %    MemFit(data, {model1,model2,...}), which performs model comparison
+    %
+    elseif nArguments == 2
         
         % (errors, model)
-        if(isnumeric(varargin{1}) && isstruct(varargin{2}))
+        if(isnumeric(varargin{1}) && isModelStruct(varargin{2}))
             
-            [data, pass] = validateData(varargin{1});
+            data = struct('errors', varargin{1});
             model = varargin{2};
+            fit = MemFit(data,model);
         
         % (model, errors)
-        elseif(isstruct(varargin{1}) && isnumeric(varargin{2}))
+        elseif(isModelStruct(varargin{1}) && isnumeric(varargin{2}))
             
-            [data, pass] = validateData(varargin{2});
+            data = struct('errors', varargin{2});
             model = varargin{1};
+            fit = MemFit(data,model);
             
-        % (errors, {model1,model2,model3,...})
-        elseif(isnumeric(varargin{1}) && iscell(varargin{2}))
+        % (model, data)
+        elseif(isModelStruct(varargin{1}) && isDataStruct(varargin{2}))
+            
+            data = varargin{2};
+            model = varargin{1};
+            fit = MemFit(data, model);
+            
+        % (data, model)
+        elseif(isDataStruct(varargin{1}) && isModelStruct(varargin{2}))
+
+            data = validatedata(varargin{1});
+            model = varargin{2};
           
-            MemFit(struct('errors', varargin{1}), varargin{2});
-                
-        % (data, {model1,model2,model3,...})
-        elseif(isstruct(varargin{1}) && iscell(varargin{2}))
+            if(verbosity > 0)
             
-            [data, pass] = validateData(varargin{1});
-            allModels = varargin{2};
+              % tell the user what's to come;
+              fprintf('\nError histogram:   ')
+              hist_ascii(data.errors);
+              fprintf('          Model:   %s\n', model.name);
+              fprintf('     Parameters:   %s\n', paramNames2str(model.paramNames));
+              
+              pause(1);
+              
+              fprintf('\nJust a moment while MTB fits a model to your data...\n');
+              
+              pause(0.5);
             
-            % Introduction & model listing
-            
-            fprintf('\nYou''ve chosen to compare the following models:\n')
-            for modelIndex = 1:length(allModels)
-               fprintf('  %d. %s\n', modelIndex, allModels{modelIndex}.name); 
+            end
+
+            % do the fitting
+            stored = MCMC_Convergence(data, model, verbosity>1);
+            fit = MCMC_Summarize(stored);
+            fit.stored = stored;
+
+            if(verbosity > 0)
+              
+              % display the results
+              fprintf('\n...finished. Now let''s view the results:\n\n')
+
+              fprintf('parameter\tMAP estimate\tlower CI\tupper CI\n')
+              fprintf('---------\t------------\t--------\t--------\n')
+              for paramIndex = 1:length(model.paramNames)
+                  fprintf('%s\t\t%4.4f\t\t%4.4f\t\t%4.4f\n', ...
+                          model.paramNames{paramIndex}, ...
+                          fit.maxPosterior(paramIndex), ...
+                          fit.lowerCredible(paramIndex), ...
+                          fit.upperCredible(paramIndex));
+              end
             end
             
+            if(verbosity>1)
+
+              % optional interactive visualization
+              fprintf('\n');
+              r = input('Would you like to see the fit? (y/n): ', 's');
+              if(strcmp(r,'y'))
+                  PlotModelFitInteractive(model, fit.maxPosterior, data);
+              end
+
+              % optional convergence visualization
+              fprintf('\n');
+              r = input(['Would you like to see the MCMC chains, tradeoffs ' ...
+                         'between parameters, samples from the posterior distribution '...
+                         'and a posterior predictive check? (y/n): '], 's');
+              if(strcmp(r,'y'))
+                  h = MCMC_Convergence_Plot(stored, model.paramNames);
+                  subfigure(2,2,1, h);
+
+                  % Show a figure with each parameter's correlation with each other
+                  h = MCMC_Plot(stored, model.paramNames);
+                  subfigure(2,2,2, h);
+
+                  % Show fit
+                  h = PlotModelParametersAndData(model, stored, data);
+                  subfigure(2,2,3, h);
+
+                  % Posterior predictive
+                  h = PlotPosteriorPredictiveData(model, stored, data);
+                  subfigure(2,2,4, h);        
+              end
+            end
+            
+            if(verbosity > 0)
+              fprintf('\nThis analysis was performed using an alpha release of the MemToolbox.\n')
+            end
+                        
+        % (errors, {model1,model2,model3,...})
+        elseif(isnumeric(varargin{1}) && isCellArrayOfModelStructs(varargin{2}))
+
+            data = struct('errors', varargin{1});
+            models = varargin{2};
+            fit = MemFit(data, models);
+        
+        % (data, {model1,model2,model3,...})
+        elseif(isDataStruct(varargin{1}) && isCellArrayOfModelStructs(varargin{2}))
+              
+            data = validatedata(varargin{1});
+            modelCellArray = varargin{2};
+
+            % Introduction & model listing
+
+            fprintf('\nYou''ve chosen to compare the following models:\n')
+            for modelIndex = 1:length(modelCellArray)
+               fprintf('  %d. %s\n', modelIndex, modelCellArray{modelIndex}.name); 
+            end
+
             fprintf('\nJust a moment while MTB fits these models to your data...\n\n');
             
             
             % Model comparison & results
-            
-            [MD, params, stored] = ModelComparison_BayesFactor(varargin{1}, allModels);
-            
-            fprintf('model\tlog L\tprop. preferred\tlog Bayes factor\n')
-            fprintf('-----\t-----\t---------------\t----------------\n')
-            for modelIndex = 1:length(allModels)
+
+            [fit.MD, fit.params, fit.stored] = ...
+                ModelComparison_BayesFactor(varargin{1}, modelCellArray);
+
+            fprintf('model\tlog L\tprop. preferred\tlog Bayes factor\n');
+            fprintf('-----\t-----\t---------------\t----------------\n');
+            for modelIndex = 1:length(modelCellArray)
                fprintf('%d\t%0.f\t%0.4f\t\t%3.2f\n',  ...
                        modelIndex, ...
-                       max(stored{modelIndex}.like),  ...
-                       MD(modelIndex), ...
-                       log(MD(modelIndex)) - log(sum(MD([1:(modelIndex-1) (modelIndex+1):end]))))
+                       max(fit.stored{modelIndex}.like),  ...
+                       fit.MD(modelIndex), ...
+                       log(fit.MD(modelIndex)) - log(sum(fit.MD([1:(modelIndex-1) (modelIndex+1):end]))))
             end
 
             fprintf('\nBest parameters:\n');
-            disp(params);
+            disp(fit.params);
 
-            return
-        
-        % (dataStruct, modelStruct)
-        elseif(isDataStruct(varargin{1}) && isModelStruct(varargin{2}))
+
+        % ({data1,data2,data3,...}, model)
+        elseif(isCellArrayOfDataStructs(varargin{1}) && isModelStruct(varargin{2}))
+          
+            dataCellArray = varargin{1};
             
-            [data, pass] = validateData(varargin{1});
+            % validate all of the data
+            for i = 1:length(dataCellArray)
+              dataCellArray{i} = validatedata(dataCellArray{i});
+            end
+            
             model = varargin{2};
             
-        % (modelStruct, dataStruct)
-        elseif(isModelStruct(varargin{1}) && isDataStruct(varargin{2}))
+            fprintf('\nYou''ve chosen to fit multiple subjects'' data together...\n\n');
             
-            [data, pass] = validateData(varargin{2});
-            model = varargin{1};
-        
+            pause(1);
+            
+            for i = 1:length(dataCellArray)
+              fprintf(' Subject number:   %d\n', i)
+              fprintf('Error histogram:   ')
+              hist_ascii(dataCellArray{i}.errors);
+              fprintf('     Parameters:   %s\n\n', paramNames2str(model.paramNames));
+            end
+          
+            pause(1);
+          
+            fprintf('Hang in there while MTB fits the model to your data...\n');
+            
+            [fit.paramsMean, fit.paramsSE, fit.paramsSubs] = ...
+                FitMultipleSubjects_Hierarchical(dataCellArray, model);
+          
         else
-            error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.'); 
+            error('MemToolbox:MemFit:InputFormat', ...
+                  'Sorry, MTB doesn''t support that input format.'); 
         end
-
-        % tell the user what's to come
-        fprintf('\nJust a moment while MTB fits a model to your data...\n\n');
-        fprintf('Error histogram:   ')
-        hist_ascii(data.errors);
-        fprintf('          Model:   %s\n', model.name);
-        fprintf('     Parameters:   %s\n', paramNames2str(model.paramNames));
-        
-        % do the fitting
-        stored = MCMC_Convergence(data, model, true);
-        fit = MCMC_Summarize(stored);
-        fit.stored = stored;
-        
-        % display the results
-        fprintf('\n\n...finished. Now let''s view the results.\n\n')
-        
-        fprintf('parameter\tMAP estimate\tlower CI\tupper CI\n')
-        fprintf('---------\t------------\t--------\t--------\n')
-        for paramIndex = 1:length(model.paramNames)
-            fprintf('%s\t\t%4.4f\t\t%4.4f\t\t%4.4f\n', ...
-                    model.paramNames{paramIndex}, ...
-                    fit.maxPosterior(paramIndex), ...
-                    fit.lowerCredible(paramIndex), ...
-                    fit.upperCredible(paramIndex));
-        end
-        
-        % optional interactive visualization
-        fprintf('\n');
-        r = input('Would you like to visualize the fit? (y/n): ', 's');
-        if(strcmp(r,'y'))
-            PlotModelFitInteractive(model, fit.maxPosterior, data)
-        end
-        
-        % optional convergence visualization
-        fprintf('\n');
-        r = input(['Would you like to visualize the MCMC chains, tradeoffs ' ...
-                   'between parameters, samples from the posterior distribution '...
-                   'and a posterior predictive check? (y/n): '], 's');
-        if(strcmp(r,'y'))
-            h = MCMC_Convergence_Plot(stored, model.paramNames);
-            subfigure(2,2,1, h);
-
-            % Show a figure with each parameter's correlation with each other
-            h = MCMC_Plot(stored, model.paramNames);
-            subfigure(2,2,2, h);
-
-            % Show fit
-            h = PlotModelParametersAndData(model, stored, data);
-            subfigure(2,2,3, h);
-
-            % Posterior predictive
-            h = PlotPosteriorPredictiveData(model, stored, data);
-            subfigure(2,2,4, h);        
-        end
-        
-        fprintf('\nModeling complete. This analysis was performed using MemToolbox 0.1.\n')
-        
-        return
-    end
+      
+    elseif nArguments == 3
+      
+      
+    else
     
-    %
-    % Three input arguments
-    % in the works
-    if nargin == 3
-        
-        % (responses, stimuli, whoIsTarget)
-        if(isnumeric(varargin{1}) && isnumeric(varargin{2} && isnumeric(varargin{3})))
-            targets = varargin{2}(varargin{3});
-            data = response2error(varargin{1}, targets);
-            fit = MemFit(data);
-            
-        else % add other cases
-            
-        end
+      % if we get here, throw an error
+      error('MemToolbox:MemFit:TooManyInputs', 'That''s just too much to handle.');
     end
-    
-    if nargin == 4
-        
-    end
-    
-    % if we get here, throw an error
-    error('MemToolbox:MemFit:TooManyInputs', 'That''s just too much to handle.');
-    fit = -1;
 end
 
 % RESPONSE2ERROR(RESPONSE,TARGET) returns the error given the target and response.
@@ -219,52 +276,6 @@ function str = paramNames2str(paramNames)
     end
 end
 
-% checks to make sure that the data is in the expected format (in the range 
-% [-180,180]. if unsalvageable, it throws errors. otherwise, throws warnings
-% and does its best to massage data into the range (-180, 180)
-function [data, pass] = validateData(data)
-
-    pass = false; % assume failure, unless...
-        
-    if(~isDataStruct(data))
-        error('Data should be passed in as a struct with a field data.errors');
-    
-    elseif(~isnumeric(data.errors))
-        throwRangeError();   
-   
-    elseif(any(data.errors < -180 | data.errors > 360)) % vomit if unintelligeble
-    
-        throwRangeError();      
-        
-    elseif(any(data.errors > 180)) % then assume (0,360)
-        throwRangeWarning();
-        data.errors = data.errors - 180;
-        
-    elseif(all((data.errors < pi) & (data.errors > -pi))) % then assume (-pi,pi)
-        throwRangeWarning();
-        data.errors = rad2deg(data.errors);
-        
-    elseif(all((data.errors < 2*pi) & (data.errors > 0))) % then assume (0,2*pi)
-        throwRangeWarning();
-        data.errors = rad2deg(data.errors-pi);
-
-    else
-        pass = true;
-    end
-    
-    % add in some checking of auxilliary data struct fields. for example,
-    % it would probably be good to make sure that any field called RT has
-    % only non-negative numbers.
-    
-end
-
-function throwRangeError()
-    error('Yuck. Data should be in the range (-180, 180)');
-end
-
-function throwRangeWarning()
-    warning('I would prefer data in the range (-180, 180), but I''ll do my best.');
-end
 
 % is the object an MTB model struct? passes iff the object is a struct 
 % containing a field called 'pdf' or 'logpdf'. 
@@ -290,7 +301,7 @@ end
 % when the function typeChecker is applied to them?
 function pass = isCellArrayOfType(object,typeChecker)
     c1 = iscell(object);
-    c2 = false(length(object));
+    c2 = false(size(object));
     for i = 1:length(object)
         c2(i) = typeChecker(object{i});
     end
