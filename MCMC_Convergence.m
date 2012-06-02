@@ -4,28 +4,28 @@
 % MCMC function that automatically detects convergence using the technique
 % of Gelman and Rubin (1992)
 %---------------------------------------------------------------------
-function stored = MCMC_Convergence(data, model, verbosity)
-    
-  % Verbose mode prints progress and other info to the command window    
-  if nargin < 3
-      verbosity = 1;
-  end
-    
+
+function stored = MCMC_Convergence(data, model, varargin)
+  % Extra arguments and parsing
+  %  Verbosity = 0,  Print nothing
+  %  Verbosity = 1,  Print description of chains & when convergence happens
+  %  Verbosity = 2,  Print ratio of between/within chain variance for each
+  %    variable on each iteration
+  %  ConvergenceVariance = Ratio of between/within chain variance needed
+  %    for each variable to count as convergence
+  %  SamplePerChain - how many samples to collect after convergence
+  %  attained
+  args = struct('Verbosity', 1, 'ConvergenceVariance', 1.2, 'SamplesPerChain', 5000); 
+  args = ParseArgs(varargin, args);
+      
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
   if matlabpool('size') == 0
     matlabpool('open');
   end
   
-  % If no prior, just put a uniform prior on all parameters
-  if ~isfield(model, 'prior')
-    model.prior = @(params)(1);
-  end
-  
-  % if no logpdf, create one from pdf
-  if ~isfield(model, 'logpdf')
-    model.logpdf = @(varargin)(sum(log(model.pdf(varargin{:}))));
-  end
+  % Ensure there is a model.prior, model.logpdf and model.pdf
+  model = EnsureAllModelMethods(model);
   
   % How many chains to run?
   numChains = size(model.start,1);
@@ -46,7 +46,7 @@ function stored = MCMC_Convergence(data, model, verbosity)
     startInfo(c).acceptance = 0;
   end
   
-  if(verbosity)
+  if args.Verbosity>=1
       fprintf('\n   Running %d chains...\n', numChains);
   end
   
@@ -55,12 +55,12 @@ function stored = MCMC_Convergence(data, model, verbosity)
   count = 0;
   while ~converged
     if count>0
-      converged = IsConverged(chainStored, verbosity);
+      converged = IsConverged(chainStored, args.ConvergenceVariance, args.Verbosity);
     end
     parfor c=1:numChains
       % Run chain
       [chainStored(c), startInfo(c)] = ....
-        MCMC_Chain(data, model, startInfo(c), verbosity);
+        MCMC_Chain(data, model, startInfo(c), args.Verbosity);
       
       % Learn about covariance
       startInfo(c).burnCovariance = startInfo(c).burnCovariance .* 0.75 + ...
@@ -72,19 +72,20 @@ function stored = MCMC_Convergence(data, model, verbosity)
       end
     end
     count = count+1;
-    if ~converged && verbosity
+    if ~converged && args.Verbosity
       fprintf('   ... not yet converged (%d)\n', count*startInfo(1).numMonte);
     end
   end
-  if verbosity
+  if args.Verbosity
       fprintf('   ... chains converged after %d samples!\n', count*startInfo(1).numMonte);
+      fprintf('   ... collecting %d samples from converged distribution\n', args.SamplesPerChain);
   end
   
   % Collect 5000 samples from converged chains
   parfor c=1:numChains
-    startInfo(c).numMonte = 5000;
+    startInfo(c).numMonte = args.SamplesPerChain;
     [chainStored(c), startInfo(c)] = ....
-        MCMC_Chain(data, model, startInfo(c), verbosity);
+        MCMC_Chain(data, model, startInfo(c), args.Verbosity);
   end
   
   % Combine values across chains
@@ -168,7 +169,7 @@ end
 
 
 %---------------------------------------------------------------------
-function b = IsConverged(stored, verbosity)
+function b = IsConverged(stored, convergenceVariance, verbosity)
   nChains = length(stored);
   numPerChain = size(stored(1).vals,1);
   nParams = size(stored(1).vals,2);
@@ -194,6 +195,6 @@ function b = IsConverged(stored, verbosity)
     fprintf('%0.1f ', r);
     fprintf('\n');
   end
-  b = all(r<1.2 | isnan(r));
+  b = all(r<convergenceVariance | isnan(r));
 end
 

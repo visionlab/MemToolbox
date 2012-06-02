@@ -1,32 +1,24 @@
-function PlotModelFit(model, params, data, pdfColor, nBins, showNumbers)
-  % Default parameters
-  if nargin < 4 || isempty(pdfColor)
-    pdfColor = 'b';
-  end
-  if nargin < 5 || isempty(nBins)
-    nBins = 40;
-  end
-  if nargin <6 || isempty(showNumbers)
-    showNumbers = true;
-  end
+function figHand = PlotModelFit(model, params, data, varargin)
+  % Extra arguments and parsing
+  args = struct('PdfColor','b', 'NumberOfBins', 40, 'ShowNumbers', true, ...
+    'NewFigure', false); 
+  args = ParseArgs(varargin, args);
+  if args.NewFigure, figHand = figure(); end
   
   % If params is a struct, assume they passed a stored() struct from MCMC
   if isstruct(params) && isfield(params, 'vals')
     params = params.vals;
   end
-  
-  % If there's no model.pdf, create one using model.logpdf
-  if ~isfield(model, 'pdf')
-    model.pdf = @(varargin)(exp(model.logpdf(varargin{:})));
-  end
-  
   if(~isfield(data,'errors'))
     data = struct('errors',data);
   end
   
+  % Ensure there is a model.prior, model.logpdf and model.pdf
+  model = EnsureAllModelMethods(model);
+  
   % Plot data histogram
   set(gcf, 'Color', [1 1 1]);
-  x = linspace(-180, 180, nBins)';
+  x = linspace(-180, 180, args.NumberOfBins)';
   n = hist(data.errors(:), x);
   bar(x, n./sum(n), 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
   xlim([-180 180]); hold on;
@@ -51,7 +43,7 @@ function PlotModelFit(model, params, data, pdfColor, nBins, showNumbers)
   else
     paramsAsCell = num2cell(params);
     p = model.pdf(struct('errors', vals), paramsAsCell{:});
-    plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', pdfColor, 'LineWidth', 2);
+    plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, 'LineWidth', 2);
   end
   xlabel('Error (degrees)');
   ylabel('Probability');
@@ -62,7 +54,7 @@ function PlotModelFit(model, params, data, pdfColor, nBins, showNumbers)
   ylim([0 topOfY]);
   
   % Label the plot with the parameter values
-  if showNumbers && size(params,1) == 1
+  if args.ShowNumbers && size(params,1) == 1
     txt = [];
     for i=1:length(params)
       txt = [txt sprintf('%s: %.3g\n', model.paramNames{i}, params(i))];

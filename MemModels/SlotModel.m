@@ -16,7 +16,6 @@ function model = SlotModel()
 end
 
 function y = slotpdf(data,capacity,sd)
-  
   g = (1 - max(0,min(1,capacity./data.n)));
 
   y = (1-g).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
