@@ -1,9 +1,18 @@
 % Convert samples from MCMC into estimates of parameters
-function params = MCMC_Summarize(stored) 
+% - If you pass the optional second parameter whichField, it does not
+% return a struct but instead returns only that one field. Possible values
+% are posteriorMean, posteriorMedian, maxPosterior, lowerCredible,
+% upperCredible
+function params = MCMC_Summarize(stored, whichField) 
   [~,highestLike]=max(stored.like);
-  params.posteriorMean = mean(stored.vals);
-  params.posteriorMedian = median(stored.vals);
-  params.maxPosterior = stored.vals(highestLike,:);
-  params.lowerCredible = quantile(stored.vals, 0.025);
-  params.upperCredible = quantile(stored.vals, 0.975);
+  outParams.posteriorMean = mean(stored.vals);
+  outParams.posteriorMedian = median(stored.vals);
+  outParams.maxPosterior = stored.vals(highestLike,:);
+  outParams.lowerCredible = quantile(stored.vals, 0.025);
+  outParams.upperCredible = quantile(stored.vals, 0.975);
+  if nargin < 2
+    params = outParams;
+  else
+    params = getfield(outParams, whichField);
+  end
 end
