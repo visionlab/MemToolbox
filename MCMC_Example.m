@@ -12,10 +12,9 @@ function MCMC_Example()
   %model = BinomialModel();
   
   % Run MCMC
-  %MCMCMemoized = MemoizeToDisk(@MCMC_Convergence);
   stored = MCMC_Convergence(data, model);
-  params = getfield(MCMC_Summarize(stored), 'maxPosterior');
-  
+  params = MCMC_Summarize(stored, 'maxPosterior');
+
   % Maximum posterior parameters from MCMC
   disp('MAP from MCMC():');
   disp(params);
@@ -41,8 +40,7 @@ function MCMC_Example()
   
   % Get MLE parameters using search
   disp('MLE from mle():');
-  MLEMemoized = MemoizeToDisk(@MLE);
-  params_mle = MLEMemoized(data, model);
+  params_mle = MLE(data, model);
   disp(params_mle);
 end
 
