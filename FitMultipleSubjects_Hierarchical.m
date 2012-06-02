@@ -13,6 +13,11 @@
 % taking many more posterior samples and trimming some to remove
 % autocorrelation).
 %
+% Example usage:
+%   data{1} = load('MemData/3000+trials_3items_SUBJ#1.mat');
+%   data{2} = load('MemData/3000+trials_3items_SUBJ#2.mat');
+%   paramsMean = FitMultipleSubjects_Hierarchical(data, model);
+%
 function [paramsMean, paramsSE, ...
     paramsSubs] = FitMultipleSubjects_Hierarchical(data, model)
   
@@ -51,7 +56,7 @@ function [paramsMean, paramsSE, ...
   % usual:
   stored = MCMC_Convergence(data, newModel, 2);
   params = getfield(MCMC_Summarize(stored), 'posteriorMean');
-  MCMC_Plot(stored, newModel.paramNames);
+  % MCMC_Plot(stored, newModel.paramNames);
   
   % Convert back to separate params
   paramsSubs = reshape(params', nParams, [])';
@@ -73,8 +78,8 @@ function likeVal = HierarchicalPDF(oldPdf, nParams, varargin)
     likeVal = likeVal + ...
       sum(log(oldPdf(data{i}, subjectParams{:})));
     likeVal = likeVal + ...
-      sum(normpdfln([subjectParams{:}], ...
-      [popParamsMean{:}], [popParamsStd{:}]));
+      sum(log(normpdf([subjectParams{:}], ...
+      [popParamsMean{:}], [popParamsStd{:}])));
   end 
   
   % Fetch a certain set of parameters from varargin (e.g., fetch
