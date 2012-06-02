@@ -1,30 +1,24 @@
-% Yet another wrapper for the MemToolbox. The goal here is to have a general
-% purpose function that just works, excatly as a first-time user would expect.
-% Ideally, you can run MemFit(data) and get a report of everything you'd
-% ever really want to know about your data.
+%MEMFIT  A general-purpose fitting tool from the MemToolbox
 %
-% Usage example:
-% d = load('MemData/3000+trials_3items_SUBJ#1.mat');
-% fit = MemFit(d.data);
+%   Usage example:
+%   d = load('MemData/3000+trials_3items_SUBJ#1.mat');
+%   fit = MemFit(d.data);
 %
-% It can handle many different use cases, including:
-% MemFit(data)
-% MemFit(errors)
-% MemFit(data,model)
-% MemFit(model,data)
-% MemFit(errors,model)
-% MemFit(model,errors)
-% MemFit(data, {model1, model2, model3, ...})
-% MemFit({subj1data,subj2data,...}, model)
+%   It can handle many different use cases, including:
+%   MemFit(data)
+%   MemFit(errors)
+%   MemFit(data,model)
+%   MemFit(model,data)
+%   MemFit(errors,model)
+%   MemFit(model,errors)
+%   MemFit(data, {model1, model2, model3, ...})
+%   MemFit({subj1data,subj2data,...}, model)
 %
-% All of the 2-arugment versions can take a third parameter, verbosity, which
-% controls the amount of text printed to the command window. If verbosity is
-% 0, output is suppressed. If verbosity is 1, output is minimal. If verbosity
-% is 2, then MemFit is verbose. The default is 2.
+%   All of the 2-argument versions can optionallytake a third parameter, 
+%   verbosity, which controls the amount of text printed to the command window. 
+%   If verbosity is 0, output is suppressed. If verbosity is 1, output is 
+%   minimal. If verbosity is 2, then MemFit is verbose. The default is 2.
 %
-% To dos include:
-%   1. If called with no parameters, give a tutorial-like walkthrough
-
 function fit = MemFit(varargin)
   
     % verbosity controls the amount of output. if verbosity is 0, output is
@@ -39,8 +33,8 @@ function fit = MemFit(varargin)
     end
 
 
-    if nArguments < 1
-      error('MemToolbox:MemFit:TooFewInputs', 'MemFit requires at least 1 input argument.');
+    if nArguments < 1    
+        open('MTB_tutorial.txt');
     
     %
     % One input argument, assumed to be (errors).
