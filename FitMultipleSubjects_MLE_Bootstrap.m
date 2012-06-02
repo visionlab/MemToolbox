@@ -3,7 +3,7 @@
 % Bootstrapping seems to provide less within-subject noise and better recover
 % the population estimate in my simple tests
 function [paramsMean, paramsSE, ...
-    paramsRaw] = FitMultipleSubjects_Bootstrap(data, model, nSamples)
+    paramsRaw] = FitMultipleSubjects_MLE_Bootstrap(data, model, nSamples)
   
   % Default number of bootstrap samples
   if nargin<3
@@ -15,6 +15,6 @@ function [paramsMean, paramsSE, ...
     paramsRaw(m,:) = MLE(curData, model);
   end
   
-  paramsMean = mean(paramsRaw);
+  paramsMean = mean(paramsRaw,1);
   paramsSE = std(paramsRaw);
 end
