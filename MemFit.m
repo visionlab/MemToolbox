@@ -48,7 +48,7 @@ function fit = MemFit(varargin)
         else
             error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.'); 
         end
-        fit = MemFit(data, StandardMixtureModelWithBias);
+        fit = MemFit(data, StandardMixtureModelWithBias,1);
         return
             
     %
@@ -66,14 +66,14 @@ function fit = MemFit(varargin)
             
             data = struct('errors', varargin{1});
             model = varargin{2};
-            fit = MemFit(data,model);
+            fit = MemFit(data,model,1);
         
         % (model, errors)
         elseif(isModelStruct(varargin{1}) && isnumeric(varargin{2}))
             
             data = struct('errors', varargin{2});
             model = varargin{1};
-            fit = MemFit(data,model);
+            fit = MemFit(data,model,1);
             
         % (model, data)
         elseif(isModelStruct(varargin{1}) && isDataStruct(varargin{2}))
@@ -105,7 +105,7 @@ function fit = MemFit(varargin)
             end
 
             % do the fitting
-            stored = MCMC_Convergence(data, model, verbosity>1);
+            stored = MCMC_Convergence(data, model, 'Verbosity', verbosity-1);
             fit = MCMC_Summarize(stored);
             fit.stored = stored;
 
@@ -117,7 +117,7 @@ function fit = MemFit(varargin)
               fprintf('parameter\tMAP estimate\tlower CI\tupper CI\n')
               fprintf('---------\t------------\t--------\t--------\n')
               for paramIndex = 1:length(model.paramNames)
-                  fprintf('%s\t\t%4.4f\t\t%4.4f\t\t%4.4f\n', ...
+                  fprintf('%s\t\t%3.3f\t\t%3.3f\t\t%3.3f\n', ...
                           model.paramNames{paramIndex}, ...
                           fit.maxPosterior(paramIndex), ...
                           fit.lowerCredible(paramIndex), ...
@@ -125,7 +125,7 @@ function fit = MemFit(varargin)
               end
             end
             
-            if(verbosity>1)
+            if(verbosity > 0)
 
               % optional interactive visualization
               fprintf('\n');
@@ -133,7 +133,9 @@ function fit = MemFit(varargin)
               if(strcmp(r,'y'))
                   PlotModelFitInteractive(model, fit.maxPosterior, data);
               end
+            end
 
+            if(verbosity > 1)
               % optional convergence visualization
               fprintf('\n');
               r = input(['Would you like to see the MCMC chains, tradeoffs ' ...
