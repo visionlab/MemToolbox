@@ -34,7 +34,7 @@ function fit = MemFit(varargin)
 
 
     if nArguments < 1    
-        open('MTB_tutorial.txt');
+        open('tutorial.pdf');
     
     %
     % One input argument, assumed to be (errors).

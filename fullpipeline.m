@@ -57,7 +57,7 @@ function [paramsOut, lowerCI, upperCI] = fullpipeline(model, paramsIn, numTrials
     data.errors = modelrnd(model, paramsIn, [numTrials(i),1]);
     
     % now try to recover the parameters
-    stored = MCMC_Convergence(data, model);
+    stored = MCMC_Convergence(data, model, 'Verbosity', 0);
     fit = MCMC_Summarize(stored);
     paramsOut(i,:) = fit.posteriorMean;
     lowerCI(i,:) = fit.lowerCredible;
