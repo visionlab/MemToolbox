@@ -1,5 +1,5 @@
-function model = BinomialModel()
-  model.name = 'Binomial pure death model';
+function model = QuantalDeathModel()
+  model.name = 'Quantal pure death model';
   model.paramNames = {'g', 'nQ', 'p', 's', 'mu'};
   model.lowerbound = [0 1 0 0 -180]; % Lower bounds for the parameters
   model.upperbound = [1 1000 1 Inf 180]; % Upper bounds for the parameters
