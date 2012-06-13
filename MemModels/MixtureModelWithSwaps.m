@@ -1,6 +1,6 @@
 % MixtureModelWithSwaps returns a structure for a three-component model
 % with guesses and swaps. Based on Bays et al. 2009 model.
-
+%
 % Data struct should include:
 %   data.errors: errors (radians), e.g., distance of response from target
 %   data.distractors, Row 1: distance of distractor 1 from target
