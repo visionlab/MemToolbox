@@ -3,8 +3,7 @@
 % parameter of the von Mises distribution).
 
 function model = StandardMixtureModelWithBiasKappa()
-
-  model.name = 'Standard mixture model with bias (parameterized with kappa)';
+  model.name = 'Standard mixture model with bias';
   model.paramNames = {'mu', 'g', 'K'};
   model.lowerbound = [-180 0 0]; % Lower bounds for the parameters
   model.upperbound = [180 1 Inf]; % Upper bounds for the parameters

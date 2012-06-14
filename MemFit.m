@@ -58,7 +58,7 @@ function fit = MemFit(varargin)
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
     end
-    fit = MemFit_SingleData(data, StandardMixtureModelWithBias, 2);
+    fit = MemFit_SingleData(data, StandardMixtureModel('Bias', true), 2);
     return
 
   elseif nArguments == 2
@@ -231,6 +231,7 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model)
   [fit.paramsMean, fit.paramsSE, fit.paramsSubs] = ...
     FitMultipleSubjects_Hierarchical(dataCellArray, model);
 end
+
 
 %-----------------------------
 % Helper functions
