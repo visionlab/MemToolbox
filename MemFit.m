@@ -58,7 +58,7 @@ function fit = MemFit(varargin)
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
     end
-    fit = MemFit(data, StandardMixtureModelWithBias,1);
+    fit = MemFit_SingleData(data, StandardMixtureModelWithBias, 2);
     return
 
   elseif nArguments == 2
@@ -86,7 +86,7 @@ function fit = MemFit(varargin)
       % (data, model) - preferred format
       data = ValidateData(varargin{1});
       model = varargin{2};
-      MemFit_SingleData(data, model, verbosity);
+      fit = MemFit_SingleData(data, model, verbosity);
       
     elseif(isnumeric(varargin{1}) && isCellArrayOfModelStructs(varargin{2}))
       % (errors, {model1,model2,model3,...})
@@ -162,30 +162,27 @@ function fit = MemFit_SingleData(data, model, verbosity)
   end
   
   if(verbosity > 1)
-    % optional convergence visualization
+    % Optional posterior visualization
     fprintf('\n');
-    r = input(['Would you like to see the MCMC chains, tradeoffs ' ...
-      'between parameters, samples from the posterior distribution '...
-      'and a posterior predictive check? (y/n): '], 's');
-    if(strcmp(r,'y'))
-      h = PlotConvergence(stored, model.paramNames);
-      subfigure(2,2,1, h);
-      
+    r = input(['Would you like to see the tradeoffs\n' ...
+      'between parameters, samples from the posterior\n'...
+      'distribution and a posterior predictive check? (y/n): '], 's');
+    if(strcmp(r,'y'))      
       % Show a figure with each parameter's correlation with each other
       h = PlotPosterior(stored, model.paramNames);
-      subfigure(2,2,2, h);
+      subfigure(2,2,1, h);
       
       % Show fit
       h = PlotModelParametersAndData(model, stored, data);
-      subfigure(2,2,3, h);
+      subfigure(2,2,2, h);
       
       % Posterior predictive
       h = PlotPosteriorPredictiveData(model, stored, data);
-      subfigure(2,2,4, h);
+      subfigure(2,2,3, h);
     end
   end
   if(verbosity > 0)
-    fprintf('\nThis analysis was performed using an alpha release of the MemToolbox.\n')
+    fprintf('\nThis analysis was performed using an\nalpha release of the MemToolbox.\n')
   end
 end
 
