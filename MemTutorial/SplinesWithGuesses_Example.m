@@ -1,19 +1,14 @@
 %-------------------------------------------------------------------------
-function SplinesWithGuesses_Example()
-  addpath('MemModels');
-  addpath('Helpers');
-  addpath('MemVisualizations');
-    
+function SplinesWithGuesses_Example()    
   % Example data
-  %d = load('MemData/3000+trials_3items_SUBJ#1.mat');
-  d = load('MemData/data.mat');
+  d = MemData(1);
   
   % Model
   model = SplinesModelWithGuess();
   
   % Run MCMC
-  stored = MCMC_Convergence(d.data(:), model);
-  params = getfield(MCMC_Summarize(stored), 'maxPosterior');
+  stored = MCMC(d.data(:), model);
+  params = MCMCSummarize(stored, 'maxPosterior');
   
   % Print knots
   disp('Knot values:');
@@ -32,8 +27,6 @@ function SplinesWithGuesses_Example()
   precisionDist = interp1(model.knotX, mean(stored.vals), model.stdX, 'pchip');
   precisionDist = precisionDist ./ sum(precisionDist(:));
   PlotData(model.stdX, params(end), precisionDist, d.data(:));
-  
-  keyboard
 end
 
 % I think all of these functions could be converted to use the standard

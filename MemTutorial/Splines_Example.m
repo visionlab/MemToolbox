@@ -1,20 +1,14 @@
 %-------------------------------------------------------------------------
 function Splines_Example()
-  close all;
-  addpath('MemModels');
-  addpath('Helpers');
-  addpath('MemVisualizations');
-    
   % Example data
-  data = load('MemData/3000+trials_3items_SUBJ#1.mat');
-  %data = load('MemData/data.mat');
+  data = MemData(1);
   
   % Model
   model = SplinesModel();
   
   % Run MCMC
-  stored = MCMC_Convergence(data, model);
-  params = getfield(MCMC_Summarize(stored), 'maxPosterior');
+  stored = MCMC(data, model);
+  params = MCMCSummarize(stored, 'maxPosterior');
   
   % Print knots
   disp('Knot values:');

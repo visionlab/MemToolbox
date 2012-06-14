@@ -1,10 +1,11 @@
-function figHand = PlotModelParametersAndData(model, stored, data)
+function figHand = PlotModelParametersAndData(model, stored, data, varargin)
   % Plot data fit
-  figHand = figure;
+  args = struct('NumSamplesToPlot', 63, 'NewFigure', true); 
+  args = parseargs(varargin, args);
+  if args.NewFigure, figHand = figure(); end
   
   % Which to use
-  numSamplesToPlot = 63; % Number of samples to plot
-  which = round(linspace(1, size(stored.vals,1), numSamplesToPlot));
+  which = round(linspace(1, size(stored.vals,1), args.NumSamplesToPlot));
   [~,mapVal] = max(stored.like);
   params = stored.vals(mapVal,:);
   
@@ -19,7 +20,7 @@ function figHand = PlotModelParametersAndData(model, stored, data)
   
   % Parallel coordinates
   subplot(1,2,1);
-  map = palettablecolormap('diverging', numSamplesToPlot+1);
+  map = palettablecolormap('diverging', args.NumSamplesToPlot+1);
   for i=1:length(which)
     valuesNormalized(i,:) = (values(i,:) - minVals) ./ (maxVals - minVals);
     

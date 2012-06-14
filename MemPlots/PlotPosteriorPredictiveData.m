@@ -1,18 +1,16 @@
-function figHand = PlotPosteriorPredictiveData(model, stored, data, modelColor)
+function figHand = PlotPosteriorPredictiveData(model, stored, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
   % difference plot.
-  if nargin < 4
-    modelColor = 'b';
-  end
-  
-  figHand = figure();
+  args = struct('NumSamplesToPlot', 48, 'NumberOfBins', 55, ...
+    'PdfColor','b', 'NewFigure', true); 
+  args = parseargs(varargin, args);
+  if args.NewFigure, figHand = figure(); end
   
   % Choose which samples to use
-  numSamplesToPlot = 48;
-  which = round(linspace(1, size(stored.vals,1), numSamplesToPlot));
+  which = round(linspace(1, size(stored.vals,1), args.NumSamplesToPlot));
   
   % How to bin
-  x = linspace(-180, 180, 55)';
+  x = linspace(-180, 180, args.NumberOfBins)';
   nData = hist(data.errors, x)';
   nData = nData ./ sum(nData(:));
   
@@ -28,7 +26,7 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data, modelColor)
     % Bin data and model
     n = hist(yrep, x)';
     n = n ./ sum(n(:));
-    plot(x, n, '-', 'Color', modelColor);
+    plot(x, n, '-', 'Color', args.PdfColor);
     
     % Diff between this data and real data
     diffPlot(i,:) = nData - n;

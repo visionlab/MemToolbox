@@ -1,4 +1,4 @@
-function figHand = PlotPosteriorPredictiveStatistic(model, stored, data)
+function figHand = PlotPosteriorPredictiveStatistic(model, stored, data, varargin)
   % Should break up into two functions: one to compute, and one to plot
   % (so we can easily memoize the compute function, for example)
   %
@@ -10,15 +10,16 @@ function figHand = PlotPosteriorPredictiveStatistic(model, stored, data)
   %  4) Bin the data and the model fit, and calculate a discrepency
   %  ... (rinse and repeat)
   %  5) Compare to the discrepency from the true data (plotted as a line)
-  
-  figHand = figure();
+  args = struct('NumSamplesToPlot', 48, 'NumberOfBins', 55, ...
+    'PdfColor','b', 'NewFigure', true); 
+  args = parseargs(varargin, args);
+  if args.NewFigure, figHand = figure(); end
   
   % Choose which samples to use
-  numSamplesToPlot = 64;
-  which = round(linspace(1, size(stored.vals,1), numSamplesToPlot));
+  which = round(linspace(1, size(stored.vals,1), args.NumSamplesToPlot));
   
   % How to bin
-  x = linspace(-180, 180, 55)';
+  x = linspace(-180, 180, args.NumberOfBins)';
   
   % Plot samples from posterior
   subplot(2,1,1);
@@ -73,7 +74,7 @@ function figHand = PlotPosteriorPredictiveStatistic(model, stored, data)
   
   % Also show the p value. <0.05 means we can reject this model.
   lims = axis();
-  pVal = sum(yrep_t > y_t)/numSamplesToPlot;
+  pVal = sum(yrep_t > y_t)/args.NumSamplesToPlot;
   text(lims(2), lims(4), sprintf('Can reject\nbased on SSE?\n p=%0.03f', pVal), ...
     'HorizontalAlignment', 'right');
 end

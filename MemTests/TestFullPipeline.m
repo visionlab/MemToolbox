@@ -16,7 +16,7 @@
 %   model = StandardMixtureModelWithBias;
 %   [paramsOut, lowerCI, upperCI] = fullpipeline(model)
 %
-function [paramsOut, lowerCI, upperCI] = fullpipeline(model, paramsIn, numTrials, numItems)
+function [paramsOut, lowerCI, upperCI] = TestFullPipeline(model, paramsIn, numTrials, numItems)
     
   % generate error data using parameters from the first element in the MCMC chain
   if(nargin < 2)
@@ -54,11 +54,11 @@ function [paramsOut, lowerCI, upperCI] = fullpipeline(model, paramsIn, numTrials
         
     fprintf('\nNow running pipeline with %d trials.\n', numTrials(i))
     
-    data.errors = modelrnd(model, paramsIn, [numTrials(i),1]);
+    data.errors = SampleFromModel(model, paramsIn, [numTrials(i),1]);
     
     % now try to recover the parameters
-    stored = MCMC_Convergence(data, model, 'Verbosity', 0);
-    fit = MCMC_Summarize(stored);
+    stored = MCMC(data, model, 'Verbosity', 0);
+    fit = MCMC(stored);
     paramsOut(i,:) = fit.posteriorMean;
     lowerCI(i,:) = fit.lowerCredible;
     upperCI(i,:) = fit.upperCredible;

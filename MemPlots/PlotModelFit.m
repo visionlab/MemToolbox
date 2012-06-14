@@ -2,7 +2,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
   % Extra arguments and parsing
   args = struct('PdfColor','b', 'NumberOfBins', 40, 'ShowNumbers', true, ...
     'NewFigure', false); 
-  args = ParseArgs(varargin, args);
+  args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
   % If params is a struct, assume they passed a stored() struct from MCMC

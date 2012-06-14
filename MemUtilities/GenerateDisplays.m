@@ -1,4 +1,4 @@
-function displays = generateDisplays(trials, itemsPerTrial, mode)
+function displays = GenerateDisplays(trials, itemsPerTrial, mode)
     
   % default mode is 0 (iid from circular)	
 	if nargin < 3
@@ -10,7 +10,7 @@ function displays = generateDisplays(trials, itemsPerTrial, mode)
 	  displays = unifrnd(-180, 180, trials, itemsPerTrial);
 	else
 	  warning('No such mode, defaulting to iid vm.')
-	  displays = generateDisplays(trials,itemsPerTrial,1);
+	  displays = GenerateDisplays(trials,itemsPerTrial,1);
   end
 
 end

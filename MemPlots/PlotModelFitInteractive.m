@@ -1,12 +1,12 @@
 function figHand = PlotModelFitInteractive(model, params, data, varargin)
   % Extra parameters
   args = struct('MarginalPlots', false, 'NewFigure', true); 
-  args = ParseArgs(varargin, args);
+  args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
   % If you pass a 'stored' struct instead of params
   if isstruct(params) && isfield(params, 'vals')
-    params = MCMC_Summarize(params, 'maxPosterior');
+    params = MCMCSummarize(params, 'maxPosterior');
   end
   
   % Ensure there is a model.prior, model.logpdf and model.pdf

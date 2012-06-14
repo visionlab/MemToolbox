@@ -3,7 +3,7 @@
 % return a struct but instead returns only that one field. Possible values
 % are posteriorMean, posteriorMedian, maxPosterior, lowerCredible,
 % upperCredible
-function params = MCMC_Summarize(stored, whichField) 
+function params = MCMCSummarize(stored, whichField) 
   [~,highestLike]=max(stored.like);
   outParams.posteriorMean = mean(stored.vals);
   outParams.posteriorMedian = median(stored.vals);
@@ -13,6 +13,6 @@ function params = MCMC_Summarize(stored, whichField)
   if nargin < 2
     params = outParams;
   else
-    params = getfield(outParams, whichField);
+    params = outParams.(whichField);
   end
 end

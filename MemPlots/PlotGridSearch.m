@@ -1,4 +1,4 @@
-function figHand = GridSearch_Plot(logLikeMatrix, valuesUsed, paramNames)
+function figHand = PlotGridSearch(logLikeMatrix, valuesUsed, paramNames)
   % Convert log likelihood matrix into likelihood, avoiding underflow
   likeMatrix = exp(logLikeMatrix-max(logLikeMatrix(:)));
   likeMatrix(isnan(likeMatrix)) = 0;

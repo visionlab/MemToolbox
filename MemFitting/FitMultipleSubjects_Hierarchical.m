@@ -55,7 +55,7 @@ function [paramsMean, paramsSE, ...
   % at searching this space. So do MCMC, with twice as many chains as
   % usual:
   stored = MCMC_Convergence(data, newModel, 2);
-  params = getfield(MCMC_Summarize(stored), 'posteriorMean');
+  params = MCMCSummarize(stored, 'posteriorMean');
   % MCMC_Plot(stored, newModel.paramNames);
   
   % Convert back to separate params

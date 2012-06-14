@@ -27,8 +27,8 @@ function ModelComparison_Example()
   disp(params);
   
   % Show fits
-  PlotData(params{1}, data, model1.pdf);
-  PlotData(params{2}, data, model2.pdf);
+  PlotModelFit(model1, params{1}, data, 'NewFigure', true);
+  PlotModelFit(model2, params{2}, data, 'NewFigure', true);
   
   % Model comparison with bayes factor 
   %--------------------------------------------
@@ -53,35 +53,14 @@ function ModelComparison_Example()
   disp(params);
   
   % Show fits
-  PlotData(params{1}, data, model1.pdf);
-  PlotData(params{2}, data, model2.pdf);
+  PlotModelFit(model1, params{1}, data, 'NewFigure', true);
+  PlotModelFit(model2, params{2}, data, 'NewFigure', true);
   
   % Show figures with each parameter's correlation with each other
-  MCMC_Plot(stored{1}, model1.paramNames);
-  MCMC_Plot(stored{2}, model2.paramNames);
+  PlotPosterior(stored{1}, model1.paramNames);
+  PlotPosterior(stored{2}, model2.paramNames);
   
   keyboard
-end
-
-% ------------------------------------------------------------------------
-function PlotData(params, data, pdf)
-  % Plot data fit
-  figure;
-  
-  % Plot data histogram
-  x = linspace(-180, 180, 55)';
-  n = histc(data.errors(:), x);
-  bar(x, n./sum(n), 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
-  xlim([-180 180]); hold on;
-  
-  % Plot scaled version of the prediction
-  vals = linspace(-180, 180, 500)';
-  asCell = num2cell(params);
-  p = pdf(struct('errors', vals), asCell{:});
-  multiplier = length(vals)/length(x);
-  plot(vals, p ./ sum(p(:)) * multiplier, 'b--', 'LineWidth', 2);
-  xlabel('Error (radians)');
-  ylabel('Probability');
 end
 
 

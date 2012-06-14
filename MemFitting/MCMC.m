@@ -8,7 +8,7 @@
 % ... 'ConvergenceVariance', Inf, 'SamplesPerChain', 5000, ...
 %---------------------------------------------------------------------
 
-function stored = MCMC_Convergence(data, model, varargin)
+function stored = MCMC(data, model, varargin)
   % Extra arguments and parsing
   %  Verbosity = 0,  Print nothing
   %  Verbosity = 1,  Print description of chains & when convergence happens
@@ -18,14 +18,9 @@ function stored = MCMC_Convergence(data, model, varargin)
   %    for each variable to count as convergence
   %  SamplePerChain - how many samples to collect after convergence
   %  attained
-  args = struct('Verbosity', 1, 'ConvergenceVariance', 1.2, 'SamplesPerChain', 5000); 
-  args = ParseArgs(varargin, args);
-      
-  % Fastest if your number of start positions is the same as the number
-  % of cores/processors you have
-  if matlabpool('size') == 0
-    matlabpool('open');
-  end
+  args = struct('Verbosity', 1, 'ConvergenceVariance', 1.2, ...
+    'SamplesPerChain', 5000); 
+  args = parseargs(varargin, args);
   
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);

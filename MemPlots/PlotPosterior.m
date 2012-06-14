@@ -1,4 +1,4 @@
-function figHand = MCMC_Plot(stored, paramNames)
+function figHand = PlotPosterior(stored, paramNames)
   % Show 2x2 correlation for each variable with each other to look for
   % structure; Visualize both as a scatter and as a 2D histogram
   figHand = figure;

@@ -1,4 +1,4 @@
-function figHand = MCMC_Convergence_Plot(stored, paramNames)
+function figHand = PlotConvergence(stored, paramNames)
   % Show traces for each variable for each MCMC chain. Very simple way to
   % diagnose convergence: They should look the same as each other.
   figHand = figure;

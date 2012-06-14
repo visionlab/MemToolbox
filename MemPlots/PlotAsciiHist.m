@@ -1,8 +1,8 @@
-% HIST_ASCII makes a cute little ascii histogram of error data, like this:
+% PlotAsciiHist makes a cute little ascii histogram of error data, like this:
 %
 %     -pi ___.-'-.___ pi
 %
-function hist_ascii(data,n)
+function PlotAsciiHist(data,n)
 
     % check input
     if nargin < 2

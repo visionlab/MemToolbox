@@ -1,4 +1,4 @@
-% MODELRND Simulates data from a model with some parameters. This is a slightly
+% SampleFromModel Simulates data from a model with some parameters. This is a slightly
 % refactored copy of rejectionrnd.m, taking in a model struct as one of its parameters.
 % In the future, it will probably be useful to check whether the requested model
 % is one of the standard models, and use an efficient generator for those. For example,
@@ -26,10 +26,10 @@
 %
 %    model = StandardMixtureModel();
 %    paramsIn = {0, 1};
-%    simulatedData = modelrnd(model, paramsIn, [1,1000]);
+%    simulatedData = SampleFromModel(model, paramsIn, [1,1000]);
 %    paramsOut = MCMC(simulatedData, model);
 
-function r = modelrnd(model, params, dims)
+function r = SampleFromModel(model, params, dims)
   
     if(nargin < 3)
       dims = [1 1];

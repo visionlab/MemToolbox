@@ -12,8 +12,8 @@ function MCMC_Example()
   %model = BinomialModel();
   
   % Run MCMC
-  stored = MCMC_Convergence(data, model);
-  params = MCMC_Summarize(stored, 'maxPosterior');
+  stored = MCMC(data, model);
+  params = MCMCSummarize(stored, 'maxPosterior');
 
   % Maximum posterior parameters from MCMC
   disp('MAP from MCMC():');
@@ -23,11 +23,11 @@ function MCMC_Example()
   % Trace plots and histograms should have similar means and variance
   % (e.g., should overlap). This shows that the chains that started in
   % different places all settled into the same ending distribution.
-  h = MCMC_Convergence_Plot(stored, model.paramNames);
+  h = PlotConvergence(stored, model.paramNames);
   subfigure(2,2,1, h);
   
   % Show a figure with each parameter's correlation with each other
-  h = MCMC_Plot(stored, model.paramNames);
+  h = PlotPosterior(stored, model.paramNames);
   subfigure(2,2,2, h);
   
   % Show fit

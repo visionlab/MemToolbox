@@ -1,7 +1,7 @@
 % checks to make sure that the data is in the expected format (in the range 
 % [-180,180]. if unsalvageable, it throws errors. otherwise, throws warnings
 % and does its best to massage data into the range (-180, 180)
-function [data, pass] = validateData(data)
+function [data, pass] = ValidateData(data)
 
     pass = false; % assume failure, unless...
         
@@ -50,3 +50,5 @@ end
 function pass = isDataStruct(object)
     pass = (isstruct(object) && isfield(object,'errors'));
 end
+
+
