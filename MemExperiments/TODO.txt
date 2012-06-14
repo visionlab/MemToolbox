@@ -1,0 +1,1 @@
+is there a reason for colorwheel.mat separate from colorwheel360.mat? nobody needs the 180-only version, right?(also I use a different circle in CIE space, one that gets closer to the edges and so has less "gray" colors... but probably too much to include more than 1 here, I'd guess...)

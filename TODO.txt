@@ -1,0 +1,3 @@
+I broke it all by moving things and not fixing the actual code, but figured we should agree on the structure before fixing the code.
+
+One other restructuring change -- I think we should rename 'stored' to something else throughout the code. Maybe make 'params' -> 'maxPosterior', and 'stored' -> 'posteriorSamples', and then GridSearch's return value into 'fullPosterior', where both 'posteriorSamples' and 'fullPosterior' are structs with specific fields so we can easily detect them in our plotting functions and know what kind of thing they passed in? Then the return values of MCMCSummarize make more sense (it returns something called maxPosterior, which is what MLE gets you, if you ask it, and they really do mean the same thing...). 

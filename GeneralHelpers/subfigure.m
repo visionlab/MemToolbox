@@ -48,6 +48,7 @@ function varargout = subfigure(varargin)
 % Padding to allow room for figure borders and menus
 hpad = 20;
 vpad = 90;
+figHand = [];
 
 % Process input arguments
 switch nargin
