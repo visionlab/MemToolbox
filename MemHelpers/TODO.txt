@@ -1,1 +1,0 @@
-Are MemUtilities and MemHelpers really the same thing secretly? The idea was Utilities are things people might call directly and arent necessarily used by MemToolbox and Helpers are used by MemToolbox but shouldnt be called directly. But maybe that is silly since that leaves only 2 of each?
