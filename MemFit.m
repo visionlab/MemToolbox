@@ -1,7 +1,7 @@
-%MEMFIT  A general-purpose fitting tool from the MemToolbox
+% MemFit - A general-purpose fitting tool from the MemToolbox
 %
 %   Usage example:
-%   d = load('MemData/3000+trials_3items_SUBJ#1.mat');
+%   d = MemDataset(1);
 %   fit = MemFit(d.data);
 %
 %   It can handle many different use cases, including:

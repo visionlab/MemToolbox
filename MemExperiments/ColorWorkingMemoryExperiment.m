@@ -6,7 +6,7 @@
 %		3. add option to remove contantly present color wheel
 %		5. add optional data visualization and analysis`
 
-function colorworkingmemory()	
+function ColorWorkingMemoryExperiment()	
 
 try
 	prepareEnvironment;
