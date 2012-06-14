@@ -241,13 +241,7 @@ end
 
 % Converts a cell array of strings {'a', 'b', 'c'} to string 'a, b, c'
 function str = paramNames2str(paramNames)
-  str = [];
-  for i = 1:length(paramNames)
-    str = [str paramNames{i}];
-    if(i < length(paramNames))
-      str = [str ', '];
-    end
-  end
+  str = [sprintf('%s, ', paramNames{1:end-1}) paramNames{end}];
 end
 
 % Is the object an MTB model struct? passes iff the object is a struct
@@ -262,23 +256,16 @@ function pass = isDataStruct(object)
   pass = (isstruct(object) && isfield(object,'errors'));
 end
 
+% Is object a cell array whose elements all return true
+% when the function isModelStruct is applied to them?
 function pass = isCellArrayOfModelStructs(object)
-  pass = isCellArrayOfType(object,@isModelStruct);
-end
-
-function pass = isCellArrayOfDataStructs(object)
-  pass = isCellArrayOfType(object,@isDataStruct);
+  pass = iscell(object) && all(cellfun(@isModelStruct, object));
 end
 
 % Is object a cell array whose elements all return true
-% when the function typeChecker is applied to them?
-function pass = isCellArrayOfType(object,typeChecker)
-  c1 = iscell(object);
-  c2 = false(size(object));
-  for i = 1:length(object)
-    c2(i) = typeChecker(object{i});
-  end
-  pass = c1 && all(c2);
+% when the function isDataStruct is applied to them?
+function pass = isCellArrayOfDataStructs(object)
+  pass = iscell(object) && all(cellfun(@isDataStruct, object));
 end
 
 
