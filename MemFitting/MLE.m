@@ -1,20 +1,13 @@
 %MLE Find maximum likelihood fit for data
-%    [params] = MLE(data, model)
+%    maxPosterior = MLE(data, model)
 %
 %---------------------------------------------------------------------
-function [params, stored] = MLE(data, model)
+function maxPosterior = MLE(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
   options = statset('MaxIter',5000, 'MaxFunEvals',5000,'UseParallel','always');
   
-  if ~isfield(model, 'logpdf')
-    model.logpdf = @(varargin)(sum(log(model.pdf(varargin{:}))));
-  end
-    
-  if(~isfield(data,'errors'))
-    data = struct('errors',data);
-  end
-  
+  model = EnsureAllModelMethods(model);
   numChains = size(model.start,1);
   for c=1:numChains
     vals{c} = mle(data, 'logpdf', model.logpdf, 'start', model.start(c,:), ...
@@ -25,13 +18,13 @@ function [params, stored] = MLE(data, model)
   end
   
   % Combine values across chains
-  stored.vals = [vals{1}];
-  stored.like = like;
+  posteriorSamples.vals = [vals{1}];
+  posteriorSamples.like = like;
   for c=2:numChains
-    stored.vals = [stored.vals; vals{c}];
+    posteriorSamples.vals = [posteriorSamples.vals; vals{c}];
   end
   
   % Find MLE estimate
-  [~,b]=max(stored.like);
-  params = stored.vals(b,:);
+  [~,b]=max(posteriorSamples.like);
+  maxPosterior = posteriorSamples.vals(b,:);
 end

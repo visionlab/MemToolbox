@@ -1,5 +1,5 @@
 %---------------------------------------------------------------------
-function [MD,params,stored] = ModelComparison_BayesFactor(data, models)
+function [MD,maxPosterior,posteriorSamples] = ModelComparison_BayesFactor(data, models)
   % Assumes models have the same number of start positions specified.
   % Should error if they don't, or maybe use the lower number but report
   % it
@@ -11,23 +11,23 @@ function [MD,params,stored] = ModelComparison_BayesFactor(data, models)
   
   for md = 1:length(models)
     % Combine values across chains
-    stored{md}.vals = [chainStored{1}{md}.vals];
-    stored{md}.like = [chainStored{1}{md}.like];
+    posteriorSamples{md}.vals = [chainStored{1}{md}.vals];
+    posteriorSamples{md}.like = [chainStored{1}{md}.like];
     for c=2:numChains
-      stored{md}.vals = [stored{md}.vals; chainStored{c}{md}.vals];
-      stored{md}.like = [stored{md}.like; chainStored{c}{md}.like];
+      posteriorSamples{md}.vals = [posteriorSamples{md}.vals; chainStored{c}{md}.vals];
+      posteriorSamples{md}.like = [posteriorSamples{md}.like; chainStored{c}{md}.like];
     end
     
     % Find MAP estimate
-    [~,loc]=max(stored{md}.like);
-    params{md} = stored{md}.vals(loc,:);
+    [~,loc]=max(posteriorSamples{md}.like);
+    maxPosterior{md} = posteriorSamples{md}.vals(loc,:);
   end
   
   MD = mean(chainMD,1);
 end
 
 %---------------------------------------------------------------------
-function [chainMD, stored] = MCMC_Chain(data, models, c)
+function [chainMD, posteriorSamples] = MCMC_Chain(data, models, c)
   
   % Parameters
   numMonte = 1200;
@@ -40,8 +40,8 @@ function [chainMD, stored] = MCMC_Chain(data, models, c)
   for md=1:length(models)
     cur{md} = models{md}.start(c,:);
     
-    stored{md}.vals = zeros(numMonte*length(cur{md}), length(cur{md}));
-    stored{md}.like = zeros(numMonte*length(cur{md}), 1);
+    posteriorSamples{md}.vals = zeros(numMonte*length(cur{md}), length(cur{md}));
+    posteriorSamples{md}.like = zeros(numMonte*length(cur{md}), 1);
     
     asCell = num2cell(cur{md});
     curLike{md} = sum(log(models{md}.pdf(data, asCell{:})));
@@ -80,8 +80,8 @@ function [chainMD, stored] = MCMC_Chain(data, models, c)
         end
         
         % Store trace of current position
-        stored{md}.vals((m-1)*length(cur{md}) + j, :) = cur{md};
-        stored{md}.like((m-1)*length(cur{md}) + j) = curLike{md};
+        posteriorSamples{md}.vals((m-1)*length(cur{md}) + j, :) = cur{md};
+        posteriorSamples{md}.like((m-1)*length(cur{md}) + j) = curLike{md};
       end
     end
     
@@ -95,8 +95,8 @@ function [chainMD, stored] = MCMC_Chain(data, models, c)
   
   for md=1:length(models)
     % Throw out first newBurn samples as burn-in period
-    stored{md}.vals = stored{md}.vals((numBurn*length(cur{md})):end,:);
-    stored{md}.like = stored{md}.like((numBurn*length(cur{md})):end);
+    posteriorSamples{md}.vals = posteriorSamples{md}.vals((numBurn*length(cur{md})):end,:);
+    posteriorSamples{md}.like = posteriorSamples{md}.like((numBurn*length(cur{md})):end);
     chainMD(md) = mean(MD == md);
   end
 end

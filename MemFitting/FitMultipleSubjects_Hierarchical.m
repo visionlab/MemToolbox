@@ -54,9 +54,9 @@ function [paramsMean, paramsSE, ...
   % In theory we could do this with MLE, but in practice it is not so good
   % at searching this space. So do MCMC, with twice as many chains as
   % usual:
-  stored = MCMC_Convergence(data, newModel, 2);
-  params = MCMCSummarize(stored, 'posteriorMean');
-  % MCMC_Plot(stored, newModel.paramNames);
+  posteriorSamples = MCMC_Convergence(data, newModel, 2);
+  params = MCMCSummarize(posteriorSamples, 'posteriorMean');
+  % MCMC_Plot(posteriorSamples, newModel.paramNames);
   
   % Convert back to separate params
   paramsSubs = reshape(params', nParams, [])';

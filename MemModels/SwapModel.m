@@ -7,7 +7,7 @@
 %   ...
 %   data.distractors, Row N: distance of distractor N from target
 
-function model = MixtureModelWithSwaps()
+function model = SwapModel()
   model.name = 'Swap model';
 	model.paramNames = {'g', 'B', 'K'};
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
@@ -27,8 +27,7 @@ function logLike = SwapModelPDF(data, g, B, K)
     logLike = -Inf;
     return;
   end
-  %errors = data.errors(1,:);
-  %distractorLocs = data.distractors(2:end, :);
+
   nDistractors = size(data.distractors,1);
   l = (1-g-B).*vonmisespdf(data.errors(:),0,K) + (g).*unifpdf(data.errors(:), -180, 180);
   for i=1:nDistractors

@@ -1,3 +1,6 @@
+% params can be either a maxPosterior or a posteriorSamples. It currently cannot be a 
+% fullPosterior but we should fix this.
+
 function figHand = PlotModelFit(model, params, data, varargin)
   % Extra arguments and parsing
   args = struct('PdfColor','b', 'NumberOfBins', 40, 'ShowNumbers', true, ...
@@ -5,7 +8,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
-  % If params is a struct, assume they passed a stored() struct from MCMC
+  % If params is a struct, assume they passed a posteriorSamples() struct from MCMC
   if isstruct(params) && isfield(params, 'vals')
     params = params.vals;
   end
@@ -27,7 +30,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
   vals = linspace(-180, 180, 500)';
   multiplier = length(vals)/length(x);
   
-  % If params has multiple rows, as if it came from a stored struct, then
+  % If params has multiple rows, as if it came from a posteriorSamples struct, then
   % plot a confidence interval, too
   if size(params,1) > 1
     for i=1:size(params,1)

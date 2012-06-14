@@ -3,16 +3,16 @@
 % return a struct but instead returns only that one field. Possible values
 % are posteriorMean, posteriorMedian, maxPosterior, lowerCredible,
 % upperCredible
-function params = MCMCSummarize(stored, whichField) 
-  [~,highestLike]=max(stored.like);
-  outParams.posteriorMean = mean(stored.vals);
-  outParams.posteriorMedian = median(stored.vals);
-  outParams.maxPosterior = stored.vals(highestLike,:);
-  outParams.lowerCredible = quantile(stored.vals, 0.025);
-  outParams.upperCredible = quantile(stored.vals, 0.975);
+function s = MCMCSummarize(posteriorSamples, whichField) 
+  [~,highestLike]=max(posteriorSamples.like);
+  outParams.posteriorMean = mean(posteriorSamples.vals);
+  outParams.posteriorMedian = median(posteriorSamples.vals);
+  outParams.maxPosterior = posteriorSamples.vals(highestLike,:);
+  outParams.lowerCredible = quantile(posteriorSamples.vals, 0.025);
+  outParams.upperCredible = quantile(posteriorSamples.vals, 0.975);
   if nargin < 2
-    params = outParams;
+    s = outParams;
   else
-    params = outParams.(whichField);
+    s = outParams.(whichField);
   end
 end

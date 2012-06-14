@@ -12,13 +12,13 @@ function GridSearch_Example()
   % Not very useful, right? Here's what it is really useful for.
   % First lets do MCMC to get some idea of the shape of the likelihood
   % function:
-  stored = MCMC(data,model);
-  h=PlotPosterior(stored, model.paramNames);
+  posteriorSamples = MCMC(data,model);
+  h=PlotPosterior(posteriorSamples, model.paramNames);
   subfigure(2,2,2,h);
   
   % Now lets refine the grid search to look only at reasonable values: 
-  model.upperbound = max(stored.vals);
-  model.lowerbound = min(stored.vals);
+  model.upperbound = max(posteriorSamples.vals);
+  model.lowerbound = min(posteriorSamples.vals);
   [logLikeMatrix, valuesUsed] = GridSearch(data, model);
   h=PlotGridSearch(logLikeMatrix, valuesUsed, model.paramNames);
   subfigure(2,2,3,h);    

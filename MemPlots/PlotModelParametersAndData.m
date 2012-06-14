@@ -1,19 +1,19 @@
-function figHand = PlotModelParametersAndData(model, stored, data, varargin)
+function figHand = PlotModelParametersAndData(model, posteriorSamples, data, varargin)
   % Plot data fit
   args = struct('NumSamplesToPlot', 63, 'NewFigure', true); 
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
   % Which to use
-  which = round(linspace(1, size(stored.vals,1), args.NumSamplesToPlot));
-  [~,mapVal] = max(stored.like);
-  params = stored.vals(mapVal,:);
+  which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
+  [~,mapVal] = max(posteriorSamples.like);
+  params = posteriorSamples.vals(mapVal,:);
   
   % Add MAP value to the end
   which = [which mapVal];
   
   % Setup to normalize them to same axis
-  values = stored.vals(which,:);
+  values = posteriorSamples.vals(which,:);
   [~,order]=sort(values(:,1));
   minVals = min(values);
   maxVals = max(values);
@@ -44,7 +44,7 @@ function figHand = PlotModelParametersAndData(model, stored, data, varargin)
   set(gca, 'box', 'off');
   set(seriesInfo(end), 'LineWidth', 4); % Last one plotted is MAP value
   lastClicked = seriesInfo(end);
-  set(gca, 'XTick', 1:size(stored.vals,2));
+  set(gca, 'XTick', 1:size(posteriorSamples.vals,2));
   set(gca, 'XTickLabel', model.paramNames);
   
   labelPos = 0:0.25:1;

@@ -57,8 +57,8 @@ function [paramsOut, lowerCI, upperCI] = TestFullPipeline(model, paramsIn, numTr
     data.errors = SampleFromModel(model, paramsIn, [numTrials(i),1]);
     
     % now try to recover the parameters
-    stored = MCMC(data, model, 'Verbosity', 0);
-    fit = MCMC(stored);
+    posteriorSamples = MCMC(data, model, 'Verbosity', 0);
+    fit = MCMC(posteriorSamples);
     paramsOut(i,:) = fit.posteriorMean;
     lowerCI(i,:) = fit.lowerCredible;
     upperCI(i,:) = fit.upperCredible;

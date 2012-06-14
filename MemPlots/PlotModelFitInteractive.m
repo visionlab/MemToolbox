@@ -1,10 +1,12 @@
+% params can be either a maxPosterior or a posteriorSamples. It currently cannot be a 
+% fullPosterior but we should fix this.
 function figHand = PlotModelFitInteractive(model, params, data, varargin)
   % Extra parameters
   args = struct('MarginalPlots', false, 'NewFigure', true); 
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
-  % If you pass a 'stored' struct instead of params
+  % If you pass a 'posteriorSamples' struct instead of params
   if isstruct(params) && isfield(params, 'vals')
     params = MCMCSummarize(params, 'maxPosterior');
   end

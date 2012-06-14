@@ -1,14 +1,14 @@
-function figHand = PlotConvergence(stored, paramNames)
+function figHand = PlotConvergence(posteriorSamples, paramNames)
   % Show traces for each variable for each MCMC chain. Very simple way to
   % diagnose convergence: They should look the same as each other.
   figHand = figure;
   N = length(paramNames);
-  colors = palettablecolors(max(stored.chain));
+  colors = palettablecolors(max(posteriorSamples.chain));
   for p=1:N
     % Make trace plots
     h = subplot(N,3,sub2ind([3 N],1:2,[p p]));
-    for c=1:max(stored.chain)
-      vals(:,c) = stored.vals(stored.chain==c, p);
+    for c=1:max(posteriorSamples.chain)
+      vals(:,c) = posteriorSamples.vals(posteriorSamples.chain==c, p);
       plot(vals(:,c), 'Color', colors(c,:));
       set(gca, 'box', 'off');
       hold on;
@@ -20,7 +20,7 @@ function figHand = PlotConvergence(stored, paramNames)
     % Make overlapping histograms
     h2 = subplot(N,3,sub2ind([3 N],3,p));
     yBins = linspace(lims(3), lims(4), 30)';
-    for c=1:max(stored.chain)
+    for c=1:max(posteriorSamples.chain)
       cnt = histc(vals(:,c), yBins);
       B = barh(yBins, cnt, 'hist');
       set(B, 'EdgeColor', 'none', 'FaceColor', ...

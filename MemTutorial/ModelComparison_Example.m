@@ -10,7 +10,7 @@ function ModelComparison_Example()
   %--------------------------------------------
   fprintf('CROSS VALIDATION\n-----------------------------------\n');
   
-  [logLike, AIC, params] = ModelComparison_CrossValidate(data, {model1, model2});
+  [logLike, AIC, maxPosterior] = ModelComparison_CrossValidate(data, {model1, model2});
  
   disp('Log likelihood of models');
   fprintf('\t%0.f\n',logLike);
@@ -24,21 +24,21 @@ function ModelComparison_Example()
   disp(AIC(2) - AIC(1));
   
   disp('Best parameters:');
-  disp(params);
+  disp(maxPosterior);
   
   % Show fits
-  PlotModelFit(model1, params{1}, data, 'NewFigure', true);
-  PlotModelFit(model2, params{2}, data, 'NewFigure', true);
+  PlotModelFit(model1, maxPosterior{1}, data, 'NewFigure', true);
+  PlotModelFit(model2, maxPosterior{2}, data, 'NewFigure', true);
   
   % Model comparison with bayes factor 
   %--------------------------------------------
   fprintf('BAYES FACTOR \n-----------------------------------\n');
   % Run
-  [MD, params, stored] = ModelComparison_BayesFactor(data, {model1, model2});
+  [MD, maxPosterior, posteriorSamples] = ModelComparison_BayesFactor(data, {model1, model2});
  
   disp('Log likelihood of models');
-  for i=1:length(stored)
-      fprintf('\t%0.f\n',max(stored{i}.like));
+  for i=1:length(posteriorSamples)
+      fprintf('\t%0.f\n',max(posteriorSamples{i}.like));
   end
   fprintf('\n');
   
@@ -50,15 +50,15 @@ function ModelComparison_Example()
   disp(log(MD(1))-log(MD(2)));
   
   disp('Best parameters:');
-  disp(params);
+  disp(maxPosterior);
   
   % Show fits
-  PlotModelFit(model1, params{1}, data, 'NewFigure', true);
-  PlotModelFit(model2, params{2}, data, 'NewFigure', true);
+  PlotModelFit(model1, maxPosterior{1}, data, 'NewFigure', true);
+  PlotModelFit(model2, maxPosterior{2}, data, 'NewFigure', true);
   
   % Show figures with each parameter's correlation with each other
-  PlotPosterior(stored{1}, model1.paramNames);
-  PlotPosterior(stored{2}, model2.paramNames);
+  PlotPosterior(posteriorSamples{1}, model1.paramNames);
+  PlotPosterior(posteriorSamples{2}, model2.paramNames);
   
   keyboard
 end

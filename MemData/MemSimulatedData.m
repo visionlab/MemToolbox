@@ -199,7 +199,7 @@ function data = MemData2MTB(mData,trialsPerCondition)
     g = 1 - data.numStored(i)/data.n(i);
     SD = data.precision(i);
     
-    data.errors(i) = SampleFromModel(StandardMixtureModelWithBiasSD, {mu,g,SD}); % params: mu, g, SD
+    data.errors(i) = SampleFromModel(StandardMixtureModelWithBiasSD, {mu,g,SD});
   end
 end
 

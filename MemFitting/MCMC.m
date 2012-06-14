@@ -1,5 +1,5 @@
 %MCMC Markov chain Monte Carlo with tuned proposals and alternative parameterization
-%    [params,stored] = MCMC_Convergence(data, model)
+%    posteriorSamples = MCMC(data, model)
 %
 % MCMC function that automatically detects convergence using the technique
 % of Gelman and Rubin (1992)
@@ -8,7 +8,7 @@
 % ... 'ConvergenceVariance', Inf, 'SamplesPerChain', 5000, ...
 %---------------------------------------------------------------------
 
-function stored = MCMC(data, model, varargin)
+function posteriorSamples = MCMC(data, model, varargin)
   % Extra arguments and parsing
   %  Verbosity = 0,  Print nothing
   %  Verbosity = 1,  Print description of chains & when convergence happens
@@ -87,18 +87,18 @@ function stored = MCMC(data, model, varargin)
   end
   
   % Combine values across chains
-  stored.vals = [chainStored(1).vals];
-  stored.like = [chainStored(1).like];
-  stored.chain = ones(size(chainStored(1).like));
+  posteriorSamples.vals = [chainStored(1).vals];
+  posteriorSamples.like = [chainStored(1).like];
+  posteriorSamples.chain = ones(size(chainStored(1).like));
   for c=2:numChains
-    stored.vals = [stored.vals; chainStored(c).vals];
-    stored.like = [stored.like; chainStored(c).like];
-    stored.chain = [stored.chain; ones(size(chainStored(c).like)).*c];
+    posteriorSamples.vals = [posteriorSamples.vals; chainStored(c).vals];
+    posteriorSamples.like = [posteriorSamples.like; chainStored(c).like];
+    posteriorSamples.chain = [posteriorSamples.chain; ones(size(chainStored(c).like)).*c];
   end
 end
 
 %---------------------------------------------------------------------
-function [stored, startInfo] = MCMC_Chain(data, model, startInfo, verbosity)
+function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verbosity)
   
   % Parameters
   probabilityOfBigMove = 0.1; % probability of taking a big jump
@@ -110,8 +110,8 @@ function [stored, startInfo] = MCMC_Chain(data, model, startInfo, verbosity)
     sum(log(model.prior(startInfo.cur)));
   
   % Initialize storage of param vals
-  stored.vals = zeros(startInfo.numMonte, length(startInfo.cur));
-  stored.like = zeros(startInfo.numMonte, 1);
+  posteriorSamples.vals = zeros(startInfo.numMonte, length(startInfo.cur));
+  posteriorSamples.like = zeros(startInfo.numMonte, 1);
   
   % Track acceptance
   acceptance = zeros(startInfo.numMonte,1);
@@ -155,8 +155,8 @@ function [stored, startInfo] = MCMC_Chain(data, model, startInfo, verbosity)
     end
     
     % Store trace of startInfo.current position
-    stored.vals(m, :) = startInfo.cur;
-    stored.like(m) = startInfo.curLike;
+    posteriorSamples.vals(m, :) = startInfo.cur;
+    posteriorSamples.like(m) = startInfo.curLike;
   end
   
   startInfo.acceptance = mean(acceptance);
@@ -167,20 +167,20 @@ end
 
 
 %---------------------------------------------------------------------
-function b = IsConverged(stored, convergenceVariance, verbosity)
-  nChains = length(stored);
-  numPerChain = size(stored(1).vals,1);
-  nParams = size(stored(1).vals,2);
+function b = IsConverged(posteriorSamples, convergenceVariance, verbosity)
+  nChains = length(posteriorSamples);
+  numPerChain = size(posteriorSamples(1).vals,1);
+  nParams = size(posteriorSamples(1).vals,2);
   
   globalMeans = zeros(1,nParams);
   for c=1:nChains
-    globalMeans = globalMeans + mean(stored(c).vals);
+    globalMeans = globalMeans + mean(posteriorSamples(c).vals);
   end
   globalMeans = globalMeans ./ nChains;
   
   for v = 1:nParams
     for c=1:nChains
-      vals = stored(c).vals(:, v);
+      vals = posteriorSamples(c).vals(:, v);
       w(c) = var(vals);
       b(c) = (mean(vals)-globalMeans(v)).^2;
     end

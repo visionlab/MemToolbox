@@ -134,9 +134,9 @@ function fit = MemFit_SingleData(data, model, verbosity)
   end
   
   % do the fitting
-  stored = MCMC(data, model, 'Verbosity', verbosity-1);
-  fit = MCMCSummarize(stored);
-  fit.stored = stored;
+  posteriorSamples = MCMC(data, model, 'Verbosity', verbosity-1);
+  fit = MCMCSummarize(posteriorSamples);
+  fit.posteriorSamples = posteriorSamples;
   
   if(verbosity > 0)
     % display the results
@@ -169,15 +169,15 @@ function fit = MemFit_SingleData(data, model, verbosity)
       'distribution and a posterior predictive check? (y/n): '], 's');
     if(strcmp(r,'y'))      
       % Show a figure with each parameter's correlation with each other
-      h = PlotPosterior(stored, model.paramNames);
+      h = PlotPosterior(posteriorSamples, model.paramNames);
       subfigure(2,2,1, h);
       
       % Show fit
-      h = PlotModelParametersAndData(model, stored, data);
+      h = PlotModelParametersAndData(model, posteriorSamples, data);
       subfigure(2,2,2, h);
       
       % Posterior predictive
-      h = PlotPosteriorPredictiveData(model, stored, data);
+      h = PlotPosteriorPredictiveData(model, posteriorSamples, data);
       subfigure(2,2,3, h);
     end
   end
@@ -198,7 +198,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   end
   
   % Model comparison & results
-  [fit.MD, fit.params, fit.stored] = ...
+  [fit.MD, fit.maxPosterior, fit.posteriorSamples] = ...
     ModelComparison_BayesFactor(data, modelCellArray);
   
   fprintf('model\tlog L\tprop. preferred\tlog Bayes factor\n');
@@ -206,12 +206,12 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   for modelIndex = 1:length(modelCellArray)
     fprintf('%d\t%0.f\t%0.4f\t\t%3.2f\n',  ...
       modelIndex, ...
-      max(fit.stored{modelIndex}.like),  ...
+      max(fit.posteriorSamples{modelIndex}.like),  ...
       fit.MD(modelIndex), ...
       log(fit.MD(modelIndex)) - log(sum(fit.MD([1:(modelIndex-1) (modelIndex+1):end]))))
   end
   fprintf('\nBest parameters:\n');
-  disp(fit.params);
+  disp(fit.maxPosterior);
 end
 
 %-----------------------------

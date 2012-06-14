@@ -1,4 +1,4 @@
-function figHand = PlotPosteriorPredictiveData(model, stored, data, varargin)
+function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
   % difference plot.
   args = struct('NumSamplesToPlot', 48, 'NumberOfBins', 55, ...
@@ -7,7 +7,7 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data, varargin)
   if args.NewFigure, figHand = figure(); end
   
   % Choose which samples to use
-  which = round(linspace(1, size(stored.vals,1), args.NumSamplesToPlot));
+  which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
   
   % How to bin
   x = linspace(-180, 180, args.NumberOfBins)';
@@ -20,7 +20,7 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data, varargin)
   for i=1:length(which)
     
     % Generate random data from this distrib. with these parameters
-    asCell = num2cell(stored.vals(which(i),:));
+    asCell = num2cell(posteriorSamples.vals(which(i),:));
     yrep = SampleFromModel(model, asCell, size(data.errors));
    
     % Bin data and model

@@ -1,4 +1,4 @@
-function figHand = PlotPosteriorPredictiveStatistic(model, stored, data, varargin)
+function figHand = PlotPosteriorPredictiveStatistic(model, posteriorSamples, data, varargin)
   % Should break up into two functions: one to compute, and one to plot
   % (so we can easily memoize the compute function, for example)
   %
@@ -16,7 +16,7 @@ function figHand = PlotPosteriorPredictiveStatistic(model, stored, data, varargi
   if args.NewFigure, figHand = figure(); end
   
   % Choose which samples to use
-  which = round(linspace(1, size(stored.vals,1), args.NumSamplesToPlot));
+  which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
   
   % How to bin
   x = linspace(-180, 180, args.NumberOfBins)';
@@ -27,11 +27,11 @@ function figHand = PlotPosteriorPredictiveStatistic(model, stored, data, varargi
   
   for i=1:length(which)
     % Generate random data from this distrib. with these parameters
-    asCell = num2cell(stored.vals(which(i),:));
+    asCell = num2cell(posteriorSamples.vals(which(i),:));
     yrep = modelrnd(model, asCell, size(data));
     
     % Get best fit to this data
-    model.start = stored.vals(which(i),:);
+    model.start = posteriorSamples.vals(which(i),:);
     bestParams = MLE(yrep, model);
     
     % Bin data and model
@@ -60,8 +60,8 @@ function figHand = PlotPosteriorPredictiveStatistic(model, stored, data, varargi
   palettablehistogram();
   
   % Now, find the MAP value from the real data...
-  [~,mapVal] = max(stored.like);
-  params = stored.vals(mapVal,:);
+  [~,mapVal] = max(posteriorSamples.like);
+  params = posteriorSamples.vals(mapVal,:);
   asCell = num2cell(params);
   
   % Bin and compare...

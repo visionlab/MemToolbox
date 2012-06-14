@@ -5,7 +5,7 @@ function ArgStruct = ParseArgs(args,ArgStruct,varargin)
 % ArgStruct = ParseArgs(varargin,ArgStruct[,FlagtypeParams[,Aliases]])
 %
 % * ArgStruct is the structure full of named arguments with default values.
-% * Flagtype params is params that don't require a value. (the value will be set to 1 if it is present)
+% * Flagtype is parameters that don't require a value. (the value will be set to 1 if it is present)
 % * Aliases can be used to map one argument-name to several argstruct fields
 %
 %
