@@ -21,7 +21,7 @@ function figHand = PlotPosteriorPredictiveData(model, stored, data, varargin)
     
     % Generate random data from this distrib. with these parameters
     asCell = num2cell(stored.vals(which(i),:));
-    yrep = modelrnd(model, asCell, size(data.errors));
+    yrep = SampleFromModel(model, asCell, size(data.errors));
    
     % Bin data and model
     n = hist(yrep, x)';
