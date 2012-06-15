@@ -168,11 +168,8 @@ end
 
 % Takes a data struct from MemData repository and simulates a new data set
 % based on those parameters.
-%
 % Example usage:
-%
 %   data = memdata2mtb(MemData(16));
-%
 function data = MemData2MTB(mData,trialsPerCondition)
   if(numel(mData.n) == 1)
     mData.n = ones(1,length(mData.times))*mData.n;

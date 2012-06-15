@@ -1,5 +1,4 @@
 function palettablehistogram()
-  
   % make the background white
   set(gcf,'Color',[1 1 1]);
   
