@@ -5,6 +5,10 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     'PdfColor','b', 'NewFigure', true); 
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
+    
+  if(isfield(model,'pdfForPlot'))
+   model.pdf = model.pdfForPlot;
+  end
   
   % Choose which samples to use
   which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
@@ -22,7 +26,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     % Generate random data from this distrib. with these parameters
     asCell = num2cell(posteriorSamples.vals(which(i),:));
     yrep = SampleFromModel(model, asCell, size(data.errors));
-   
+       
     % Bin data and model
     n = hist(yrep, x)';
     n = n ./ sum(n(:));

@@ -65,7 +65,7 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
   
   % Plot data histogram
   subplot(1,2,2);
-  PlotModelFit(model, params, data, map(order==(length(which)), :));
+  PlotModelFit(model, params, data, 'PdfColor', map(order==(length(which)), :));
 
   % What to do when series is clicked
   function Click_Callback(~,~)
@@ -82,7 +82,8 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
     set(seriesInfo(minValue), 'Color', map(order==minValue,:))
     uistack(seriesInfo(minValue), 'top');
     subplot(1,2,2); hold off;
-    PlotModelFit(model, values(minValue,:), data, map(order==minValue,:));
+    PlotModelFit(model, values(minValue,:), data, ...
+                 'PdfColor', map(order==minValue,:));
     
     % Unhighlight old series
     set(lastClicked, 'LineWidth', 1);

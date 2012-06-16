@@ -19,6 +19,10 @@ function figHand = PlotModelFit(model, params, data, varargin)
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);
   
+  if(isfield(model,'pdfForPlot'))
+    model.pdf = model.pdfForPlot;
+  end
+  
   % Plot data histogram
   set(gcf, 'Color', [1 1 1]);
   x = linspace(-180, 180, args.NumberOfBins)';
