@@ -1,1 +1,2 @@
-data = MemData(1)
+data = MemDataset(1);
+fit = MemFit(data, StandardMixtureModel)
