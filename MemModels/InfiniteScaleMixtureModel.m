@@ -10,7 +10,7 @@ function model = InfiniteScaleMixtureModel(baseDistribution, mixingDistribution)
 
     % is base = wrapped normal and mixing = gamma, use student's t
     if(strcmp(baseDistribution, 'wrappednormal') && strcmp(mixingDistribution, 'gamma'))
-        model = StudentsTModel();
+        model = VariablePrecisionModel();
         return;
     elseif(strcmp(baseDistribution, 'vonmises') && strcmp(mixingDistribution, 'binomial'))
         model = BinomialModel();

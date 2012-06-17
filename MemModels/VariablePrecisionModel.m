@@ -1,12 +1,10 @@
-% StudentsTModel() returns a structure for an infinite scale mixture model
+% VariablePrecisionModel() returns a structure for an infinite scale mixture model
 % with a gamma mixing distribution. This particular flavor of the infinite scale
 % mixture model assumes that the shape of the error distribution for fixed precision 
 % is a wrapped normal.
-%
-% TODO: Convert to use Memoize() instead of this way of caching
 
-function model = StudentsTModel()
-    model.name = 'Student''s t model';
+function model = VariablePrecisionModel()
+  model.name = 'Variable Precision Model';
 	model.paramNames = {'g', 'sigma', 'df'};
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
 	model.upperbound = [1 Inf Inf]; % Upper bounds for the parameters
@@ -21,12 +19,12 @@ end
 
 function r = ismgen(params, dims)
   paramsNew = {0, params{1}, params{2}, params{3}};
-  model = StudentsTModelWithBias();
+  model = VariablePrecisionWithBiasModel();
   r = model.generator(paramsNew, dims);
 end
   
 % call the student's t with bias, mu=0
 function y = ismpdf(data,g,sigma,df)
-    model = StudentsTModelWithBias();
+    model = VariablePrecisionWithBiasModel();
     y = model.pdf(data, 0, g, sigma, df);
 end

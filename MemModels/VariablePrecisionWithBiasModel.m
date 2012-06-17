@@ -1,45 +1,42 @@
-% STUDENTSTMODELWITHBIAS() returns a structure for an infinite scale mixture model
+% VariablePrecisionWithBiasModel() - an infinite scale mixture model
 % with a gamma mixing distribution. This particular flavor of the infinite scale
 % mixture model assumes that the shape of the error distribution for fixed precision 
 % is a wrapped normal.
 %
-% still in the works.
 
-% TODO: Convert to use Memoize() instead of this way of caching
-
-function model = StudentsTModelWithBias()
-    model.name = 'Student''s t model with bias';
+function model = VariablePrecisionWithBiasModel()
+  model.name = 'Variable precision model with bias';
 	model.paramNames = {'mu', 'g', 'sigma', 'df'};
-	model.lowerbound = [-pi 0 0 0]; % Lower bounds for the parameters
-	model.upperbound = [pi 1 Inf Inf]; % Upper bounds for the parameters
-	model.movestd = [0.01, 0.02, 0.1, 0.25];
+	model.lowerbound = [-180 0 0 0]; % Lower bounds for the parameters
+	model.upperbound = [180 1 Inf Inf]; % Upper bounds for the parameters
+	model.movestd = [1, 0.02, 1, 0.25];
 	model.pdf = @(data, mu, g, sigma, df) ...
     (1-g).*tDistWrapped(data.errors,mu,sigma,df)' + ...
-      (g).*unifpdf(data.errors(:),-pi,pi);
-	model.start = [0.1,  0.0, 0.2, 0.2;
-                  -0.1,  0.2, 0.3, 1.0;
-                   0.05, 0.4, 0.1, 2.0;
-                  -0.05, 0.6, 0.5, 5.0];
-  model.generator = @StudentsTModelWithBiasGenerator;
+      (g).*unifpdf(data.errors(:),-180,180);
+	model.start = [1,  0.0, 20, 0.2;
+                  -1,  0.2, 30, 1.0;
+                   5, 0.4, 10, 2.0;
+                  -5, 0.6, 50, 5.0];
+  model.generator = @VariablePrecisionWithBiasGenerator;
 end
 
-% XXXX may not work right, check
-function allT = StudentsTModelWithBiasGenerator(parameters, dims)
+% XXXX may not work right, check!!
+function allT = VariablePrecisionWithBiasGenerator(parameters, dims)
   n = prod(dims);
   allT = parameters{3}*trnd(parameters{4},n,1)+parameters{1};
-  allT = mod(allT+pi, 2*pi)-pi;
+  allT = mod(allT+pi, 360)-180;
   guesses = logical(rand(n,1) < parameters{2}); % figure out which ones will be guesses
-  allT(guesses) = rand(sum(guesses),1)*2*pi - pi;
+  allT(guesses) = rand(sum(guesses),1)*360 - 180;
   allT = reshape(allT, dims); % reshape to requested dimensions
 end
 
-
+% Wrapper function
 function p = tDistWrapped(x, mu, sigma, df)
   persistent m;
   if isempty(m)
     m = containers.Map();
   end
-  hash = DataHash(x);
+  hash = datahash(x);
   if ~m.isKey(hash)
     m(hash) = CreateFastWrappedT(x);
   end
@@ -47,10 +44,10 @@ function p = tDistWrapped(x, mu, sigma, df)
   p = f(mu,sigma,df);
 end
 
-
+% Fast wrapped t (precomputed for a particular set of x)
 function f = CreateFastWrappedT(x)
-  valsRange = 100;
-  addVals = (-valsRange:valsRange)' * (zeros(1,length(x))+2*pi);
+  valsRange = 30; % how many times to wrap around the circle
+  addVals = (-valsRange:valsRange)' * (zeros(1,length(x))+360);
   if size(x,1) > size(x,2)
     x = x';
   end
