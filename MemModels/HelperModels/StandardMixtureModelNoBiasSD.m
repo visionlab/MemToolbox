@@ -19,5 +19,5 @@ end
 % calls the standardmixturemodel generator with mu=0
 function r = StandardMixtureModelGenerator(parameters, dims)
     model = StandardMixtureModelWithBiasSD();
-    r = model.generator({0, parameters{1}, deg2k(parameters{2})}, dims);
+    r = model.generator({0, parameters{1}, parameters{2}}, dims);
 end
