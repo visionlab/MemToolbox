@@ -50,7 +50,7 @@ function fit = MemFit(varargin)
     open('tutorial.pdf'); 
     
   elseif nArguments == 1
-    % One input argument, assumed to be (errors).
+    % One input argument, assumed to be (errors) or (data).
     if(isnumeric(varargin{1}))
       data = struct('errors', varargin{1});
     elseif(isfield(varargin{1}, 'errors'))
@@ -107,7 +107,7 @@ function fit = MemFit(varargin)
       for i = 1:length(dataCellArray)
         dataCellArray{i} = ValidateData(dataCellArray{i});
       end
-      fit = MemFit_MultipleSubjects(dataCellArray, model);
+      fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity);
       
     else
       error('MemToolbox:MemFit:InputFormat', ...
@@ -215,7 +215,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
 end
 
 %-----------------------------
-function fit = MemFit_MultipleSubjects(dataCellArray, model)
+function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
   if verbosity > 0
     fprintf('\nYou''ve chosen to fit multiple subjects'' data together...\n\n');
     pause(1);
