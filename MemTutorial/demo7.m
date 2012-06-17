@@ -13,6 +13,9 @@ MemFit(data, {model1, model2});
 
 
 % Third model:
+% XXX : It seems like it would be ideal if we could reparameterize this
+% model, so rather than using df and sigma, it uses the scale and shape of
+% the gamma instead
 model3 = VariablePrecisionWithBiasModel();
 MemFit(data,model3)
 
