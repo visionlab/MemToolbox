@@ -4,6 +4,9 @@ function fullPosterior = GridSearch(data, model, varargin)
     'PointsPerParam', round(nthroot(5000, length(model.paramNames)))); 
   args = parseargs(varargin, args);
   
+  % Ensure there is a model.prior, model.logpdf and model.pdf
+  model = EnsureAllModelMethods(model);
+  
   if ~isempty(args.PosteriorSamples)
       % Refine the grid search to look only at reasonable values: 
       model.upperbound = max(args.PosteriorSamples.vals);
@@ -40,15 +43,18 @@ function fullPosterior = GridSearch(data, model, varargin)
   
   % Evaluate
   logLikeMatrix = zeros(size(allVals{1}));
-  parfor i=1:numel(allVals{1})
-    curParams = num2cell(cellfun(@(x)x(i), allVals));
-    logLikeMatrix(i) = sum(log(model.pdf(data, curParams{:})));
+  for i=1:numel(allVals{1})
+    curParams = cellfun(@(x)x(i), allVals);
+    curParamsCell = num2cell(curParams);
+    logLikeMatrix(i) = model.logpdf(data, curParamsCell{:});
+    priorMatrix(i) = model.prior(curParams(:));
   end
   fullPosterior.logLikeMatrix = logLikeMatrix;
+  fullPosterior.priorMatrix = priorMatrix;
   
   % Convert log likelihood matrix into likelihood, avoiding underflow
-  fullPosterior.likeMatrix = exp(logLikeMatrix-max(logLikeMatrix(:)));
-  fullPosterior.likeMatrix(isnan(fullPosterior.likeMatrix)) = 0;
+  fullPosterior.propToLikeMatrix = exp(logLikeMatrix-max(logLikeMatrix(:)));
+  fullPosterior.propToLikeMatrix(isnan(fullPosterior.propToLikeMatrix)) = 0;
   
   % Store values used:
   fullPosterior.valuesUsed = valuesUsed;

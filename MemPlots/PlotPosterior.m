@@ -6,7 +6,7 @@ function figHand = PlotPosterior(posterior, paramNames)
   if isfield(posterior, 'vals')
     % posteriorSamples:
     figHand = PlotPosterior_MCMC(posterior, paramNames);
-  elseif isfield(posterior, 'likeMatrix')
+  elseif isfield(posterior, 'propToLikeMatrix')
     % fullPosterior:
     figHand = PlotPosterior_GridSearch(posterior, paramNames);
   end
@@ -46,7 +46,7 @@ end
 
 function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
   % Shorten names
-  likeMatrix = fullPosterior.likeMatrix;
+  likeMatrix = fullPosterior.propToLikeMatrix;
   valuesUsed = fullPosterior.valuesUsed;
   
   % Show 2x2 correlation for each variable with each other to look for
