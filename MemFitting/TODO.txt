@@ -1,7 +1,0 @@
-can we kill MCMC.m now that MCMC_Convergence.m has optional parameters that allow you to set when convergence is achieved and how many samples to take? we can document it, but these parameters are the same as MCMC now:
-
-... 'ConvergenceVariance', Inf, 'SamplesPerChain', 5000, ...
-
-Then we could rename MCMC_Convergence.m to the more 'normal' MCMC.m
-
-Also I'm not sure of the utility/naming of the FitMultipleSubjects_*.m files. Probably they should have a more coherent naming scheme once they work/are more flushed out. Thoughts?
