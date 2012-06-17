@@ -4,6 +4,18 @@
 % is a wrapped normal.
 %
 
+% XXX : It seems like it would be ideal if we could reparameterize this
+% model, so rather than using df and sigma, it uses the scale and shape of
+% the gamma instead
+%    prec = 1/(params(2)*params(2));
+%    df = params(3);
+%
+%    shape = df/2;
+%    scale = df/(2*prec);
+%
+% Not sure if sampling would work as well, but I suspect it would be fine.
+%
+
 function model = VariablePrecisionWithBiasModel()
   model.name = 'Variable precision model with bias';
 	model.paramNames = {'mu', 'g', 'sigma', 'df'};
@@ -24,7 +36,7 @@ end
 function allT = VariablePrecisionWithBiasGenerator(parameters, dims)
   n = prod(dims);
   allT = parameters{3}*trnd(parameters{4},n,1)+parameters{1};
-  allT = mod(allT+pi, 360)-180;
+  allT = mod(allT+180, 360)-180;
   guesses = logical(rand(n,1) < parameters{2}); % figure out which ones will be guesses
   allT(guesses) = rand(sum(guesses),1)*360 - 180;
   allT = reshape(allT, dims); % reshape to requested dimensions
