@@ -1,14 +1,20 @@
-data = MemData(1);
+data = MemDataset(1);
 
-model1 = StandardMixtureModel;
-MemFit(data,model1)
+% First model:
+model1 = StandardMixtureModel();
+MemFit(data,model1);
 
-model2 = StandardMixtureModelWithBias;
-MemFit(data,model2)
+% Second model:
+model2 = StandardMixtureModel('Bias', true);
+MemFit(data,model2);
 
-MemFit(data, {model1, model2})
+% Now compare:
+MemFit(data, {model1, model2});
 
-% model3 = StudentsTModelWithBias;
-% MemFit(data,model3)
 
-% MemFit(data, {model1, model2});
+% Third model:
+model3 = VariablePrecisionWithBiasModel();
+MemFit(data,model3)
+
+% Now compare:
+MemFit(data, {model2, model3});
