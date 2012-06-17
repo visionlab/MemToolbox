@@ -18,6 +18,9 @@ function data = MemDataset(whichData)
     case 2
       data = load(fullfile(currentDir, 'DataFiles', ...
         '3000+trials_3items_SUBJ#2.mat'));
+    case 3
+      data = load(fullfile(currentDir, 'DataFiles', ...
+        'swap-data-simulated.mat'));
     otherwise
       error('Sorry, that''s not one of the available datasets.')
   end
