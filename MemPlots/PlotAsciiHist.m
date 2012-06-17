@@ -3,7 +3,6 @@
 %     -pi ___.-'-.___ pi
 %
 function PlotAsciiHist(data,n)
-
     % check input
     if nargin < 2
         n = 21;

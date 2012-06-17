@@ -5,10 +5,6 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     'PdfColor','b', 'NewFigure', true); 
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
-    
-  if(isfield(model,'pdfForPlot'))
-   model.pdf = model.pdfForPlot;
-  end
   
   % Choose which samples to use
   which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
@@ -30,7 +26,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     % Bin data and model
     n = hist(yrep, x)';
     n = n ./ sum(n(:));
-    plot(x, n, '-', 'Color', args.PdfColor);
+    hSim = plot(x, n, '-', 'Color', args.PdfColor);
     
     % Diff between this data and real data
     diffPlot(i,:) = nData - n;
@@ -41,7 +37,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     'MarkerEdgeColor',[.1 .1 .1],'MarkerFaceColor', [.5 .5 .5], ...
     'MarkerSize', 5);
   title('Simulated data from model');
-  legend(h, 'Actual data');
+  legend([h, hSim], {'Actual data', 'Simulated data'});
   xlim([-180, 180]);
   
   % Plot difference

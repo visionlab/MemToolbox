@@ -13,4 +13,9 @@ function model = EnsureAllModelMethods(model)
   if ~isfield(model, 'pdf')
     model.pdf = @(varargin)(exp(model.logpdf(varargin{:})));
   end
+ 
+  % If there's no model.pdfForPlot, assume the normal pdf can be used
+  if ~isfield(model,'pdfForPlot')
+    model.pdfForPlot = model.pdf;
+  end
 end

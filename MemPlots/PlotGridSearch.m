@@ -34,5 +34,5 @@ function figHand = PlotGridSearch(logLikeMatrix, valuesUsed, paramNames)
   
   % comestics
   colormap(palettablecolormap('sequential'));
-  palettablehistogram;
+  palettablehistogram();
 end

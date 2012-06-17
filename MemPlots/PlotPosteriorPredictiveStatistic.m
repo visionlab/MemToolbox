@@ -18,6 +18,9 @@ function figHand = PlotPosteriorPredictiveStatistic(model, posteriorSamples, dat
   % Choose which samples to use
   which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
   
+  % Ensure there is a model.prior, model.logpdf and model.pdf
+  model = EnsureAllModelMethods(model);
+  
   % How to bin
   x = linspace(-180, 180, args.NumberOfBins)';
   
@@ -28,7 +31,7 @@ function figHand = PlotPosteriorPredictiveStatistic(model, posteriorSamples, dat
   for i=1:length(which)
     % Generate random data from this distrib. with these parameters
     asCell = num2cell(posteriorSamples.vals(which(i),:));
-    yrep = modelrnd(model, asCell, size(data));
+    yrep = SampleFromModel(model, asCell, size(data));
     
     % Get best fit to this data
     model.start = posteriorSamples.vals(which(i),:);
@@ -36,7 +39,7 @@ function figHand = PlotPosteriorPredictiveStatistic(model, posteriorSamples, dat
     
     % Bin data and model
     bestParamsAsCell = num2cell(bestParams);
-    pdfVals = model.pdf(x, bestParamsAsCell{:});
+    pdfVals = model.pdfForPlot(x, bestParamsAsCell{:});
     n = hist(yrep, x)';
     n = n ./ sum(n(:));
     pdfVals = pdfVals ./ sum(pdfVals(:));
@@ -65,7 +68,7 @@ function figHand = PlotPosteriorPredictiveStatistic(model, posteriorSamples, dat
   asCell = num2cell(params);
   
   % Bin and compare...
-  pdfVals = model.pdf(x, asCell{:});
+  pdfVals = model.pdfForPlot(x, asCell{:});
   pdfVals = pdfVals ./ sum(pdfVals(:));
   y_t = sum((nData - pdfVals) .^ 2);
   

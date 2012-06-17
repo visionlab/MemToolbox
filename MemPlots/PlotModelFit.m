@@ -19,10 +19,6 @@ function figHand = PlotModelFit(model, params, data, varargin)
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);
   
-  if(isfield(model,'pdfForPlot'))
-    model.pdf = model.pdfForPlot;
-  end
-  
   % Plot data histogram
   set(gcf, 'Color', [1 1 1]);
   x = linspace(-180, 180, args.NumberOfBins)';
@@ -39,7 +35,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
   if size(params,1) > 1
     for i=1:size(params,1)
       paramsAsCell = num2cell(params(i,:));
-      p(i,:) = model.pdf(struct('errors', vals), paramsAsCell{:});
+      p(i,:) = model.pdfForPlot(struct('errors', vals), paramsAsCell{:});
       p(i,:) = p(i,:) ./ sum(p(i,:));
     end
     bounds = quantile(p, [.05 .50 .95])';
@@ -49,7 +45,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
     %set(h, 'LineWidth', 2);
   else
     paramsAsCell = num2cell(params);
-    p = model.pdf(struct('errors', vals), paramsAsCell{:});
+    p = model.pdfForPlot(struct('errors', vals), paramsAsCell{:});
     plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, 'LineWidth', 2);
   end
   xlabel('Error (degrees)');
