@@ -16,7 +16,7 @@ function figHand = PlotGridSearch(logLikeMatrix, valuesUsed, paramNames)
       axis tight;
       
       subplot(N,N,sub2ind([N N],p2,p));
-      imagesc(valuesUsed{p2}, valuesUsed{p}, V);
+      imagesc(valuesUsed{p2}, valuesUsed{p}, V');
       set(gca,'YDir','normal');
       axis tight;
     end
