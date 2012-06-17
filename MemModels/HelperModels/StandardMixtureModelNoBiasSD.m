@@ -18,6 +18,6 @@ end
 % achieves a 15x speedup over the default rejection sampler
 % calls the standardmixturemodel generator with mu=0
 function r = StandardMixtureModelGenerator(parameters, dims)
-    model = StandardMixtureModelWithBias();
+    model = StandardMixtureModelWithBiasSD();
     r = model.generator({0, parameters{1}, deg2k(parameters{2})}, dims);
 end
