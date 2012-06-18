@@ -1,5 +1,4 @@
-% MemSimulatedData - Return simulated data from a published experimental
-% setup
+% MemSimulatedData - Return simulated data from published experimental setup
 %
 % Parameters:
 %   MemSimulatedData(experimentNumber, trialsPerCondition)
@@ -14,6 +13,7 @@
 % luminance low enough that it affected visibility.
 % (3) adelson & jonides (1980) patial report figure 2 panel b
 % ...
+%
 %
 
 function data = MemSimulatedData(whichData, trialsPerCondition)
