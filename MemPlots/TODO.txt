@@ -1,1 +1,0 @@
-should combine PlotPosterior.m and PlotGridSearch.m, where the function does the correct thing based on the type of structure it is passed (both are plotting the posterior)
