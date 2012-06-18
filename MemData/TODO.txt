@@ -1,1 +1,0 @@
-I'm not entirely sure of the structure here... some of the MemData(1...N) calls returns real data, some return structures that can be converted to data with memdata2mtb.m? is that how this works? We should probably just separate those two things totally or combine them totally (e.g., MemData(4) actually returns memdata2mtb(MemData(4)) or something...)
