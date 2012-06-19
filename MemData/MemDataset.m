@@ -3,7 +3,7 @@
 % Parameters:
 %   MemDataset(experimentNumber)
 %    
-%   experimentNumber - 1 or 2, depending on which subject. Experimental
+%   experimentNumber - 1, 2, or 3, depending on which subject. Experimental
 %   conditions were .... [].
 %
 function data = MemDataset(whichData)

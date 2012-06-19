@@ -1,5 +1,6 @@
-% ALLGUESSINGMODEL returns a structure for a single component model. This is the same
-% as StandardMixtureModel, but without a remembered state.
+% ALLGUESSINGMODEL returns a structure for a single-component model (a uniform 
+% distribution). This is the same as StandardMixtureModel, but without a 
+% remembered state.
 
 function model = AllGuessingModel()
   model.name = 'All guessing model';
@@ -8,9 +9,9 @@ function model = AllGuessingModel()
 	model.upperbound = [1]; % Upper bounds for the parameters
 	model.movestd = [0.00];
 	model.pdf = @(data, g) (g)*unifpdf(data.errors(:),-180,180);
-	model.start = [1;  % K
-                 1;  % K
-                 1]; % K
+	model.start = [1;  % g
+                 1;  % g
+                 1]; % g
   
   model.generator = @(parameters,dims) (unifrnd(-180,180,dims));
 end

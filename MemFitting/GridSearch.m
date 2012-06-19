@@ -1,3 +1,31 @@
+%GRIDSEARCH - Calculate full posterior of parameters given data
+%
+%    fullPosterior = GridSearch(data, model)
+%
+% This fitting function just loops over reasonable values of each parameter
+% and evaluates the likelihood and prior at those values. It then returns a
+% log likelihood and prior matrix whose size is N-dimensional for an
+% N-parameter model (e.g., the full posterior, evaluated at discrete
+% points on each parameter).
+%
+% Optional parameters:
+%  'PointsPerParam' - how many bins to break up each model parameter into
+%    Note that the posterior has to be evaluated at the full factorial of
+%    the model parameters, so if you pass 25 and have a 4 parameter model
+%    you will have 25^4 = 390,625 points that need to be evaluated.
+%
+%      fullPosterior = GridSearch(data, model, 'PointsPerParam', 25)
+%
+%  'PosteriorSamples' - if you have already run MCMC on this data, you can
+%    pass the posteriorSamples you got back from MCMC to GridSearch. This
+%    will allow GridSearch to smartly constrain the space it searchs, based
+%    on the MCMC samples (Rather than the default of searching the full
+%    range of parameters).
+%
+%      posSamples = MCMC(data, model)
+%      fullPosterior = GridSearch(data, model, 'PosteriorSamples', posSamples)
+%
+%---------------------------------------------------------------------
 function fullPosterior = GridSearch(data, model, varargin)
   args = struct('MleParams', [], 'PosteriorSamples', [], ...
     ... % Default to 5000 total points

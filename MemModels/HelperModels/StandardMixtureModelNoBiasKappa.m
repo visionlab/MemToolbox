@@ -1,6 +1,6 @@
 % STANDARDMIXTUREMODEL returns a structure for a two-component mixture model
 
-function model = StandardMixtureModelKappa()
+function model = StandardMixtureModelNoBiasKappa()
   model.name = 'Standard mixture model';
 	model.paramNames = {'g', 'K'};
 	model.lowerbound = [0 0]; % Lower bounds for the parameters

@@ -1,10 +1,19 @@
-% Runs a color working memory task, a la Zhang & Luck (2008).
-%	Preferences can be found down at the bottom, beginning on line 197.
+% ColorWorkingMemoryExperiment Runs a color working memory task, 
+%   a la Zhang & Luck (2008). The task requires memory for the color of
+%   briefly presented squares. Participants then report the color of a single
+%   probed square using a continuous report task. 
+%    
+%	Preferences can be found down at the bottom, beginning on line 197. 
+%   Important preferences include:    
+%   number of distinct items
+%   retention interval
+%   encoding duration
+%   number of trials per condition
 %
 % To do:
 %		2. ensure accurate timing (i.e., kill missed flip deadlines)
 %		3. add option to remove contantly present color wheel
-%		5. add optional data visualization and analysis`
+%		5. add optional data visualization and analysis
 
 function ColorWorkingMemoryExperiment()
   
@@ -113,7 +122,7 @@ function ColorWorkingMemoryExperiment()
     
     data.setSize = prefs.setSizes(prefs.fullFactorialDesign(prefs.order, 1));
     data.retentionInterval = prefs.retentionIntervals(prefs.fullFactorialDesign(prefs.order,2));
-        
+    
     save data.mat data prefs
     postpareEnvironment;
     

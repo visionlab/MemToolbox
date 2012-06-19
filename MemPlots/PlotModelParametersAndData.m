@@ -1,3 +1,6 @@
+%PLOTMODELPARAMETERSANDDATA plots the parameters of the model in a parallel coordinates plot
+% It then shows you the fit of the model at each set of parameter values.
+%
 function figHand = PlotModelParametersAndData(model, posteriorSamples, data, varargin)
   % Plot data fit
   args = struct('NumSamplesToPlot', 63, 'NewFigure', true); 

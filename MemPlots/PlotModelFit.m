@@ -1,3 +1,6 @@
+% PLOTMODELFIT plots the probability density function of the model overlaid on
+% a histogram of the data. 
+
 % params can be either a maxPosterior or a posteriorSamples. It currently cannot be a 
 % fullPosterior but we should fix this.
 

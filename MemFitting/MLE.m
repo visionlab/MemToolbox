@@ -1,5 +1,9 @@
-%MLE Find maximum likelihood fit for data
+%MLE - Find maximum likelihood fit of model to data
+%
 %    maxPosterior = MLE(data, model)
+%
+% TODO: Should we include the prior in this computation so it is really a 
+% MAP fit rather than a max likelihood fit?
 %
 %---------------------------------------------------------------------
 function maxPosterior = MLE(data, model)

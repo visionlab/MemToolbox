@@ -1,5 +1,12 @@
-% params can be either a maxPosterior or a posteriorSamples. It currently cannot be a 
+% PLOTMODELFIT(model, params, data) plots the model's probability density 
+% function overlaid on a histogram of the data. The plot is interactive, with 
+% a slider that allows you to adjust each of the parameters of the model and 
+% see the impact on the pdf.
+
+% params can be either a maxPosterior or a posteriorSamples. It currently 
+% cannot be a 
 % fullPosterior but we should fix this.
+
 function figHand = PlotModelFitInteractive(model, params, data, varargin)
   % Extra parameters
   args = struct('MarginalPlots', false, 'NewFigure', true); 

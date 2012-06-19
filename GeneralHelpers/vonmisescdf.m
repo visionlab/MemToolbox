@@ -1,9 +1,9 @@
 function cdf = vonmisescdf ( x, a, b )
   if numel(x) > 1000
-    % For large numbers of points, itis faster to just integrate by hand
+    % For large numbers of points, it is faster to just integrate by hand
     % and interpolate
     xvals = linspace(-pi,pi,5000);
-    y = vonmisespdf(xvals, 0, b);
+    y = vonmisespdf(rad2deg(xvals), 0, b);
     cdfVals = cumtrapz(xvals,y);
     cdf = interp1(xvals, cdfVals, x-a);
   else

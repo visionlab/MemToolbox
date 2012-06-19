@@ -15,14 +15,15 @@ function model = TwoAFCMixtureModel(minGuessRate)
   
   % Take standard mixture model
   model = StandardMixtureModelNoBiasKappa();
+  model.name = '2afc mixture model';
   model.upperbound = [1 100];
   model.lowerbound = [minGuessRate 0];
   
   % ... and change pdf
-  model.pdf = @Mixture2AFCpdf;
+  model.pdf = @curPdf;
 end
 
-function p = Mixture2AFCpdf(data, g, k) 
-  thetas = vonmisescdf(deg2rad(data.changeSize./2), 0, k).*(1-g) + g/2;
+function p = curPdf(data, g, k) 
+  thetas = vonmisescdf(abs(deg2rad(data.changeSize./2)), 0, k).*(1-g) + g/2;
   p = binopdf(data.afcCorrect, 1, thetas);
 end

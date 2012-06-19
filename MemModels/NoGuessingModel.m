@@ -1,5 +1,6 @@
-% NOGUESSINGMODEL returns a structure for a single component model. This is the same
-% as StandardMixtureModel, but without a guess state.
+% NOGUESSINGMODEL returns a structure for a single component model. 
+% This is the same as StandardMixtureModel, but without a guess state. 
+% The probability distribution is a uniform distribution of error. 
 
 function model = NoGuessingModel()
     model.name = 'No guessing model';

@@ -22,17 +22,20 @@ function figHand = PlotPosterior_MCMC(posteriorSamples, paramNames)
       [V,C] = hist3(posteriorSamples.vals(:,[p p2]), [20 20]);
       imagesc(C{1}, C{2}, V');
       set(gca,'YDir','normal');
+      set(gca, 'box', 'off');
       axis tight;
       
       subplot(N,N,sub2ind([N N],p2,p));
       imagesc(C{2}, C{1}, V);
       set(gca,'YDir','normal');
+      set(gca, 'box', 'off');
       axis tight;
     end
     subplot(N,N,sub2ind([N N],p,p));
     hist(posteriorSamples.vals(:,p));
     axis tight;
     set(gca, 'YTick', []);
+    set(gca, 'box', 'off');
     subplot(N,N,sub2ind([N N],p,1));
     title(paramNames{p}, 'FontSize', 15);
     subplot(N,N,sub2ind([N N],1,p));
@@ -59,11 +62,13 @@ function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
       V = ndsum(likeMatrix,  find(1:N ~= p & 1:N ~= p2));
       imagesc(valuesUsed{p}, valuesUsed{p2}, V);
       set(gca,'YDir','normal');
+      set(gca, 'box', 'off');
       axis tight;
       
       subplot(N,N,sub2ind([N N],p2,p));
       imagesc(valuesUsed{p2}, valuesUsed{p}, V');
       set(gca,'YDir','normal');
+      set(gca, 'box', 'off');
       axis tight;
     end
     
@@ -72,6 +77,7 @@ function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
     bar(valuesUsed{p}, marginal);
     axis tight;
     set(gca, 'YTick', []);
+    set(gca, 'box', 'off');
     subplot(N,N,sub2ind([N N],p,1));
     title(paramNames{p}, 'FontSize', 15);
     subplot(N,N,sub2ind([N N],1,p));

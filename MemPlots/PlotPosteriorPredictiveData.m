@@ -37,6 +37,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
        'MarkerFaceColor', [0 0 0], 'MarkerSize', 5, 'LineSmoothing', 'on');
   title('Simulated data from model');
   legend([h, hSim], {'Actual data', 'Simulated data'});
+  legend boxoff;
   xlim([-180, 180]);
   
   % Plot difference
