@@ -21,18 +21,16 @@ function model = VariablePrecisionWithBiasModel()
 	model.paramNames = {'mu', 'g', 'sigma', 'df'};
 	model.lowerbound = [-180 0 0 0]; % Lower bounds for the parameters
 	model.upperbound = [180 1 Inf Inf]; % Upper bounds for the parameters
-	model.movestd = [1, 0.02, 1, 0.25];
+	model.movestd = [0.5, 0.02, 0.5, 0.05];
 	model.pdf = @(data, mu, g, sigma, df) ...
     (1-g).*tDistWrapped(data.errors,mu,sigma,df)' + ...
       (g).*unifpdf(data.errors(:),-180,180);
-	model.start = [1,  0.0, 20, 0.2;
-                  -1,  0.2, 30, 1.0;
-                   5, 0.4, 10, 2.0;
-                  -5, 0.6, 50, 5.0];
+	model.start = [3,  0.1, 10, 0.2;
+                -3,  0.3, 30, 3.0];
   model.generator = @VariablePrecisionWithBiasGenerator;
 end
 
-% XXXX may not work right, check!!
+% To sample from it
 function allT = VariablePrecisionWithBiasGenerator(parameters, dims)
   n = prod(dims);
   allT = parameters{3}*trnd(parameters{4},n,1)+parameters{1};
@@ -42,23 +40,20 @@ function allT = VariablePrecisionWithBiasGenerator(parameters, dims)
   allT = reshape(allT, dims); % reshape to requested dimensions
 end
 
-% Wrapper function
+% Wrapper function to make everything faster if we get called with the same
+% data over and over
 function p = tDistWrapped(x, mu, sigma, df)
-  persistent m;
-  if isempty(m)
-    m = containers.Map();
+  persistent lastX f;
+  if isempty(lastX) || (length(lastX) ~= length(x)) || any(x~=lastX)
+    f = CreateFastWrappedT(x);
+    lastX = x;
   end
-  hash = datahash(x);
-  if ~m.isKey(hash)
-    m(hash) = CreateFastWrappedT(x);
-  end
-  f = m(hash);
   p = f(mu,sigma,df);
 end
 
 % Fast wrapped t (precomputed for a particular set of x)
 function f = CreateFastWrappedT(x)
-  valsRange = 30; % how many times to wrap around the circle
+  valsRange = 100; % how many times to wrap around the circle
   addVals = (-valsRange:valsRange)' * (zeros(1,length(x))+360);
   if size(x,1) > size(x,2)
     x = x';
@@ -70,3 +65,5 @@ function f = CreateFastWrappedT(x)
     ./ (sqrt(df*pi).*(1+(((combinedX-mu)./sigma).^2)./df).^((df + 1)/2))) ...
     ./sigma, 1));
 end
+
+

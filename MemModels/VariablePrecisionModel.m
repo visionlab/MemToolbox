@@ -17,6 +17,7 @@ function model = VariablePrecisionModel()
   model.generator = @ismgen;
 end
 
+% To sample from this model
 function r = ismgen(params, dims)
   paramsNew = {0, params{1}, params{2}, params{3}};
   model = VariablePrecisionWithBiasModel();
