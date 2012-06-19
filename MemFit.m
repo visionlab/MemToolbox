@@ -1,8 +1,8 @@
 % MemFit - A general-purpose fitting tool from the MemToolbox
 %
 %   Usage example:
-%   d = MemDataset(1);
-%   fit = MemFit(d.data);
+%   data = MemDataset(1);
+%   fit = MemFit(data);
 %
 %   It can handle many different use cases, including:
 %   MemFit(data)
@@ -14,7 +14,7 @@
 %   MemFit(data, {model1, model2, model3, ...})
 %   MemFit({subj1data,subj2data,...}, model)
 %
-%   All of the 2-argument versions can optionallytake a third parameter,
+%   All of the 2-argument versions can optionally take a third parameter,
 %   verbosity, which controls the amount of text printed to the command window.
 %   If verbosity is 0, output is suppressed. If verbosity is 1, output is
 %   minimal. If verbosity is 2, then MemFit is verbose. The default is 2.
@@ -53,6 +53,11 @@ function fit = MemFit(varargin)
     % One input argument, assumed to be (errors) or (data).
     if(isnumeric(varargin{1}))
       data = struct('errors', varargin{1});
+    elseif(isfield(varargin{1}, 'afcCorrect'))
+      warning('MemToolbox:MemFit:InputFormat', ...
+        'It looks like you passed in 2AFC data. Trying to fit with TwoAFCMixtureModel().');
+      fit = MemFit_SingleData(varargin{1}, TwoAFCMixtureModel(), 2);
+      return
     elseif(isfield(varargin{1}, 'errors'))
       data = varargin{1};
     else
@@ -124,8 +129,12 @@ end
 function fit = MemFit_SingleData(data, model, verbosity)
   if(verbosity > 0)
     % tell the user what's to come;
-    fprintf('\nError histogram:   ')
-    PlotAsciiHist(data.errors);
+    if isfield(data, 'errors')
+      fprintf('\nError histogram:   ')
+      PlotAsciiHist(data.errors);
+    else
+      fprintf('\nMean percent correct: %0.2f\n', mean(data.afcCorrect));      
+    end
     fprintf('          Model:   %s\n', model.name);
     fprintf('     Parameters:   %s\n', paramNames2str(model.paramNames));
     pause(1);
@@ -182,7 +191,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
     end
   end
   if(verbosity > 0)
-    fprintf('\nThis analysis was performed using an\nalpha release of the MemToolbox.\n')
+    fprintf('\nThis analysis was performed using a\nbeta release of the MemToolbox.\n')
   end
 end
 
@@ -251,7 +260,7 @@ end
 % Is the object an MTB data struct? passes iff the object is a struct
 % containing a field called 'errors'.
 function pass = isDataStruct(object)
-  pass = (isstruct(object) && isfield(object,'errors'));
+  pass = (isstruct(object) && (isfield(object,'errors') || isfield(object, 'afcCorrect')));
 end
 
 % Is object a cell array whose elements all return true

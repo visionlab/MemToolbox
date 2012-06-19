@@ -2,32 +2,27 @@
 % [-180,180]. if unsalvageable, it throws errors. otherwise, throws warnings
 % and does its best to massage data into the range (-180, 180)
 function [data, pass] = ValidateData(data)
-
-    pass = false; % assume failure, unless...
+    pass = true; % always pass if you make it through without an error()
         
     if(~isDataStruct(data))
-        error('Data should be passed in as a struct with a field data.errors');
+        error('Data should be passed in as a struct with a field data.errors or data.afcCorrect');
+    end
     
-    elseif(~isnumeric(data.errors))
-        throwRangeError();   
-   
-    elseif(any(data.errors < -180 | data.errors > 360)) % vomit if unintelligeble
-        throwRangeError();      
-        
-    elseif(any(data.errors > 180)) % then assume (0,360)
+    if isfield(data, 'errors')
+      if(~isnumeric(data.errors))
+        throwRangeError();
+      elseif(any(data.errors < -180 | data.errors > 360)) % vomit if unintelligeble
+        throwRangeError();
+      elseif(any(data.errors > 180)) % then assume (0,360)
         throwRangeWarning('(0,360)');
         data.errors = data.errors - 180;
-        
-    elseif(all((data.errors < pi) & (data.errors > -pi))) % then assume (-pi,pi)
+      elseif(all((data.errors < pi) & (data.errors > -pi))) % then assume (-pi,pi)
         throwRangeWarning('(-pi,pi)');
         data.errors = rad2deg(data.errors);
-        
-    elseif(all((data.errors < 2*pi) & (data.errors > 0))) % then assume (0,2*pi)
+      elseif(all((data.errors < 2*pi) & (data.errors > 0))) % then assume (0,2*pi)
         throwRangeWarning('(0,2*pi)');
         data.errors = rad2deg(data.errors-pi);
-
-    else
-        pass = true;
+      end
     end
     
     % add in some checking of auxilliary data struct fields. for example,
@@ -48,7 +43,6 @@ end
 % is the object an MTB data struct? passes iff the object is a struct
 % containing a field called 'errors'.
 function pass = isDataStruct(object)
-    pass = (isstruct(object) && isfield(object,'errors'));
+  pass = (isstruct(object) && (isfield(object,'errors') || isfield(object, 'afcCorrect')));
 end
-
 
