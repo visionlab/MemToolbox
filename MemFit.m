@@ -132,7 +132,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
     if isfield(data, 'errors')
       fprintf('\nError histogram:   ')
       PlotAsciiHist(data.errors);
-    else
+    elseif isfield(data, 'afcCorrect')
       fprintf('\nMean percent correct: %0.2f\n', mean(data.afcCorrect));      
     end
     fprintf('          Model:   %s\n', model.name);
@@ -170,7 +170,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
     end
   end
   
-  if(verbosity > 1)
+  if(verbosity > 0)
     % Optional posterior visualization
     fprintf('\n');
     r = input(['Would you like to see the tradeoffs\n' ...
@@ -191,7 +191,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
     end
   end
   if(verbosity > 0)
-    fprintf('\nThis analysis was performed using a\nbeta release of the MemToolbox.\n')
+    fprintf('\nThis analysis was performed using a\nbeta release of the MemToolbox.\n\n')
   end
 end
 
