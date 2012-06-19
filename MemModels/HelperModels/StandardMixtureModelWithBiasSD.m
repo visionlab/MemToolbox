@@ -9,9 +9,8 @@ function model = StandardMixtureModelWithBias()
   model.movestd = [1, 0.02, 1];
   model.pdf = @(data, mu, g, sd) ((1-g).*vonmisespdf(data.errors(:), ...
     mu,deg2k(sd)) + (g).*unifpdf(data.errors(:),-180,180));
-  model.start = [10, .2, 20;  % mu, g, sd
-                 0, .4, 15;  % mu, g, sd
-                -10, .1, 30]; % mu, g, sd
+  model.start = [10, .60, 10;  % mu, g, sd
+                  0, .10, 40;]; % mu, g, sd
 model.generator = @StandardMixtureModelWithBiasGenerator;
 end
 
