@@ -16,10 +16,10 @@ function posteriorSamples = MCMC(data, model, varargin)
   %    variable on each iteration
   %  ConvergenceVariance = Ratio of between/within chain variance needed
   %    for each variable to count as convergence
-  %  SamplePerChain - how many samples to collect after convergence
+  %  PostConvergenceSamples - how many samples to collect after convergence
   %  attained
   args = struct('Verbosity', 1, 'ConvergenceVariance', 1.2, ...
-    'SamplesPerChain', 5000); 
+    'PostConvergenceSamples', 15000, 'BurnInSamplesBeforeCheck', 500); 
   args = parseargs(varargin, args);
   
   % Ensure there is a model.prior, model.logpdf and model.pdf
@@ -35,8 +35,9 @@ function posteriorSamples = MCMC(data, model, varargin)
   
   % Setup initial values for all chains
   for c=1:numChains
-    startInfo(c).numMonte = 2000;
+    startInfo(c).numMonte = args.BurnInSamplesBeforeCheck;
     startInfo(c).cur = model.start(c,:);
+    startInfo(c).numChains = numChains;
     coMatrix = eye(length(model.movestd));
     coMatrix(coMatrix==1) = model.movestd;
     startInfo(c).burnCovariance = coMatrix;
@@ -52,9 +53,6 @@ function posteriorSamples = MCMC(data, model, varargin)
   converged = false;
   count = 0;
   while ~converged
-    if count>0
-      converged = IsConverged(chainStored, args.ConvergenceVariance, args.Verbosity);
-    end
     parfor c=1:numChains
       % Run chain
       [chainStored(c), startInfo(c)] = ....
@@ -69,21 +67,26 @@ function posteriorSamples = MCMC(data, model, varargin)
         startInfo(c).burnCovariance = startInfo(c).burnCovariance ./ 3;
       end
     end
+    converged = IsConverged(chainStored, args.ConvergenceVariance, args.Verbosity);
     count = count+1;
     if ~converged && args.Verbosity
       fprintf('   ... not yet converged (%d)\n', count*startInfo(1).numMonte);
     end
   end
-  if args.Verbosity
+  if args.Verbosity >=1
       fprintf('   ... chains converged after %d samples!\n', count*startInfo(1).numMonte);
-      fprintf('   ... collecting %d samples from converged distribution\n', args.SamplesPerChain);
+      fprintf('   ... collecting %d samples from converged distribution\n', args.PostConvergenceSamples);
   end
   
-  % Collect 5000 samples from converged chains
+  % Collect args.PostConvergenceSamples samples from converged chains
   parfor c=1:numChains
-    startInfo(c).numMonte = args.SamplesPerChain;
+    startInfo(c).numMonte = ceil(args.PostConvergenceSamples / numChains);
+    verbosity = args.Verbosity;
+    if c == 1 && verbosity > 0
+      verbosity = -1;
+    end
     [chainStored(c), startInfo(c)] = ....
-        MCMC_Chain(data, model, startInfo(c), args.Verbosity);
+        MCMC_Chain(data, model, startInfo(c), verbosity);
   end
   
   % Combine values across chains
@@ -118,6 +121,12 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
   
   % Do MCMC
   for m=1:startInfo.numMonte
+    if mod(m,100) == 0 && verbosity == -1
+      if m>100
+        fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b');
+      end
+      fprintf('\t...%8d\n', m * startInfo.numChains);
+    end
     % Pick move
     % - Proposal distribution here is implicitly a mvnormal that is
     % renormalized to be truncated by the edges of the legal parameter
@@ -160,7 +169,7 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
   end
   
   startInfo.acceptance = mean(acceptance);
-  if verbosity > 2
+  if verbosity >= 2
     fprintf('    MCMC chain acceptance rate: %0.2f\n', mean(acceptance));
   end
 end
@@ -189,7 +198,8 @@ function b = IsConverged(posteriorSamples, convergenceVariance, verbosity)
     Sp = (numPerChain-1)/(numPerChain) * W + (1/numPerChain) * B;
     r(v) = sqrt(Sp/W);
   end
-  if verbosity > 2
+  if verbosity >= 2
+    fprintf('\tB/W per variable: ');
     fprintf('%0.1f ', r);
     fprintf('\n');
   end
