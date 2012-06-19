@@ -63,7 +63,7 @@ function fit = MemFit(varargin)
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
     end
-    fit = MemFit_SingleData(data, StandardMixtureModel('Bias', true), 2);
+    fit = MemFit_SingleData(data, StandardMixtureModel('Bias', false), 2);
     return
 
   elseif nArguments == 2
