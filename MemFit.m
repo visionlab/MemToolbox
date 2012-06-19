@@ -47,6 +47,7 @@ function fit = MemFit(varargin)
   
   if nArguments < 1
     % No arguments - just open the tutorial
+    fprintf('\nOpening the tutorial using your default PDF viewer...\n\n');
     open('tutorial.pdf'); 
     
   elseif nArguments == 1
