@@ -1,6 +1,5 @@
 %
-% MemToolbox
-% Version 1.0
+% MemToolbox beta
 % 
 % The MemToolbox is a collection of MATLAB functions that is designed for
 % analyzing data from visual working memory studies. In particular, it
