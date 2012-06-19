@@ -4,20 +4,15 @@
 % is one of the standard models, and use an efficient generator for those. For example,
 % even the optimized rejection sampler is still 10x slower than vonmisesrnd.m for generating
 % vonmises random variates. 
-%
-% Another possibility, one that I think is pretty nice, is that  model structs could 
-% optionally include a .efficientGenerator procedure. This method would then check 
-% whether the model has an efficient generator, use it, and otherwise use rejection
-% sampling from the pdf.
 % 
-%  Jordan -- if we're going to have a general purpose sampler, maybe it
+%  Jordan, if we're going to have a general purpose sampler, maybe it
 %  should use MCMC so it doesn't depend on the point at 0 being the
 %  highest? Or maybe we should use some heuristics to decide if that
 %  condition is likely to hold and only use rejection sampling if so? I put
 %  a more general (but 4x slower) sampler using MCMC at the bottom of the
 %  file.
 %
-%  Tim -- isn't it a problem that the MCMC sampler gives correlated samples?
+%  Tim, isn't it a problem that the MCMC sampler gives correlated samples?
 %  Also, is there an accepted method for finding the right envelope function? I guess
 %  this reduces to finding the mode of the pdf. Would it be crazy to use one of the
 %  builtin optimization functions to acheive this?

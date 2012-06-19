@@ -1,11 +1,14 @@
-%MCMC Markov chain Monte Carlo with tuned proposals and alternative parameterization
+%MCMC - Markov chain Monte Carlo with tuned proposals
 %    posteriorSamples = MCMC(data, model)
 %
 % MCMC function that automatically detects convergence using the technique
-% of Gelman and Rubin (1992)
+% of Gelman and Rubin (1992). 
+%
 % You can make this work as a normal MCMC function without any 
 % convergence detection by passing it the following parameters:
-% ... 'ConvergenceVariance', Inf, 'SamplesPerChain', 5000, ...
+% ... 'ConvergenceVariance', Inf, 'BurnInSamplesBeforeCheck', 5000, ...
+% ... 'PostConvergenceSamples', 15000, ...
+%
 %---------------------------------------------------------------------
 
 function posteriorSamples = MCMC(data, model, varargin)
