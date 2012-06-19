@@ -3,8 +3,8 @@
 
 function figHand = PlotModelFit(model, params, data, varargin)
   % Extra arguments and parsing
-  args = struct('PdfColor','b', 'NumberOfBins', 40, 'ShowNumbers', true, ...
-    'NewFigure', false); 
+  args = struct('PdfColor', [0.54, 0.61, 0.06], 'NumberOfBins', 40, ...
+                'ShowNumbers', true, 'NewFigure', false); 
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
@@ -25,6 +25,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
   n = hist(data.errors(:), x);
   bar(x, n./sum(n), 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
   xlim([-180 180]); hold on;
+  set(gca, 'box', 'off');
   
   % Plot scaled version of the prediction
   vals = linspace(-180, 180, 500)';
@@ -46,10 +47,11 @@ function figHand = PlotModelFit(model, params, data, varargin)
   else
     paramsAsCell = num2cell(params);
     p = model.pdfForPlot(struct('errors', vals), paramsAsCell{:});
-    plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, 'LineWidth', 2);
+    plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, ... 
+         'LineWidth', 2, 'LineSmoothing', 'on');
   end
-  xlabel('Error (degrees)');
-  ylabel('Probability');
+  xlabel('Error (degrees)', 'FontSize', 14);
+  ylabel('Probability', 'FontSize', 14);
   
   % Always set ylim to 120% of the histogram height, regardless of function
   % fit

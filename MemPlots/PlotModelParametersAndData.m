@@ -31,7 +31,8 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
         colorOfLine = map(order==i,:);
     end
     
-    seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), 'Color', colorOfLine);
+    seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), ... 
+                         'Color', colorOfLine, 'LineSmoothing', 'on');
     
     % Special case of only one parameter
     if size(values,2) == 1
