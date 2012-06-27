@@ -59,12 +59,12 @@ function fit = MemFit(varargin)
         'It looks like you passed in 2AFC data. Trying to fit with TwoAFCMixtureModel().');
       fit = MemFit_SingleData(varargin{1}, TwoAFCMixtureModel(), 2);
       return
-    elseif(isfield(varargin{1}, 'errors'))
+    elseif(isfield(varargin{1}, 'errors') || isCellArrayOfDataStructs(varargin{1}))
       data = varargin{1};
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
     end
-    fit = MemFit_SingleData(data, StandardMixtureModel('Bias', false), 2);
+    fit = MemFit(data, StandardMixtureModel('Bias', false), 2);
     return
 
   elseif nArguments == 2
@@ -84,7 +84,7 @@ function fit = MemFit(varargin)
       
     elseif(isModelStruct(varargin{1}) && isDataStruct(varargin{2}))
       % (model, data)
-      data = varargin{2};
+      data = ValidateData(varargin{2});
       model = varargin{1};
       fit = MemFit_SingleData(data, model, verbosity);
       
@@ -236,8 +236,11 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
       fprintf(' Subject number:   %d\n', i)
       fprintf('Error histogram:   ')
       PlotAsciiHist(dataCellArray{i}.errors);
-      fprintf('     Parameters:   %s\n\n', paramNames2str(model.paramNames));
+      fprintf('\n')
     end
+    fprintf('          Model:   %s\n', ...
+        ['Hierarchical ' lower(model.name(1)) model.name(2:end)]);    
+    fprintf('     Parameters:   %s\n\n', paramNames2str(model.paramNames));
     pause(1);
     fprintf('Hang in there while MTB fits the model to your data...\n');
   end
