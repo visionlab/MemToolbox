@@ -1,7 +1,7 @@
 % STANDARDMIXTUREMODEL returns a structure for a two-component mixture model,
 % with mean MU, guess rate G, and standard deviation SD.
 
-function model = StandardMixtureModelWithBias()
+function model = StandardMixtureModelWithBiasSD()
   model.name = 'Standard mixture model with bias';
   model.paramNames = {'mu', 'g', 'sd'};
   model.lowerbound = [-180 0 0]; % Lower bounds for the parameters
@@ -9,9 +9,15 @@ function model = StandardMixtureModelWithBias()
   model.movestd = [1, 0.02, 1];
   model.pdf = @(data, mu, g, sd) ((1-g).*vonmisespdf(data.errors(:), ...
     mu,deg2k(sd)) + (g).*unifpdf(data.errors(:),-180,180));
-  model.start = [10, .60, 10;  % mu, g, sd
-                  0, .10, 40;]; % mu, g, sd
-model.generator = @StandardMixtureModelWithBiasGenerator;
+  model.start = [10, .60, 10;  
+                  0, .10, 40;   % mu, g, sd
+                  0, .10, 30];
+
+  model.prior = @(p) (JeffreysPriorForProportion(p(:,2)) .* ... % for g
+                      JeffreysPriorForKappaOfVonMises(deg2k(p(:,3))) .* ... % SD
+                      ImproperUniform(p(:,1))); % mu
+
+  model.generator = @StandardMixtureModelWithBiasGenerator;
 end
 
 % achieves a 15x speedup over the default rejection sampler

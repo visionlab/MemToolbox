@@ -11,13 +11,17 @@ function model = StandardMixtureModelNoBiasKappa()
 	model.start = [.2, 10;  % g, K
                  .4, 15;  % g, K
                  .1, 20]; % g, K
+                 
+  model.prior = @(p) (JeffreysPriorForProportion(p(:,1)) .* ... % for g
+                     JeffreysPriorForKappaOfVonMises(p(:,2))); % K
+        
   model.generator = @StandardMixtureModelGenerator;
 end
 
 % achieves a 15x speedup over the default rejection sampler
 % calls the standardmixturemodel generator with mu=0
 function r = StandardMixtureModelGenerator(parameters, dims)
-    model = StandardMixtureModelWithBias();
+    model = StandardMixtureModel('Bias',true);
     r = model.generator({0, parameters{1}, parameters{2}}, dims);
 end
   
