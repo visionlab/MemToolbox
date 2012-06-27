@@ -18,4 +18,10 @@ function model = EnsureAllModelMethods(model)
   if ~isfield(model,'pdfForPlot')
     model.pdfForPlot = model.pdf;
   end
+  
+  % If there's no model.priorForMC, use the uninformative prior
+  if ~isfield(model, 'priorForMC')
+    model.priorForMC = model.prior;
+  end
+  
 end

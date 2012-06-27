@@ -19,6 +19,10 @@ function model = StandardMixtureModelWithBiasKappaPriors()
   model.prior = @(p) (JeffreysPriorForProportion(p(2)) .* ... % for g
                       JeffreysPriorForKappaOfVonMises(p(3)) .* ... % K
                       ImproperUniform(p(:,1))); % mu
+                      
+  model.priorForMC = @(p) (vonmisespdf(p(1),0,33) * ... % for mu
+                           betapdf(p(2),1.25,2.5) * ... % for g
+                           lognpdf(p(3),2,0.5)); % for sd
   
   model.generator = @StandardMixtureModelWithBiasGenerator;
                                    

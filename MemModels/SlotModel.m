@@ -23,9 +23,14 @@ function model = SlotModel()
 	model.upperbound = [Inf Inf]; % Upper bounds for the parameters
 	model.movestd = [1, 0.1];
 	model.pdf = @slotpdf;
-	model.start = [2, 10;  % g, sd
-                 3, 15;  % g, sd
-                 4, 20]; % g, sd
+	model.start = [1, 4;  % capacity, sd
+                 4, 15;  % capacity, sd
+                 10,40]; % capacity, sd
+  model.prior = @(p) (ImproperUniform(p(1)) .* ... % for capacity
+                      JeffreysPriorForKappaOfVonMises(deg2k(p(2))));
+                      
+  model.priorForMC = @(p) (lognpdf(p(1),2,1) .* ... % for capacity
+                           lognpdf(deg2k(p(2)),2,0.5));
 end
 
 function y = slotpdf(data,capacity,sd)

@@ -17,7 +17,7 @@ function model = StandardMixtureModelNoBiasSD()
   model.prior = @(p) (JeffreysPriorForProportion(p(1)) .* ... % for g
                       JeffreysPriorForKappaOfVonMises(deg2k(p(2)))); % SD
                       
-  model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g ...
+  model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
                            lognpdf(deg2k(p(2)),2,0.5)); % for sd
 
 end

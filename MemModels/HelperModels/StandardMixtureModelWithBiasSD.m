@@ -11,9 +11,9 @@ function model = StandardMixtureModelWithBiasSD()
     mu,deg2k(sd)) + (g).*unifpdf(data.errors(:),-180,180));
   model.start = [10, .60, 10;  
                   0, .10, 40;   % mu, g, sd
-                  0, .10, 30];
+                -10, .10, 30];
 
-  model.prior = @(p) (ImproperUniform(p(:,1)) * ... % for mu
+  model.prior = @(p) (ImproperUniform(p(1)) * ... % for mu
                       JeffreysPriorForProportion(p(2)) * ... % g
                       JeffreysPriorForKappaOfVonMises(deg2k(p(3)))); % SD
                     

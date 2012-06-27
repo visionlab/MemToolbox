@@ -1,3 +1,9 @@
+% MODELCOMPARISON_CROSSVALIDATE Cross validates the model by fitting the
+% model to (X-1)/Xs of the data and evaluating the model on 1/X of the
+% data. 
+%
+% As a default, 1/10 of the data is used for cross-validation
+%
 %---------------------------------------------------------------------
 % TOGO: Use all start positions for all models, rather than just the first
 % one

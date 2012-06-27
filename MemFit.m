@@ -139,7 +139,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
       fprintf('\nMean percent correct: %0.2f\n', mean(data.afcCorrect));      
     end
     fprintf('          Model:   %s\n', model.name);
-    fprintf('     Parameters:   %s\n', paramNames2str(model.paramNames));
+    fprintf('     Parameters:   %s\n', prettyPrintCellArray(model.paramNames));
     pause(1);
     fprintf('\nJust a moment while MTB fits a model to your data...\n');
     pause(0.5);
@@ -210,23 +210,32 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   end
   
   % Model comparison & results
-  [fit.MD, fit.maxPosterior, fit.posteriorSamples] = ...
-    ModelComparison_BayesFactor(data, modelCellArray);  
+  [fit.bayesFactor,fit.fullPosterior] = ...
+    ModelComparison_BayesFactor(data, modelCellArray);
   
   fprintf('model\tlog L\tAIC\tprop. preferred\tlog Bayes factor\n');
   fprintf('-----\t-----\t---\t---------------\t----------------\n');
   for modelIndex = 1:length(modelCellArray)
-    logL = max(fit.posteriorSamples{modelIndex}.like);
-    AIC = 2*(length(modelCellArray{modelIndex}.paramNames)) - 2*logL;
-    fprintf('%d\t%0.f\t%0.f\t%0.4f\t\t%3.2f\n',  ...
-      modelIndex, ...
-      logL,  ...
-      AIC, ...
-      fit.MD(modelIndex), ...
-      log(fit.MD(modelIndex)) - log(sum(fit.MD([1:(modelIndex-1) (modelIndex+1):end]))))
+      
+      [logLike,i] = max(fit.fullPosterior{modelIndex}.logLikeMatrix(:));      
+      AIC = 2*(length(modelCellArray{modelIndex}.paramNames)) - 2*logLike;
+      fprintf('%d\t%0.f\t%0.f\t%0.4f\t\t%3.2f\n',  ...
+        modelIndex, ...
+        logLike,  ...
+        AIC, ...
+        -Inf, ... % in the works.
+        fit.bayesFactor(modelIndex));
   end
-  fprintf('\nBest parameters:\n');
-  disp(fit.maxPosterior);
+  
+  fprintf('\nMLE parameters for each model:\n');
+  for modelIndex = 1:length(modelCellArray)
+    fprintf('          Model:   %s\n',  modelCellArray{modelIndex}.name);
+    fprintf('     Parameters:   %s\n', ...
+        prettyPrintCellArray(modelCellArray{modelIndex}.paramNames));
+    fprintf('            MLE:   %s\n', ...
+        prettyPrintCellArray(cellstr(num2str(MLE(data, modelCellArray{modelIndex})'))));
+    fprintf('\n');
+  end
 end
 
 %-----------------------------
@@ -242,7 +251,7 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
     end
     fprintf('          Model:   %s\n', ...
         ['Hierarchical ' lower(model.name(1)) model.name(2:end)]);    
-    fprintf('     Parameters:   %s\n\n', paramNames2str(model.paramNames));
+    fprintf('     Parameters:   %s\n\n', prettyPrintCellArray(model.paramNames));
     pause(1);
     fprintf('Hang in there while MTB fits the model to your data...\n');
   end
@@ -255,9 +264,9 @@ end
 % Helper functions
 %-----------------------------
 
-% Converts a cell array of strings {'a', 'b', 'c'} to string 'a, b, c'
-function str = paramNames2str(paramNames)
-  str = [sprintf('%s, ', paramNames{1:end-1}) paramNames{end}];
+% Converts a cell array {'a', 'b', 'c'} to string 'a, b, c'
+function str = prettyPrintCellArray(array)
+  str = [sprintf('%s, ', array{1:end-1}) array{end}];
 end
 
 % Is the object an MTB model struct? passes iff the object is a struct
@@ -284,5 +293,3 @@ end
 function pass = isCellArrayOfDataStructs(object)
   pass = iscell(object) && all(cellfun(@isDataStruct, object));
 end
-
-
