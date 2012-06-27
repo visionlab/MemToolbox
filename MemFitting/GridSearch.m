@@ -71,7 +71,7 @@ function fullPosterior = GridSearch(data, model, varargin)
   
   % Evaluate
   logLikeMatrix = zeros(size(allVals{1}));
-  for i=1:numel(allVals{1})
+  parfor i=1:numel(allVals{1})
     curParams = cellfun(@(x)x(i), allVals);
     curParamsCell = num2cell(curParams);
     logLikeMatrix(i) = model.logpdf(data, curParamsCell{:});
