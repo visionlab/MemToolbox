@@ -59,7 +59,9 @@ function fit = MemFit(varargin)
         'It looks like you passed in 2AFC data. Trying to fit with TwoAFCMixtureModel().');
       fit = MemFit_SingleData(varargin{1}, TwoAFCMixtureModel(), 2);
       return
-    elseif(isfield(varargin{1}, 'errors') || isCellArrayOfDataStructs(varargin{1}))
+    elseif(any(isfield(varargin{1}, {'errors','error'})))
+      data = varargin{1};
+    elseif(isCellArrayOfDataStructs(varargin{1}))
       data = varargin{1};
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
@@ -267,7 +269,8 @@ end
 % Is the object an MTB data struct? passes iff the object is a struct
 % containing a field called 'errors'.
 function pass = isDataStruct(object)
-  pass = (isstruct(object) && (isfield(object,'errors') || isfield(object, 'afcCorrect')));
+  pass = (isstruct(object) && (any(isfield(object,{'errors','error'})) || ...
+          isfield(object, 'afcCorrect')));
 end
 
 % Is object a cell array whose elements all return true

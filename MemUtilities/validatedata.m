@@ -1,13 +1,20 @@
 % checks to make sure that the data is in the expected format (in the range 
 % [-180,180]. if unsalvageable, it throws errors. otherwise, throws warnings
-% and does its best to massage data into the range (-180, 180)
+% and does its best to massage data into the range (-180, 180).
 function [data, pass] = ValidateData(data)
     pass = true; % always pass if you make it through without an error()
+       
+    % rename according to MTB standards when appropriate
+    if ~isfield(data, 'errors') & isfield(data, 'error')
+      data.errors = data.error;
+      data = rmfield(data, 'error');
+    end
         
     if(~isDataStruct(data))
         error('Data should be passed in as a struct with a field data.errors or data.afcCorrect');
     end
     
+    % check that the error values are in the correct range, otherwise massage
     if isfield(data, 'errors')
       if(~isnumeric(data.errors))
         throwRangeError();
@@ -16,10 +23,10 @@ function [data, pass] = ValidateData(data)
       elseif(any(data.errors > 180)) % then assume (0,360)
         throwRangeWarning('(0,360)');
         data.errors = data.errors - 180;
-      elseif(all((data.errors < pi) & (data.errors > -pi))) % then assume (-pi,pi)
+      elseif(all((data.errors <= (pi)) & (data.errors >= (-pi)))) % then assume (-pi,pi)
         throwRangeWarning('(-pi,pi)');
         data.errors = rad2deg(data.errors);
-      elseif(all((data.errors < 2*pi) & (data.errors > 0))) % then assume (0,2*pi)
+      elseif(all((data.errors <= 2*pi) & (data.errors >= 0))) % then assume (0,2*pi)
         throwRangeWarning('(0,2*pi)');
         data.errors = rad2deg(data.errors-pi);
       end
