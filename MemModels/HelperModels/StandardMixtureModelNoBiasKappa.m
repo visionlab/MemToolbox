@@ -12,8 +12,8 @@ function model = StandardMixtureModelNoBiasKappa()
                  .4, 15;  % g, K
                  .1, 20]; % g, K
                  
-  model.prior = @(p) (JeffreysPriorForProportion(p(:,1)) .* ... % for g
-                     JeffreysPriorForKappaOfVonMises(p(:,2))); % K
+  model.prior = @(p) (JeffreysPriorForProportion(p(1)) .* ... % for g
+                     JeffreysPriorForKappaOfVonMises(p(2))); % K
         
   model.generator = @StandardMixtureModelGenerator;
 end

@@ -13,10 +13,14 @@ function model = StandardMixtureModelWithBiasSD()
                   0, .10, 40;   % mu, g, sd
                   0, .10, 30];
 
-  model.prior = @(p) (JeffreysPriorForProportion(p(:,2)) .* ... % for g
-                      JeffreysPriorForKappaOfVonMises(deg2k(p(:,3))) .* ... % SD
-                      ImproperUniform(p(:,1))); % mu
-
+  model.prior = @(p) (ImproperUniform(p(:,1)) * ... % for mu
+                      JeffreysPriorForProportion(p(2)) * ... % g
+                      JeffreysPriorForKappaOfVonMises(deg2k(p(3)))); % SD
+                    
+  model.priorForMC = @(p) (vonmisespdf(p(1),0,33) * ... % for mu ...
+                           betapdf(p(2),1.25,2.5) * ... % for g ...
+                           lognpdf(deg2k(p(3)),2,0.5)); % for sd
+                        
   model.generator = @StandardMixtureModelWithBiasGenerator;
 end
 

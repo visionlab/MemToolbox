@@ -5,7 +5,7 @@ function model = StandardMixtureModelNoBiasSD()
   model.name = 'Standard mixture model';
 	model.paramNames = {'g', 'sd'};
 	model.lowerbound = [0 0]; % Lower bounds for the parameters
-	model.upperbound = [1 1000]; % Upper bounds for the parameters
+	model.upperbound = [1 Inf]; % Upper bounds for the parameters
 	model.movestd = [0.02, 0.1];
 	model.pdf = @(data, g, sd) ((1-g).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
                                 (g).*unifpdf(data.errors(:),-180,180));
@@ -14,8 +14,12 @@ function model = StandardMixtureModelNoBiasSD()
                  0.1, 20]; % g, sd
   model.generator = @StandardMixtureModelGenerator;
   
-  model.prior = @(p) (JeffreysPriorForProportion(p(:,1)) .* ... % for g
-                      JeffreysPriorForKappaOfVonMises(deg2k(p(:,2)))); % SD
+  model.prior = @(p) (JeffreysPriorForProportion(p(1)) .* ... % for g
+                      JeffreysPriorForKappaOfVonMises(deg2k(p(2)))); % SD
+                      
+  model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g ...
+                           lognpdf(deg2k(p(2)),2,0.5)); % for sd
+
 end
 
 % achieves a 15x speedup over the default rejection sampler
