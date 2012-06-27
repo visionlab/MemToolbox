@@ -9,7 +9,7 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
   
   % Which to use
   which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
-  [~,mapVal] = max(posteriorSamples.like);
+  [tmp,mapVal] = max(posteriorSamples.like);
   params = posteriorSamples.vals(mapVal,:);
   
   % Add MAP value to the end
@@ -17,7 +17,7 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
   
   % Setup to normalize them to same axis
   values = posteriorSamples.vals(which,:);
-  [~,order]=sort(values(:,1));
+  [tmp,order]=sort(values(:,1));
   minVals = min(values);
   maxVals = max(values);
   
@@ -72,7 +72,7 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
   PlotModelFit(model, params, data, 'PdfColor', map(order==(length(which)), :));
 
   % What to do when series is clicked
-  function Click_Callback(~,~)
+  function Click_Callback(tmp,tmp2)
     % Get the point that was clicked on
     cP = get(gca,'Currentpoint');
     cx = round(cP(1,1)); % TODO: Doesn't work well if you click in 
@@ -81,7 +81,7 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
     
     % Show that series
     diffValues = (cy-valuesNormalized(:,cx)).^2;
-    [~,minValue] = min(diffValues);
+    [tmp,minValue] = min(diffValues);
     set(seriesInfo(minValue), 'LineWidth', 4);
     set(seriesInfo(minValue), 'Color', map(order==minValue,:))
     uistack(seriesInfo(minValue), 'top');

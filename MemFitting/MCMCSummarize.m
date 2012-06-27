@@ -4,7 +4,7 @@
 % are posteriorMean, posteriorMedian, maxPosterior, lowerCredible,
 % upperCredible
 function s = MCMCSummarize(posteriorSamples, whichField) 
-  [~,highestLike]=max(posteriorSamples.like);
+  [tmp,highestLike]=max(posteriorSamples.like);
   outParams.posteriorMean = mean(posteriorSamples.vals);
   outParams.posteriorMedian = median(posteriorSamples.vals);
   outParams.maxPosterior = posteriorSamples.vals(highestLike,:);
