@@ -4,8 +4,7 @@
 % see the impact on the pdf.
 
 % params can be either a maxPosterior or a posteriorSamples. It currently 
-% cannot be a 
-% fullPosterior but we should fix this.
+% cannot be a fullPosterior, but we should fix this.
 
 function figHand = PlotModelFitInteractive(model, params, data, varargin)
   % Extra parameters

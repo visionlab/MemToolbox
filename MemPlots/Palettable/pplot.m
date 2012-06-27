@@ -1,4 +1,4 @@
-function phist(varargin)
+function pplot(varargin)
   
   opengl('OpenGLLineSmoothingBug',1)
   
