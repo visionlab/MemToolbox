@@ -240,6 +240,10 @@ end
 
 %-----------------------------
 function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
+  if length(dataCellArray) == 1
+    fit = MemFit(dataCellArray{1}, model, verbosity);
+    return
+  end
   if verbosity > 0
     fprintf('\nYou''ve chosen to fit multiple subjects'' data together...\n\n');
     pause(1);
