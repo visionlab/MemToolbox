@@ -72,11 +72,11 @@ function posteriorSamples = MCMC(data, model, varargin)
     end
     converged = IsConverged(chainStored, args.ConvergenceVariance, args.Verbosity);
     count = count+1;
-    if ~converged && args.Verbosity
+    if ~converged && args.Verbosity > 0
       fprintf('   ... not yet converged (%d)\n', count*startInfo(1).numMonte);
     end
   end
-  if args.Verbosity >=1
+  if args.Verbosity > 0
       fprintf('   ... chains converged after %d samples!\n', count*startInfo(1).numMonte);
       fprintf('   ... collecting %d samples from converged distribution\n', args.PostConvergenceSamples);
   end
@@ -124,7 +124,7 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
   
   % Do MCMC
   for m=1:startInfo.numMonte
-    if mod(m,100) == 0 && verbosity == -1
+    if mod(m,100) == 0 && verbosity > 0
       if m>100
         fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b');
       end
