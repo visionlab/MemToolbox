@@ -16,7 +16,9 @@ function [data, pass] = ValidateData(data)
     
     % check that the error values are in the correct range, otherwise massage
     if isfield(data, 'errors')
-      if(~isnumeric(data.errors))
+      if(isempty(data.errors))
+        error('The data vector should not be empty.');
+      elseif(~isnumeric(data.errors))
         throwRangeError();
       elseif(any(data.errors < -180 | data.errors > 360)) % vomit if unintelligeble
         throwRangeError();
