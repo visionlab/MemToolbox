@@ -54,20 +54,25 @@ function fit = MemFit(varargin)
     % One input argument, assumed to be (errors) or (data).
     if(isnumeric(varargin{1}))
       data = struct('errors', varargin{1});
+      fit = MemFit(data, StandardMixtureModel('Bias', false), 1);
+      
     elseif(isfield(varargin{1}, 'afcCorrect'))
       warning('MemToolbox:MemFit:InputFormat', ...
         'It looks like you passed in 2AFC data. Trying to fit with TwoAFCMixtureModel().');
       fit = MemFit_SingleData(varargin{1}, TwoAFCMixtureModel(), 2);
-      return
+      
     elseif(any(isfield(varargin{1}, {'errors','error'})))
       data = varargin{1};
+      fit = MemFit(data, StandardMixtureModel('Bias', false), 1);
+      
     elseif(isCellArrayOfDataStructs(varargin{1}))
       data = varargin{1};
+      fit = MemFit(data, StandardMixtureModel('Bias', false), 1);
+      
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
+      fit = -1;
     end
-    fit = MemFit(data, StandardMixtureModel('Bias', false), 2);
-    return
 
   elseif nArguments == 2
     
@@ -76,13 +81,13 @@ function fit = MemFit(varargin)
       % (errors, model)
       data = struct('errors', varargin{1});
       model = varargin{2};
-      fit = MemFit_SingleData(data, model, 1);
+      fit = MemFit_SingleData(data, model, verbosity);
       
     elseif(isModelStruct(varargin{1}) && isnumeric(varargin{2}))
       % (model, errors)
       data = struct('errors', varargin{2});
       model = varargin{1};
-      fit = MemFit_SingleData(data, model, 1);
+      fit = MemFit_SingleData(data, model, verbosity);
       
     elseif(isModelStruct(varargin{1}) && isDataStruct(varargin{2}))
       % (model, data)
@@ -202,10 +207,18 @@ end
 function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   % Introduction & model listing
   if verbosity > 0
-    fprintf('\nYou''ve chosen to compare the following models:\n')
+    fprintf('\nYou''ve chosen to compare the following models:\n\n')
+    
     for modelIndex = 1:length(modelCellArray)
-      fprintf('  %d. %s\n', modelIndex, modelCellArray{modelIndex}.name);
+      fprintf('        Model %d:   %s\n',  ...
+              modelIndex, modelCellArray{modelIndex}.name);
+      fprintf('     Parameters:   %s\n', ...
+              prettyPrintCellArray(modelCellArray{modelIndex}.paramNames));
+      fprintf('            MLE:   %s\n', ...
+          prettyPrintCellArray(cellstr(num2str(MLE(data, modelCellArray{modelIndex})'))));
+      fprintf('\n');
     end
+    
     fprintf('\nJust a moment while MTB fits these models to your data...\n\n');
   end
   
@@ -226,16 +239,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
         -Inf, ... % in the works.
         fit.bayesFactor(modelIndex));
   end
-  
-  fprintf('\nMLE parameters for each model:\n');
-  for modelIndex = 1:length(modelCellArray)
-    fprintf('          Model:   %s\n',  modelCellArray{modelIndex}.name);
-    fprintf('     Parameters:   %s\n', ...
-        prettyPrintCellArray(modelCellArray{modelIndex}.paramNames));
-    fprintf('            MLE:   %s\n', ...
-        prettyPrintCellArray(cellstr(num2str(MLE(data, modelCellArray{modelIndex})'))));
-    fprintf('\n');
-  end
+
 end
 
 %-----------------------------
