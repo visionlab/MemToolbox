@@ -33,7 +33,7 @@ function y = sdpdf(data, tau, k, sd)
   
   g = 1 - p; % the guess rate
   
-  y = ((1-g(:)).*vonmisespdf(data.errors(:),0,sd2k(pi/180.*sd)) + ...
+  y = ((1-g(:)).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
           (g(:).*unifpdf(data.errors(:),-180,180)));
   
 end
