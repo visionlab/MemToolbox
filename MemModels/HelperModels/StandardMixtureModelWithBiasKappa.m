@@ -16,8 +16,7 @@ function model = StandardMixtureModelWithBiasKappaPriors()
                  0.0, .4, 15;  % mu, g, K
                 -4.0, .1, 20]; % mu, g, K
   
-  model.prior = @(p) (JeffreysPriorForProportion(p(2)) .* ... % for g
-                      JeffreysPriorForKappaOfVonMises(p(3)) .* ... % K
+  model.prior = @(p) (JeffreysPriorForKappaOfVonMises(p(3)) .* ... % K
                       ImproperUniform(p(:,1))); % mu
                       
   model.priorForMC = @(p) (vonmisespdf(p(1),0,33) * ... % for mu

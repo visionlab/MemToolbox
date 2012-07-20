@@ -12,8 +12,7 @@ function model = StandardMixtureModelNoBiasKappa()
                  .4, 15;  % g, K
                  .1, 20]; % g, K
                  
-  model.prior = @(p) (JeffreysPriorForProportion(p(1)) .* ... % for g
-                     JeffreysPriorForKappaOfVonMises(p(2)));  % K
+  model.prior = @(p) JeffreysPriorForKappaOfVonMises(p(2));  % K
                      
   model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g ...
                            lognpdf(p(2),2,0.5));        % for K
