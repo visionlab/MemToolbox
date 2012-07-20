@@ -1,5 +1,5 @@
 %---------------------------------------------------------------------
-function [bayesFactor,fullPosterior] = ModelComparison_BayesFactor(data, models, varargin)
+function [bayesFactor,posteriorOdds,fullPosterior] = ModelComparison_BayesFactor(data, models, varargin)
   
   if length(models) < 2
     error('Model comparison requires a cell array of at least two models.');
@@ -27,7 +27,6 @@ function [bayesFactor,fullPosterior] = ModelComparison_BayesFactor(data, models,
     curPrior = fullPosterior{m}.priorMatrix;
     wLogLike(isnan(wLogLike)) = 0;
     posteriorOdds(m) = maxLike + log(nansum(exp(wLogLike(:)).*curPrior(:)));
-    
   end
   
   % compute bayes factor for each model with respect to the first model
