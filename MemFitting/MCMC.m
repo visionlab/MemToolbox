@@ -124,12 +124,12 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
   
   % Do MCMC
   for m=1:startInfo.numMonte
-    if mod(m,100) == 0 && verbosity > 0
-      if m>100
-        fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b');
-      end
-      fprintf('\t...%8d\n', m * startInfo.numChains);
-    end
+    % if mod(m,100) == 0 && verbosity > 0
+    %   if m>100
+    %     fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b');
+    %   end
+    %   fprintf('\t...%8d\n', m * startInfo.numChains);
+    % end
     % Pick move
     % - Proposal distribution here is implicitly a mvnormal that is
     % renormalized to be truncated by the edges of the legal parameter

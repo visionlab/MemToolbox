@@ -7,8 +7,10 @@ function model = StandardMixtureModelWithBiasSD()
   model.lowerbound = [-180 0 0]; % Lower bounds for the parameters
   model.upperbound = [180 1 Inf]; % Upper bounds for the parameters
   model.movestd = [1, 0.02, 1];
+  
   model.pdf = @(data, mu, g, sd) ((1-g).*vonmisespdf(data.errors(:), ...
     mu,deg2k(sd)) + (g).*unifpdf(data.errors(:),-180,180));
+  
   model.start = [10, .60, 10;  
                   0, .10, 40;   % mu, g, sd
                 -10, .10, 30];

@@ -2,8 +2,8 @@ clc;
 clear all;
 
 data = MemDataset(1);
-data.errors = SampleFromModel(StandardMixtureModel, {.2, 20}, [1000 1]);
-%data.errors = SampleFromModel(StandardMixtureModel('Bias', true), {10, .2, 20}, [1000 1]);
+%data.errors = SampleFromModel(StandardMixtureModel, {.2, 20}, [1000 1]);
+data.errors = SampleFromModel(StandardMixtureModel('Bias', true), {10, .2, 20}, [1000 1]);
 
 % Models
 model{1} = EnsureAllModelMethods(StandardMixtureModel());
