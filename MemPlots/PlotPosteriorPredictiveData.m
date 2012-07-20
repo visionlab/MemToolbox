@@ -1,3 +1,5 @@
+% Doesn't work with 2AFC data currently
+
 function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
   % difference plot.
