@@ -16,6 +16,7 @@ function model = StandardMixtureModelWithBiasSD()
                 -10, .10, 30];
 
   model.prior = @(p) (ImproperUniform(p(1)) * ... % for mu
+                      JeffreysPriorForProportion(p(2)) * ... % g
                       JeffreysPriorForKappaOfVonMises(deg2k(p(3)))); % SD
                     
   model.priorForMC = @(p) (vonmisespdf(p(1),0,33) * ... % for mu ...
