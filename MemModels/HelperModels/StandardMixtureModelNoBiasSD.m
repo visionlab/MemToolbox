@@ -14,8 +14,7 @@ function model = StandardMixtureModelNoBiasSD()
                  0.1, 20]; % g, sd
   model.generator = @StandardMixtureModelGenerator;
   
-  model.prior = @(p) (JeffreysPriorForProportion(p(1)) .* ... % for g
-                      JeffreysPriorForKappaOfVonMises(deg2k(p(2)))); % SD
+  model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(2))); % SD
                       
   model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
                            lognpdf(deg2k(p(2)),2,0.5)); % for sd
