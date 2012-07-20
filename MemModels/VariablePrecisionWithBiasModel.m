@@ -20,7 +20,7 @@ function model = VariablePrecisionWithBiasModel()
   model.name = 'Variable precision model with bias';
 	model.paramNames = {'mu', 'g', 'sigma', 'df'};
 	model.lowerbound = [-180 0 0 0]; % Lower bounds for the parameters
-	model.upperbound = [180 1 Inf Inf]; % Upper bounds for the parameters
+	model.upperbound = [180 1 Inf 100]; % Upper bounds for the parameters
 	model.movestd = [0.5, 0.02, 0.5, 0.05];
 	model.pdf = @(data, mu, g, sigma, df) ...
     (1-g).*tDistWrapped(data.errors,mu,sigma,df)' + ...
