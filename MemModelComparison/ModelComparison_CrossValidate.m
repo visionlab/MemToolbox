@@ -3,12 +3,13 @@
 % data. 
 %
 % As a default, 1/10 of the data is used for cross-validation
-%
-%---------------------------------------------------------------------
-% TOGO: Use all start positions for all models, rather than just the first
-% one
-function [logLike, AIC, params] = ModelComparison_CrossValidate(data, models, varargin)
 
+function [logLike, params] = ModelComparison_CrossValidate(data, models, varargin)
+  
+  if length(models) < 2
+    error('Model comparison requires a cell array of at least two models.');
+  end
+  
    % Default: split data into 10 parts, use 9 for training, 1 for test
    args = struct('Splits', 10);
    args = parseargs(varargin, args);
@@ -22,20 +23,19 @@ function [logLike, AIC, params] = ModelComparison_CrossValidate(data, models, va
      segments = round(linspace(1,length(data.errors), args.Splits));
      for s = 1:length(segments)-1       
        % Setup training and test
-       trainingData = data.errors;
        curHoldoutData = segments(s):(segments(s+1)-1);
-       testData = data.errors(curHoldoutData);
-       trainingData(curHoldoutData) = [];
+       trainingData = data;
+       trainingData.errors(curHoldoutData) = NaN;
+       testData = data;
+       testData.errors(~ismember(1:length(data.errors), curHoldoutData)) = NaN;
        
        % Fit mle()
-       paramsSeg{md}(s,:) = mle(struct('errors', trainingData), 'pdf', models{md}.pdf, 'start', models{md}.start(1,:), ...
-         'lowerbound', models{md}.lowerbound, 'upperbound', models{md}.upperbound);
+       paramsSeg{md}(s,:) = MLE(trainingData, models{md});
        
        % Get likelihood on hold-out set
        asCell = num2cell(paramsSeg{md}(s,:));
-       logLike(md) = logLike(md) + sum(log(models{md}.pdf(struct('errors', testData), asCell{:})));
+       logLike(md) = logLike(md) + models{md}.logpdf(testData, asCell{:});
      end
      params{md} = mean(paramsSeg{md}, 1);
-     AIC(md) = 2*length(models{md}.lowerbound) - 2*logLike(md);
    end   
 end

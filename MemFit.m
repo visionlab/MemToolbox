@@ -223,7 +223,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   end
   
   % Model comparison & results
-  [fit.bayesFactor,fit.fullPosterior] = ...
+  [fit.bayesFactor,fit.posteriorOdds,fit.fullPosterior] = ...
     ModelComparison_BayesFactor(data, modelCellArray);
   
   fprintf('model\tlog L\tAIC\tprop. preferred\tlog Bayes factor\n');
