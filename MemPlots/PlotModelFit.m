@@ -1,9 +1,11 @@
-% PLOTMODELFIT plots the probability density function of the model overlaid on
-% a histogram of the data. 
-
-% params can be either a maxPosterior or a posteriorSamples. It currently cannot be a 
-% fullPosterior but we should fix this.
-
+% PLOTMODELFIT plots the probability density function of the model overlaid
+%  on a histogram of the data. The model and data can either be 
+%  continuous report model/data or 2AFC model/data.
+%
+% The 'params' argument can be a maxPosterior, a posteriorSamples or a
+% fullPosterior. If it is a fullPosterior or posteriorSamples, the variance
+% of the model will be displayed in addition to the best fit model.
+%
 function figHand = PlotModelFit(model, params, data, varargin)
   % Extra arguments and parsing
   args = struct('PdfColor', [0.54, 0.61, 0.06], 'NumberOfBins', 40, ...
@@ -11,10 +13,18 @@ function figHand = PlotModelFit(model, params, data, varargin)
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
-  % If params is a struct, assume they passed a posteriorSamples() struct from MCMC
+  % If params has a .vals, assume they passed a posteriorSamples from MCMC
   if isstruct(params) && isfield(params, 'vals')
-    params = params.vals;
+    params = params.vals(1:500,:);
   end
+  
+  % If params has a .logLikeMatrix, assume they passed a fullPosterior from
+  % GridSearch
+  if isstruct(params) && isfield(params, 'logLikeMatrix')
+    posteriorSamples = SampleFromPosterior(params, 500);
+    params = posteriorSamples.vals;
+  end
+  
   if(~isfield(data,'errors')) && (~isfield(data,'afcCorrect'))
     data = struct('errors',data);
   end
@@ -97,7 +107,8 @@ function PlotContinuousReport(model, params, data, args)
     bounds = quantile(p, [.05 .50 .95])';
     h = boundedline(vals, bounds(:,2) .* multiplier, ...
       [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)] .* multiplier, ...
-      pdfColor, 'alpha');
+      'cmap', args.PdfColor, 'alpha');
+    set(h, 'LineWidth', 2);
   else
     paramsAsCell = num2cell(params);
     p = model.pdfForPlot(vals, data, paramsAsCell{:});

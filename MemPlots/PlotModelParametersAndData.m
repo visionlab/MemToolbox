@@ -1,5 +1,7 @@
-%PLOTMODELPARAMETERSANDDATA plots the parameters of the model in a parallel coordinates plot
-% It then shows you the fit of the model at each set of parameter values.
+%PLOTMODELPARAMETERSANDDATA plots the parameters of the model in a parallel 
+% coordinates plot. It then shows you the fit of the model at each set of 
+% parameter values, which you can obtain by clicking on the parallel
+% coordinates plot.
 %
 function figHand = PlotModelParametersAndData(model, posteriorSamples, data, varargin)
   % Plot data fit

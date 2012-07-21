@@ -1,4 +1,5 @@
-% PLOTDATA plots a histogram of the data. 
+% PLOTDATA plots a histogram of the data for continuous report data, and a
+% binned bar graph for 2AFC data
 
 function figHand = PlotData(data, varargin)
   % Extra arguments and parsing
