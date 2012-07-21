@@ -1,4 +1,4 @@
-% SampleFromModel Simulates data from a model with some parameters. 
+% SampleFromModel - Simulates data from a model with some parameters. 
 %
 %    Example usage:
 %

@@ -15,10 +15,8 @@ function [aic, bic, logLike] = ModelComparison_AIC_BIC(data, models)
        dataLen = length(data.afcCorrect);
      end
        
-     % Get likelihood
-     params = MLE(data, models{md});
-     asCell = num2cell(params);
-     logLike(md) = models{md}.logpdf(data, asCell{:});
+     % Get max posterior
+     [params, logLike(md)] = MAP(data, models{md});
      
      % Calc AIC/BIC
      aic(md) = -logLike(md) + 2*length(models{md}.upperbound);
