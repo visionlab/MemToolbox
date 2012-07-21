@@ -25,11 +25,21 @@
 %      posSamples = MCMC(data, model)
 %      fullPosterior = GridSearch(data, model, 'PosteriorSamples', posSamples)
 %
+%  'TakeSamplesFromPrior' - if you haven't run MCMC on this data, you can
+%    choose to center the grid search by having GridSearch sample from the
+%    prior on the parameters and choose upper and lower bounds accordingly.
+%
+%      fullPosterior = GridSearch(data, model, 'TakeSamplesFromPrior', true)
+%
+%    If you do not pass this parameter, GridSearch simply uses the
+%    model.upperbound and model.lowerbound on parameters to center the search.
+%
 %---------------------------------------------------------------------
 function fullPosterior = GridSearch(data, model, varargin)
   args = struct('MleParams', [], 'PosteriorSamples', [], ...
     ... % Default to 5000 total points
-    'PointsPerParam', round(nthroot(5000, length(model.paramNames)))); 
+    'PointsPerParam', round(nthroot(5000, length(model.paramNames))), ...
+    'TakeSamplesFromPrior', false); 
   args = parseargs(varargin, args);
   
   % Ensure there is a model.prior, model.logpdf and model.pdf
@@ -41,10 +51,20 @@ function fullPosterior = GridSearch(data, model, varargin)
       model.lowerbound = min(args.PosteriorSamples.vals);
   end
   
-  % Use MLE parameters to center the grid search if any parameters have Inf
+  if args.TakeSamplesFromPrior && isempty(args.PosteriorSamples)
+    % Sample from prior
+    priorModel = model;
+    priorModel.pdf = @(data, varargin)(1);
+    priorModel.logpdf = @(data, varargin)(0);
+    priorSamples = MCMC([], priorModel, 'Verbosity', 0, 'PostConvergenceSamples', 10000);
+    model.upperbound = max(priorSamples.vals);
+    model.lowerbound = min(priorSamples.vals);
+  end
+  
+  % Use MAP parameters to center the grid search if any parameters have Inf
   % upper or lowerbound
   if isempty(args.MleParams) && (any(isinf(model.upperbound)) || any(isinf(model.lowerbound))) 
-    args.MleParams = MLE(data, model);
+    args.MleParams = MAP(data, model);
   end
   
   % Number of parameters
@@ -71,6 +91,7 @@ function fullPosterior = GridSearch(data, model, varargin)
   
   % Evaluate
   logLikeMatrix = zeros(size(allVals{1}));
+  priorMatrix = zeros(size(allVals{1}));
   parfor i=1:numel(allVals{1})
     curParams = cellfun(@(x)x(i), allVals);
     curParamsCell = num2cell(curParams);
