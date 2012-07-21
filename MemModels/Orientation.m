@@ -1,4 +1,4 @@
-% Orientation() converts a model to use a 180 degree space rather than
+% Orientation - converts a model to use a 180 degree space rather than
 %  a 360 degree space. To work, you need to pass in both a model and also
 %  which parameters of that model are in units of degrees - typically this
 %  will be bias and standard deviation -- as these need to be adjusted as
