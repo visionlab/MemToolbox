@@ -1,12 +1,10 @@
-%MLE - Find maximum likelihood fit of model to data
+% MLE - Find maximum likelihood fit of model to data
 %
-%    maxPosterior = MLE(data, model)
-%
-% TODO: Should we include the prior in this computation so it is really a 
-% MAP fit rather than a max likelihood fit?
+%    maxLikelihood = MLE(data, model)
 %
 %---------------------------------------------------------------------
-function maxPosterior = MLE(data, model)
+function maxLikelihood = MLE(data, model)
+  
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
   options = statset('MaxIter',5000,'MaxFunEvals',5000,'UseParallel','always');
@@ -22,13 +20,13 @@ function maxPosterior = MLE(data, model)
   end
   
   % Combine values across chains
-  posteriorSamples.vals = [vals{1}];
-  posteriorSamples.like = like;
+  likeSamples.vals = [vals{1}];
+  likeSamples.like = like;
   for c=2:numChains
-    posteriorSamples.vals = [posteriorSamples.vals; vals{c}];
+    likeSamples.vals = [likeSamples.vals; vals{c}];
   end
   
   % Find MLE estimate
-  [~,b]=max(posteriorSamples.like);
-  maxPosterior = posteriorSamples.vals(b,:);
+  [~,b]=max(likeSamples.like);
+  maxLikelihood = likeSamples.vals(b,:);
 end
