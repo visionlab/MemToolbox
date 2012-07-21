@@ -20,6 +20,12 @@ function model = SwapModel()
     0.4, 0.1, 15;  % g, B, K
     0.1, 0.5, 20]; % g, B, K
   
+  model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(3))); % SD
+  
+  model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
+    betapdf(p(2),1.25,2.5) * ... % for B
+    lognpdf(deg2k(p(3)),2,0.5)); % for sd
+  
   model.pdfForPlot = @(data,g,B,sd)  ...
                         ((1-(g+B-g*B)).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
                             (g+B-g*B).*unifpdf(data.errors(:),-180,180));
