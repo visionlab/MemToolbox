@@ -3,7 +3,7 @@
 %    maxLikelihood = MLE(data, model)
 %
 %---------------------------------------------------------------------
-function maxLikelihood = MLE(data, model)
+function [maxLikelihood, like] = MLE(data, model)
   
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
@@ -27,6 +27,6 @@ function maxLikelihood = MLE(data, model)
   end
   
   % Find MLE estimate
-  [~,b]=max(likeSamples.like);
+  [like,b]=max(likeSamples.like);
   maxLikelihood = likeSamples.vals(b,:);
 end

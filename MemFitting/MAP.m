@@ -3,7 +3,7 @@
 %    maxPosterior = MAP(data, model)
 %
 %---------------------------------------------------------------------
-function maxPosterior = MAP(data, model)
+function [maxPosterior, like] = MAP(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
   options = statset('MaxIter',5000,'MaxFunEvals',5000,'UseParallel','always');
@@ -29,6 +29,6 @@ function maxPosterior = MAP(data, model)
   end
   
   % Find MAP estimate
-  [~,b]=max(posteriorSamples.like);
+  [like,b]=max(posteriorSamples.like);
   maxPosterior = posteriorSamples.vals(b,:);
 end
