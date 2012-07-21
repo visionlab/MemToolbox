@@ -5,6 +5,9 @@
 % working memory, and sd is the precision with which items are remembered. 
 % (This is a pure death process over objects.)
 %
+% In addition to data.errors, requires data.n (the set size for each trial)
+% as well as data.time (the delay before test in each trial; in milliseconds).
+%
 % Example usage:
 %
 %   data = memdata2mtb(MemData(16));
@@ -25,7 +28,6 @@ function model = ExponentialDecayModel()
 end
 
 function y = sdpdf(data, tau, k, sd)
-  
   B = min(k, data.n); % maximum contribution of working memory
   
   % the probability of remembering is exponential in time

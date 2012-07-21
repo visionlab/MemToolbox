@@ -17,7 +17,9 @@
 % then see how likely the data is under those parameters. Models that
 % predict the data well over their entire possible space of parameters do
 % well, and models that need very particular settings of their parameters
-% to fit the data do poorly.
+% to fit the data do poorly. This approximation method is quite accurate
+% for small numbers of parameters (<~5) as in most models in use in
+% MemToolbox.
 %
 % Examples:
 % 

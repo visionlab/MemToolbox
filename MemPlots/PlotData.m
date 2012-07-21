@@ -12,7 +12,7 @@ function figHand = PlotData(data, varargin)
   end
   
   if isfield(data, 'errors')
-    % Plot data histogram
+    % Plot data histogram for continuous report data
     set(gcf, 'Color', [1 1 1]);
     x = linspace(-180, 180, args.NumberOfBins)';
     n = hist(data.errors(:), x);
@@ -24,6 +24,8 @@ function figHand = PlotData(data, varargin)
     topOfY = max(n./sum(n))*1.20;
     ylim([0 topOfY]);
   else
+    
+    % Plot binned data for 2AFC data
     set(gcf, 'Color', [1 1 1]);
     x = linspace(-180, 180, args.NumberOfBins)';
     for i=2:length(x)
