@@ -1,6 +1,8 @@
 % SLOTPLUSRESOURCESMODEL returns a structure for a two-component mixture model with 
 % capacity K and precision sd.
 %
+% In addition to data.errors, requires data.n (the set size for each trial)
+%
 % Parameter explanation: 
 %
 % Capacity is the maximum number of independent representations. 

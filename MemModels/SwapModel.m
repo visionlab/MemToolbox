@@ -1,12 +1,11 @@
 % SWAPMODEL returns a structure for a three-component model
 % with guesses and swaps. Based on Bays, Catalao, & Husain (2009) model.
 %
-% Data struct should include:
-%   data.errors: errors (radians), e.g., distance of response from target
+% In addition to data.errors, the struct should include:
 %   data.distractors, Row 1: distance of distractor 1 from target
 %   ...
 %   data.distractors, Row N: distance of distractor N from target
-
+%
 function model = SwapModel()
   model.name = 'Swap model';
 	model.paramNames = {'g', 'B', 'sd'};
@@ -26,9 +25,6 @@ function model = SwapModel()
     betapdf(p(2),1.25,2.5) * ... % for B
     lognpdf(deg2k(p(3)),2,0.5)); % for sd
   
-  model.pdfForPlot = @(data,g,B,sd)  ...
-                        ((1-(g+B-g*B)).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
-                            (g+B-g*B).*unifpdf(data.errors(:),-180,180));
   model.generator = @SwapGenerator;
 end
 
@@ -50,6 +46,7 @@ function p = SwapModelPDF(data, g, B, sd)
   end
 end
 
+% TODO: Make this generate based on the actual displays
 function r = SwapGenerator(p, dims)
     model = StandardMixtureModelWithBiasSD();
     r = model.generator({0, p{1}+p{2}-p{1}*p{2}, p{3}}, dims);
