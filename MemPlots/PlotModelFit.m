@@ -21,7 +21,8 @@ function figHand = PlotModelFit(model, params, data, varargin)
   
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);
-  
+  model = GetModelPdfForPlot(model);
+   
   if isfield(data, 'errors')
     PlotContinuousReport(model, params, data, args);
   else
@@ -82,7 +83,7 @@ function PlotContinuousReport(model, params, data, args)
   set(gca, 'box', 'off');
   
   % Plot scaled version of the prediction
-  vals = linspace(-180, 180, 500)';
+  vals = linspace(-180, 180, 200)';
   multiplier = length(vals)/length(x);
   
   % If params has multiple rows, as if it came from a posteriorSamples struct, then
@@ -90,7 +91,7 @@ function PlotContinuousReport(model, params, data, args)
   if size(params,1) > 1
     for i=1:size(params,1)
       paramsAsCell = num2cell(params(i,:));
-      p(i,:) = model.pdfForPlot(struct('errors', vals), paramsAsCell{:});
+      p(i,:) = model.pdfForPlot(vals, data, paramsAsCell{:});
       p(i,:) = p(i,:) ./ sum(p(i,:));
     end
     bounds = quantile(p, [.05 .50 .95])';
@@ -99,7 +100,7 @@ function PlotContinuousReport(model, params, data, args)
       pdfColor, 'alpha');
   else
     paramsAsCell = num2cell(params);
-    p = model.pdfForPlot(struct('errors', vals), paramsAsCell{:});
+    p = model.pdfForPlot(vals, data, paramsAsCell{:});
     plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, ... 
          'LineWidth', 2, 'LineSmoothing', 'on');
   end

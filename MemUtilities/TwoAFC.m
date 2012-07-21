@@ -1,4 +1,4 @@
-% TwoAFC returns a structure for a model that can be fit to 2afc data
+% TwoAFC - returns a structure for a model that can be fit to 2afc data
 %
 % Requires two fields in data:
 %   data.afcCorrect - a sequence of zeros and ones, saying whether observers
@@ -17,22 +17,15 @@ function model = TwoAFC(model, samplesToApproxCDF)
     samplesToApproxCDF = 1000;
   end
   
+  % Check if we need extra information to call the pdf
+  model.requiresSeparateCDFs = DoesModelRequireExtraInfo(model);
+  
   % Take model and turn it into a 2AFC-model
   model.name = ['2AFC ' model.name];
   model.oldPdf = model.pdf;
   model.interpVals = linspace(-180, 180, samplesToApproxCDF);
   model.pdf = @NewPDF;
-  
-  % Check if we need extra information to call the pdf
-  model.requiresSeparateCDFs = false;
-  try
-    data.errors = model.interpVals;
-    params = num2cell(model.start(1,:));
-    model.oldPdf(data, params{:});
-  catch
-    model.requiresSeparateCDFs = true;
-  end
-  
+
   % Convert pdf into a 2AFC pdf
   function p = NewPDF(data, varargin)
     
