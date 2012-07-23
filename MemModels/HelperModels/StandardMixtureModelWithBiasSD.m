@@ -9,7 +9,7 @@ function model = StandardMixtureModelWithBiasSD()
   model.movestd = [1, 0.02, 1];
   
   model.pdf = @(data, mu, g, sd) ((1-g).*vonmisespdf(data.errors(:), ...
-    mu,deg2k(sd)) + (g).*unifpdf(data.errors(:),-180,180));
+    mu,deg2k(sd)) + (g).*1/360);
   
   model.start = [10, .60, 10;  
                   0, .10, 40;   % mu, g, sd

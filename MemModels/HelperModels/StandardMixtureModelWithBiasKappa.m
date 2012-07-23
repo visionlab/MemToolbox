@@ -2,8 +2,8 @@
 % with mean MU, guess rate G, and precision Kappa (i.e., the concetration
 % parameter of the von Mises distribution).
 
-function model = StandardMixtureModelWithBiasKappaPriors()
-  model.name = 'Standard mixture model with bias + priors';
+function model = StandardMixtureModelWithBiasKappa()
+  model.name = 'Standard mixture model with bias (kappa)';
   model.paramNames = {'mu', 'g', 'K'};
   model.lowerbound = [-180 0 0]; % Lower bounds for the parameters
   model.upperbound = [180 1 Inf]; % Upper bounds for the parameters
