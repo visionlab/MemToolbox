@@ -9,7 +9,7 @@
 function figHand = PlotModelFit(model, params, data, varargin)
   % Extra arguments and parsing
   args = struct('PdfColor', [0.54, 0.61, 0.06], 'NumberOfBins', 40, ...
-                'ShowNumbers', true, 'NewFigure', false); 
+                'ShowNumbers', true, 'ShowAxisLabels', true, 'NewFigure', false); 
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
@@ -78,8 +78,10 @@ function Plot2AFC(model, params, data, args)
          'LineWidth', 2, 'LineSmoothing', 'on');
        
   % Label plot
-  xlabel('Distance (degrees)', 'FontSize', 14);
-  ylabel('Probability Correct', 'FontSize', 14);
+  if args.ShowAxisLabels
+    xlabel('Distance (degrees)', 'FontSize', 14);
+    ylabel('Probability Correct', 'FontSize', 14);
+  end
   ylim([0 1]);
 end
 
@@ -115,9 +117,11 @@ function PlotContinuousReport(model, params, data, args)
     plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, ... 
          'LineWidth', 2, 'LineSmoothing', 'on');
   end
-  xlabel('Error (degrees)', 'FontSize', 14);
-  ylabel('Probability', 'FontSize', 14);
   
+  if args.ShowAxisLabels
+    xlabel('Error (degrees)', 'FontSize', 14);
+    ylabel('Probability', 'FontSize', 14);
+  end
   % Always set ylim to 120% of the histogram height, regardless of function
   % fit
   topOfY = max(n./sum(n))*1.20;
