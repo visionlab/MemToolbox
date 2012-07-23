@@ -48,6 +48,14 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
     sPass = sum(pass);
     samples(num+1:num+sPass) = curSamples(pass);
     num = num + sPass;
+  % If the model has an efficient generator, use it. otherwise use rejection sampling
+  if(isfield(model, 'generator'))
+    if r
+      samp = model.generator(params, dims, displayInfo);
+    else 
+      samp = model.generator(params, dims);
+      return;
+    end
   end
   
   samp = reshape(samples(1:n), dims);
