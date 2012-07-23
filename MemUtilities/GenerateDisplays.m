@@ -13,10 +13,27 @@ function displays = GenerateDisplays(trials, itemsPerTrial, mode)
 	
 	% iid from ciruclar uniform
 	if mode == 1
-	  displays = unifrnd(-180, 180, trials, itemsPerTrial);
+    % Generate random items
+	  displays.items = unifrnd(0, 360, itemsPerTrial, trials);
+    displays.whichIsTestItem = ceil(rand(1,trials)*itemsPerTrial);
+    
+    % Extract useful information for models
+    displays = AddUsefulInfo(displays);
 	else
 	  warning('No such mode, defaulting to iid vm.')
 	  displays = GenerateDisplays(trials,itemsPerTrial,1);
   end
+end
 
+function displays = AddUsefulInfo(displays)
+  % Add in the distance of the distractors to the target for each trial
+  allItems = 1:size(displays.items,1);
+  for i=1:size(displays.items,2)
+    whichTest = displays.whichIsTestItem(i);
+    displays.distractors(:,i) = distance(displays.items(whichTest,i), ...
+      displays.items(allItems~=whichTest, i));
+  end
+  
+  % Add set size for each trial
+  displays.n = repmat(size(displays.items,1), [1 size(displays.items,2)]);
 end
