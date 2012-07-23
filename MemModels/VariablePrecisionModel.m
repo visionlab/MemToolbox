@@ -4,7 +4,7 @@
 % is a wrapped normal.
 
 function model = VariablePrecisionModel()
-  model.name = 'Variable Precision Model';
+  model.name = 'Variable precision model';
 	model.paramNames = {'g', 'sigma', 'df'};
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
 	model.upperbound = [1 Inf 100]; % Upper bounds for the parameters

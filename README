@@ -8,7 +8,28 @@ in MATLAB using the MemToolbox (citation)."
 
 Citation goes here
 
-MemDemos        - experiment code and data analysis scripts	
-MemData         - real and simulated data sets
-MemModels       - models of working memory from the literature
-vonmisesrnd     - von Mises random numbers
+Contents:
+MemFit.m				    - a general purpose fitting tool
+MemTutorial         - a walkthrough of the toolbox
+MemModels           - models of working memory from the literature
+MemData             - real and simulated data sets
+MemFitting          - tools to fit models to data
+MemModelComparison  - tools to compare the ability of models to fit the data
+MemPlots            - visualization tools
+MemExperiments      - experiment scripts
+MemUtilities        - internal helper functions
+GeneralHelpers      - helper functions that might be useful elsewhere
+MemTests            - scripts that test toolbox functionality
+paper.pdf           - a high-level overview of the toolbox
+Setup.m             - adds the toolbox and its subfolders to the path
+LICENSE             - the terms under which this toolbox is licensed (BSD)
+README              - chances are you've figured this out by now
+Contents            - a list very much like this one
+
+Dependencies:
+	1. The Statistics Toolbox (http://www.mathworks.com/products/statistics/) is   		
+     needed for all of the major functionality of the toolbox.
+	2. The Psychophysics Toolbox (http://psychtoolbox.org) is needed only for 
+		 the experiment scripts in MemExperiments.
+
+

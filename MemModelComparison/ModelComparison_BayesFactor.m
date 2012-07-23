@@ -81,7 +81,7 @@ function [logBayesFactor,logPosteriorOdds,posteriorOdds] = ModelComparison_Bayes
   
   % Get samples from prior
   if args.Verbosity > 0
-    fprintf('\nComparing %d models:\n', length(models));
+    fprintf('\nComparing the %d models...\n', length(models));
   end
   for m = 1:length(models)
     if args.Verbosity > 0
@@ -97,7 +97,7 @@ function [logBayesFactor,logPosteriorOdds,posteriorOdds] = ModelComparison_Bayes
     % Bayes factor is the average likelihood of 
     % each model, weighted by the prior.
     if args.Verbosity > 0
-      fprintf('   - calculating likelihoods for model %d: %s\n', m, models{m}.name);
+      fprintf('  Calculating likelihoods for model %d: %s\n', m, models{m}.name);
     end
     for i=1:size(priorSamples{m}.vals,1)
       params = num2cell(priorSamples{m}.vals(i,:));

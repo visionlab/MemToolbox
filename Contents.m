@@ -19,15 +19,14 @@
 % 
 % [citation goes here]
 % 
-% MemData            - real and simulated data sets
-% MemExperiments     - run simple continuous report experiments
-% MemFitting         - fit models to data using MLE, MCMC or grid search
-% MemModelComparison - compare the fit of different models to a dataset
-% MemModels          - models of working memory from the literature
-% MemPlots           - plot data, models and model fits
-% MemTests           - ensure MemToolbox functions are working correctly
-% MemTutorial        - demos and a tutorial walkthrough
-% MemUtilities       - simple functions that standalone from MemToolbox
-%
-% MemFit.m           - the primary fitting function of MemToolbox
-%
+% Contents:
+% MemFit.m            - a general purpose fitting tool
+% MemTutorial         - a walkthrough of the toolbox
+% MemModels           - models of working memory from the literature
+% MemData             - real and simulated data sets
+% MemFitting          - tools to fit models to data
+% MemModelComparison  - tools to compare the ability of models to fit the data
+% MemPlots            - visualization tools
+% MemUtilities        - internal helper functions
+% GeneralHelpers      - helper functions that might be useful elsewhere
+% MemTests            - scripts that test toolbox functionality
