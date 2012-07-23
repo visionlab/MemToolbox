@@ -1,6 +1,6 @@
-% ModelComparison_AIC_BIC - Calculates AIC and BIC values for models
+% ModelComparison_AIC_BIC - Calculates AIC, AICc, and BIC values for models
 
-function [aic, bic, logLike] = ModelComparison_AIC_BIC(data, models)
+function [AIC, BIC, logLike, AICc] = ModelComparison_AIC_BIC(data, models)
   
   if length(models) < 2
     error('Model comparison requires a cell array of at least two models.');
@@ -18,8 +18,10 @@ function [aic, bic, logLike] = ModelComparison_AIC_BIC(data, models)
      % Get max posterior
      [params, logLike(md)] = MAP(data, models{md});
      
-     % Calc AIC/BIC
-     aic(md) = -logLike(md) + 2*length(models{md}.upperbound);
-     bic(md) = -logLike(md) + log(dataLen)*length(models{md}.upperbound);
+     % Calc AIC/AICc/BIC
+     k = length(models{md}.upperbound);
+     AIC(md) = -2*logLike(md) + 2*k;
+     AICc(md)= AIC(md) + (2*k*(k+1))/(dataLen-k-1);
+     BIC(md) = -2*logLike(md) + log(dataLen)*length(models{md}.upperbound);
    end   
 end
