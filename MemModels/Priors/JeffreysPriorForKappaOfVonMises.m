@@ -1,4 +1,5 @@
 function y = JeffreysPriorForKappaOfVonMises(K)
-  z = besseli(1,K) ./ besseli(0,K);
+  % Do calculation in log space to avoid overflow
+  z = exp((log(besseli(1,K,1)) + K) - (log(besseli(0,K,1)) + K));
   y = z .* (K - z - K.*z.^2);
 end
