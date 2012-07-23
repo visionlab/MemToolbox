@@ -1,6 +1,6 @@
 % ModelComparison_DIC - Calculates DIC values for models
 %
-%  DIC is a generalisation of Akaike's Information Criterion (AIC)
+%  DIC is a generalization of Akaike's Information Criterion (AIC)
 %  designed for hierarchical models.  It estimates the "effective number of
 %  parameters" based on the spread of the posterior distribution, and thus
 %  does not penalize models for having more parameters but rather penalizes
