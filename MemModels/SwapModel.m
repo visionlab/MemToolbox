@@ -15,6 +15,8 @@ function model = SwapModel()
   
   model.pdf = @SwapModelPDF;
   
+  model.generator = @SwapModelGenerator;
+  
 	model.start = [0.2, 0.1, 10;  % g, B, K
     0.4, 0.1, 15;  % g, B, K
     0.1, 0.5, 20]; % g, B, K
@@ -24,8 +26,6 @@ function model = SwapModel()
   model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
     betapdf(p(2),1.25,2.5) * ... % for B
     lognpdf(deg2k(p(3)),2,0.5)); % for sd
-  
-  model.generator = @SwapGenerator;
 end
 
 function p = SwapModelPDF(data, g, B, sd)
@@ -46,9 +46,23 @@ function p = SwapModelPDF(data, g, B, sd)
   end
 end
 
-% TODO: Make this generate based on the actual displays
-function r = SwapGenerator(p, dims)
-    model = StandardMixtureModelWithBiasSD();
-    r = model.generator({0, p{1}+p{2}-p{1}*p{2}, p{3}}, dims);
-end
+% swap model random number generator
+function y = SwapModelGenerator(params,dims,displayInfo)
+  
+  n = prod(dims);
+  y = zeros(n,1);
+  
+  for i = 1:n
+    r = rand;
+    if(r < params{1}) % guess
+      y(i) = unifrnd(-180,180);
+    elseif(r < params{1} + params{2}) % swap
+      whichDistractor = randi(size(displayInfo.distractors,1));
+      y(i) = vonmisesrnd(displayInfo.distractors(whichDistractor,i),deg2k(params{3}));
+    else % remember
+      y(i) = vonmisesrnd(0,deg2k(params{3}));
+    end
+  end
 
+  y = reshape(y,dims);
+end
