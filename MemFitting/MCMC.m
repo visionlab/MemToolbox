@@ -174,6 +174,9 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
   startInfo.acceptance = mean(acceptance);
   if verbosity >= 2
     fprintf('    MCMC chain acceptance rate: %0.2f\n', mean(acceptance));
+    fprintf('    Values: ');
+    fprintf('%0.2f\t', posteriorSamples.vals(end,:));
+    fprintf('\n');
   end
 end
 
@@ -208,4 +211,5 @@ function b = IsConverged(posteriorSamples, convergenceVariance, verbosity)
   end
   b = all(r<convergenceVariance | isnan(r));
 end
+
 
