@@ -227,7 +227,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
       fprintf('\n');
     end
     
-    fprintf('Just a moment while MTB fits these models to your data...\n\n');
+    fprintf('Just a moment while MTB fits these models to your data...\n\n\n');
   end
   
   % Model comparison & results
@@ -253,8 +253,9 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   end
   
   function printStat(name,stats,f)
+    DescribeModelComparisonMethod(name);
     % Print headers
-    fprintf(['model\t' name '\n']);
+    fprintf(['\nmodel\t' name '\n']);
     fprintf(['-----\t' repmat('-', 1, length(name)) '\n']);
     % Print model-specific stats
     if(~strcmp(name,'Log Bayes factor'))
@@ -271,8 +272,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
       fprintf('%d:%d\t%g\n', combos(i,1), combos(i,2), ...
               f(stats, combos(i,1), combos(i,2)));
     end
-    DescribeModelComparisonMethod(name);
-    fprintf('\n');
+    fprintf('\n\n\n');
   end
 end
 
