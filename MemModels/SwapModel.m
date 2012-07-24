@@ -59,17 +59,24 @@ end
 % Swap model random number generator
 function y = SwapModelGenerator(params,dims,displayInfo)
   n = prod(dims);
+
+  % Assign types to trials
+  r = rand(n,1);
+  which = zeros(n,1); % default = remembered
+  which(r<params{1}+params{2}) = randi(size(displayInfo.distractors,1), ...
+    sum(r<params{1}+params{2}), 1); % swap to random distractor
+  which(r<params{1}) = -1; % guess
+  
+  % Fill in with errors
   y = zeros(n,1);
-  for i = 1:n
-    r = rand;
-    if(r < params{1}) % guess
-      y(i) = unifrnd(-180,180);
-    elseif(r < params{1} + params{2}) % swap
-      whichDistractor = randi(size(displayInfo.distractors,1));
-      y(i) = vonmisesrnd(displayInfo.distractors(whichDistractor,i),deg2k(params{3}));
-    else % remember
-      y(i) = vonmisesrnd(0,deg2k(params{3}));
-    end
+  y(which==-1) = rand(sum(which==-1), 1)*360 - 180;
+  y(which==0)  = vonmisesrnd(0,deg2k(params{3}), [sum(which==0) 1]);
+  
+  for d=1:size(displayInfo.distractors,1)
+    y(which==d) = vonmisesrnd(displayInfo.distractors(d,(which==d))', ...
+      deg2k(params{3}), [sum(which==d) 1]);
   end
+  
+  % Reshape
   y = reshape(y,dims);
 end
