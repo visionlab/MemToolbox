@@ -27,9 +27,5 @@ README              - chances are you've figured this out by now
 Contents            - a list very much like this one
 
 Dependencies:
-	1. The Statistics Toolbox (http://www.mathworks.com/products/statistics/) is   		
-     needed for all of the major functionality of the toolbox.
-	2. The Psychophysics Toolbox (http://psychtoolbox.org) is needed only for 
-		 the experiment scripts in MemExperiments.
-
-
+1. The Statistics Toolbox (http://www.mathworks.com/products/statistics/) is needed for all of the major functionality of the toolbox.
+2. The Psychophysics Toolbox (http://psychtoolbox.org) is needed only for the experiment scripts in MemExperiments.
