@@ -152,7 +152,8 @@ function fit = MemFit_SingleData(data, model, verbosity)
   
   % Do the fitting
   posteriorSamples = MCMC(data, model, 'Verbosity', verbosity-1, ...
-    'PostConvergenceSamples', 3000, 'BurnInSamplesBeforeCheck', 200);
+    'PostConvergenceSamples', 1500*length(model.paramNames), ...
+    'BurnInSamplesBeforeCheck', 200);
   fit = MCMCSummarize(posteriorSamples);
   fit.posteriorSamples = posteriorSamples;
   
