@@ -271,8 +271,8 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
       fprintf('%d:%d\t%g\n', combos(i,1), combos(i,2), ...
               f(stats, combos(i,1), combos(i,2)));
     end
+    DescribeModelComparisonMethod(name);
     fprintf('\n');
-    %DescribeModelComparisonResults(name,stats);
   end
 end
 
