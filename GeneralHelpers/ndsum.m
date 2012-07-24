@@ -1,3 +1,4 @@
+% Multidimensional summation
 function x = ndsum(x, dim)
   newSize = size(x);
   newSize(dim) = [];

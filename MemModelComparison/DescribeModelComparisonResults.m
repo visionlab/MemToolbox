@@ -1,3 +1,4 @@
+% Describe in words the various model comparsion metrics
 function DescribeModelComparisonResults(name,stats)
   fprintf('* ')
   switch name

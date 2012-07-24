@@ -1,3 +1,4 @@
+% Cumulative distribution function of the von Mises distribution.
 function cdf = vonmisescdf (x, mu, k)
   % For large numbers of points, it is faster to just integrate by hand
   % and interpolate

@@ -1,4 +1,4 @@
-% converts the parameters of a student's t distribution (degrees of freedom df
+% Converts the parameters of a student's t distribution (degrees of freedom df
 % and standard deviation sd) to the corresponding gamma distribution that
 % produces it when used as a mixing distribution for a scale mixture of 
 % normals.

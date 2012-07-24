@@ -7,28 +7,7 @@ function y = wrappedtpdf(x, mu, sigma, df, nWraps)
 	a = tlspdf(x2+add, mu, sigma, df);
 	y = reshape(sum(a,1),size(x));
 end
-
-% function y = wrappedtpdf(x, mu, sigma, df, w)
-% 	
-% 	if (nargin < 5) w = 200; end
-% 	
-% 	n = prod(size(x));
-% 	y = zeros(n,1); % preallocate
-% 	tau = 2*pi;
-% 	
-% 	for i = 1:n
-% 		y(i) = sum(tpdf(([(x(i) - w*tau : tau : x(i) + w*tau)] - mu)./sigma, df));
-% 	end
-% 	y = reshape(y, size(x));
-
-% function p = wrappedtpdf(x, mu, sigma, df)
-%     valsRange = 200;
-%     add = (-valsRange:valsRange)' * (zeros(1,length(x))+2*pi);
-%     x = repmat(x', [valsRange*2+1, 1])
-%     a = tlspdf(x+add,mu,sigma,df);
-%     p = sum(a,1);
-% end
-% 
+ 
 % % ------------------------------------------------------------------------
 % % From Wikipedia:
 % % This distribution results from compounding a Gaussian distribution with 

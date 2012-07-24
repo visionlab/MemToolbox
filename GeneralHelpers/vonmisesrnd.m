@@ -3,10 +3,6 @@ function thetas = vonmisesrnd(mu, kappa, varargin)
 % theta = vonmisesrnd(mu, kappa, n) returns an n-by-n matrix containing pseudorandom
 % values drawn from a von Mises distribution with mean mu and spread kappa. Similarly,
 % vonmisesrnd(mu, kappa, [M,N,P]) returns and M-by-N-by-P-by-... array.
-% 
-% Notes and stuff to do:
-%	1. Improve performance for n < 20
-%	2. Slaughters circstats and jv10 for n > 100, randraw for n < 5000
 %
 % References:
 %	[1] Best, D.J. & Fisher, N.I. (1979). Efficient simulation of the von Mises distribution.
