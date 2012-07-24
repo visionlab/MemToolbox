@@ -36,14 +36,14 @@ function [dic, pD] = ModelComparison_DIC(data, models, varargin)
   end
   
   if args.Verbosity > 0
-    fprintf('\nComparing %d models:\n', length(models));
+    fprintf('\nComparing %d models by DIC:\n', length(models));
   end 
   
    % Fit each model...
    for md = 1:length(models)
      models{md} = EnsureAllModelMethods(models{md});
      if args.Verbosity > 0
-       fprintf('  Sampling from model %d: %s\n', md, models{md}.name);
+       fprintf('- Sampling from model %d: %s\n', md, models{md}.name);
      end
      if isempty(args.PosteriorSamples)
        posteriorSamples = MCMC(data, models{md}, 'Verbosity', 0);

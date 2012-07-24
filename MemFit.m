@@ -246,6 +246,12 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     printStat('Log posterior odds', fit.logPosteriorOdds);
   end
   
+  fit.DIC = ModelComparison_DIC(data, modelCellArray);
+  if verbosity > 0
+    fprintf('\n');
+    printStat('DIC', fit.DIC);
+  end
+  
   function printStat(name,stats,f)
     % Print headers
     fprintf(['model\t' name '\n']);
