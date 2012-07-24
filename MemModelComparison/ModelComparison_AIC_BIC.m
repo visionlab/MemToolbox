@@ -38,7 +38,7 @@ function [AIC, BIC, logLike, AICc] = ModelComparison_AIC_BIC(data, models)
      % Calc AIC/AICc/BIC
      k = length(models{md}.upperbound);
      AIC(md) = -2*logLike(md) + 2*k;
-     AICc(md)= AIC(md) + (2*k*(k+1))/(dataLen-k-1);
-     BIC(md) = -2*logLike(md) + log(dataLen)*length(models{md}.upperbound);
+     AICc(md)= -2*logLike(md) + 2*k * (dataLen / (dataLen - k - 1));
+     BIC(md) = -2*logLike(md) + log(dataLen)*k;
    end   
 end
