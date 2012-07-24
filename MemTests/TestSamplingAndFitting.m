@@ -61,7 +61,7 @@ function [paramsOut, lowerCI, upperCI] = ...
 
     % Generate error data for these displays:
     data = displays;
-    data.errors = SampleFromModel(model, paramsIn, [numTrials(i),1], displays);
+    data.errors = SampleFromModel(model, paramsIn, [1,numTrials(i)], displays);
     
     % Now try to recover the parameters that led to these errors:
     posteriorSamples = MCMC(data, model, 'Verbosity', 0);
