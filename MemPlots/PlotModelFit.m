@@ -46,7 +46,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
     for i=1:length(params)
       txt = [txt sprintf('%s: %.3g\n', model.paramNames{i}, params(i))];
     end
-    text(180, topOfY-0.02, txt, 'HorizontalAlignment', 'right');
+    text(180, topOfY-topOfY*0.05, txt, 'HorizontalAlignment', 'right');
   end
 end
 

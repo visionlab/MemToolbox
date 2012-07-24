@@ -23,11 +23,11 @@ function model = SlotModel()
 	model.paramNames = {'capacity', 'sd'};
 	model.lowerbound = [0 0]; % Lower bounds for the parameters
 	model.upperbound = [Inf Inf]; % Upper bounds for the parameters
-	model.movestd = [0.25, 0.1];
+	model.movestd = [1, 0.1];
 	model.pdf = @slotpdf;
 	model.start = [1, 4;  % capacity, sd
                  4, 15;  % capacity, sd
-                 6, 40]; % capacity, sd
+                 10,40]; % capacity, sd
   model.prior = @(p) (ImproperUniform(p(1)) .* ... % for capacity
                       JeffreysPriorForKappaOfVonMises(deg2k(p(2))));
                       
@@ -36,13 +36,7 @@ function model = SlotModel()
 end
 
 function y = slotpdf(data,capacity,sd)
-  % Limit capacity to the largest data.n
-  if all(data.n < capacity)
-    y = zeros(size(data.errors(:)));
-    return;
-  end
-  
-  g = (1 - max(0,min(1,capacity./data.n(:))));
+  g = (1 - max(0,min(1,capacity./data.n)));
 
   y = (1-g).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
         (g).*unifpdf(data.errors(:),-180,180);

@@ -12,30 +12,20 @@ function model = SwapModel()
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
 	model.upperbound = [1 1 Inf]; % Upper bounds for the parameters
 	model.movestd = [0.02, 0.02, 0.1];
+  
   model.pdf = @SwapModelPDF;
-  model.modelPlot = @model_plot;
+  
   model.generator = @SwapModelGenerator;
+  
 	model.start = [0.2, 0.1, 10;  % g, B, K
     0.4, 0.1, 15;  % g, B, K
     0.1, 0.5, 20]; % g, B, K
+  
   model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(3))); % SD
   
   model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
     betapdf(p(2),1.25,2.5) * ... % for B
     lognpdf(deg2k(p(3)),2,0.5)); % for sd
-  
-  % Use our custom modelPlot to make a plot of errors centered on
-  % distractors (ala Bays, Catalao & Husain, 2009, Figure 2B)
-  function figHand = model_plot(data, params, varargin)
-    d.errors = [];
-    for i=1:length(data.errors)
-      d.errors = [d.errors; distance(data.errors(i), data.distractors(:,i))];
-    end
-    m = StandardMixtureModel();
-    f = MAP(d, m);
-    figHand = PlotModelFit(m, f, d, 'NewFigure', true);
-    title('Error relative to distractor locations', 'FontSize', 14);
-  end
 end
 
 function p = SwapModelPDF(data, g, B, sd)
@@ -56,10 +46,12 @@ function p = SwapModelPDF(data, g, B, sd)
   end
 end
 
-% Swap model random number generator
+% swap model random number generator
 function y = SwapModelGenerator(params,dims,displayInfo)
+  
   n = prod(dims);
   y = zeros(n,1);
+  
   for i = 1:n
     r = rand;
     if(r < params{1}) % guess
@@ -71,5 +63,6 @@ function y = SwapModelGenerator(params,dims,displayInfo)
       y(i) = vonmisesrnd(0,deg2k(params{3}));
     end
   end
+
   y = reshape(y,dims);
 end
