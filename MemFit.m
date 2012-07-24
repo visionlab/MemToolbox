@@ -128,7 +128,7 @@ function fit = MemFit(varargin)
     end
     
   else
-    % if we get here, throw an error
+    % If we get here, throw an error
     error('MemToolbox:MemFit:TooManyInputs', 'That''s just too much to handle.');
   end
 end
@@ -136,7 +136,7 @@ end
 %-----------------------------
 function fit = MemFit_SingleData(data, model, verbosity)
   if(verbosity > 0)
-    % tell the user what's to come;
+    % Tell the user what's to come;
     if isfield(data, 'errors')
       fprintf('\nError histogram:   ')
       PlotAsciiHist(data.errors);
@@ -150,13 +150,13 @@ function fit = MemFit_SingleData(data, model, verbosity)
     pause(0.5);
   end
   
-  % do the fitting
+  % Do the fitting
   posteriorSamples = MCMC(data, model, 'Verbosity', verbosity-1);
   fit = MCMCSummarize(posteriorSamples);
   fit.posteriorSamples = posteriorSamples;
   
   if(verbosity > 0)
-    % display the results
+    % Display the results
     fprintf('\n...finished. Now let''s view the results:\n\n')
     fprintf('parameter\tMAP estimate\tlower CI\tupper CI\n')
     fprintf('---------\t------------\t--------\t--------\n')
@@ -170,7 +170,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
   end
   
   if(verbosity > 0)
-    % optional interactive visualization
+    % Optional interactive visualization
     fprintf('\n');
     r = input('Would you like to see the fit? (y/n): ', 's');
     if(strcmp(r,'y'))
@@ -234,17 +234,38 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     
   [fit.AIC, fit.BIC, fit.logLike, fit.AICc] = ModelComparison_AIC_BIC(data, modelCellArray);
   
+  % Print stats
   if verbosity > 0
+    printStat('Bayes factor', fit.bayesFactor, @(s,m1,m2) (s(m1,m2)));
     printStat('Log likelihood', fit.logLike);
     printStat('AIC', fit.AIC);
+    printStat('AICc', fit.AICc);
+    printStat('BIC', fit.BIC);
+    printStat('Log posterior odds', fit.logPosteriorOdds);
   end
   
-  function printStat(name,stats)
+  function printStat(name,stats,f)
+    % Print headers
     fprintf(['model\t' name '\n']);
-    fprintf(['-----\t' repmat('-', 1, length(name)) '\n'])
+    fprintf(['-----\t' repmat('-', 1, length(name)) '\n']);
+    % Print model-specific stats
+    if(~strcmp(name,'Bayes factor'))
+      for modelIndex = 1:length(stats)
+        fprintf('%d\t%g\n',modelIndex,stats(modelIndex));
+      end
+    end
+    % Print model vs. model stats, default is difference
+    if nargin < 3
+      f = @(s,m1,m2) (s(m1) - s(m2));
+    end
+    combos = combnk([1:length(stats)],2);
+    for i = 1:size(combos,1)
+      fprintf('%d:%d\t%g\n', combos(i,1), combos(i,2), ...
+              f(stats, combos(i,1), combos(i,2)));
+    end
+    fprintf('\n');
+    %DescribeModelComparisonResults(name,stats);
   end
-  
-  
 end
 
 %-----------------------------
