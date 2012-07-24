@@ -238,7 +238,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   
   % Print stats
   if verbosity > 0
-    printStat('Bayes factor', fit.bayesFactor, @(s,m1,m2) (s(m1,m2)));
+    printStat('Log Bayes factor', fit.bayesFactor, @(s,m1,m2) (s(m1,m2)));
     printStat('Log likelihood', fit.logLike);
     printStat('AIC', fit.AIC);
     printStat('AICc', fit.AICc);
@@ -257,7 +257,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     fprintf(['model\t' name '\n']);
     fprintf(['-----\t' repmat('-', 1, length(name)) '\n']);
     % Print model-specific stats
-    if(~strcmp(name,'Bayes factor'))
+    if(~strcmp(name,'Log Bayes factor'))
       for modelIndex = 1:length(stats)
         fprintf('%d\t%g\n',modelIndex,stats(modelIndex));
       end

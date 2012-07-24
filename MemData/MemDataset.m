@@ -1,4 +1,4 @@
-% MemDataset - Return real data from examples included in MemToolbox
+% MemDataset - Returns data from examples included in MemToolbox
 %
 function data = MemDataset(whichData)
   if(nargin < 1)
