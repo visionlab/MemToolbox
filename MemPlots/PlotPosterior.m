@@ -19,7 +19,7 @@ function figHand = PlotPosterior_MCMC(posteriorSamples, paramNames)
   for p=1:N
     for p2=1:(p-1)
       subplot(N,N,sub2ind([N N],p,p2));
-      [V,C] = hist3(posteriorSamples.vals(:,[p p2]), [20 20]);
+      [V,C] = hist3(posteriorSamples.vals(:,[p p2]), [15 15]);
       imagesc(C{1}, C{2}, V');
       set(gca,'YDir','normal');
       set(gca, 'box', 'off');
