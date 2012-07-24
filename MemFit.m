@@ -196,6 +196,12 @@ function fit = MemFit_SingleData(data, model, verbosity)
       % Posterior predictive
       h = PlotPosteriorPredictiveData(model, posteriorSamples, data);
       subfigure(2,2,3, h);
+      
+      % Customizable model-based plot
+      if isfield(model, 'modelPlot')
+        h = model.modelPlot(data, posteriorSamples);
+        subfigure(2,2,4, h);
+      end
     end
   end
   if(verbosity > 0)
@@ -219,28 +225,26 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
       fprintf('\n');
     end
     
-    fprintf('\nJust a moment while MTB fits these models to your data...\n\n');
+    fprintf('Just a moment while MTB fits these models to your data...\n\n');
   end
   
   % Model comparison & results
-  [fit.bayesFactor,fit.posteriorOdds,fit.fullPosterior] = ...
-    ModelComparison_BayesFactor(data, modelCellArray);
+  [fit.bayesFactor,fit.logPosteriorOdds,fit.posteriorOdds] = ...
+    ModelComparison_BayesFactor(data, modelCellArray, 'Verbosity', 0);
+    
+  [fit.AIC, fit.BIC, fit.logLike, fit.AICc] = ModelComparison_AIC_BIC(data, modelCellArray);
   
-  fprintf('model\tlog L\tAIC\tprop. preferred\tlog Bayes factor\n');
-  fprintf('-----\t-----\t---\t---------------\t----------------\n');
-  for modelIndex = 1:length(modelCellArray)
-      
-      [logLike,i] = max(fit.fullPosterior{modelIndex}.logLikeMatrix(:));      
-      AIC = 2*(length(modelCellArray{modelIndex}.paramNames)) - 2*logLike;
-      fit.AIC(modelIndex) = AIC;
-      fprintf('%d\t%0.f\t%0.f\t%0.4f\t\t%3.2f\n',  ...
-        modelIndex, ...
-        logLike,  ...
-        AIC, ...
-        -Inf, ... % in the works.
-        fit.bayesFactor(modelIndex));
+  if verbosity > 0
+    printStat('Log likelihood', fit.logLike);
+    printStat('AIC', fit.AIC);
   end
-
+  
+  function printStat(name,stats)
+    fprintf(['model\t' name '\n']);
+    fprintf(['-----\t' repmat('-', 1, length(name)) '\n'])
+  end
+  
+  
 end
 
 %-----------------------------
