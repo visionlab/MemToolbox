@@ -3,19 +3,19 @@
 %     -pi ___.-'-.___ pi
 %
 function PlotAsciiHist(data,n)
-    % check input
+    % Check input
     if nargin < 2
         n = 21;
     end
    
-    % bin the data
+    % Bin the data
     bins = linspace(-180+(180/(2*n)), 180-(180/(2*n)), n);
     m = hist(data, bins);
     
-    % figure out highest bin
+    % Figure out highest bin
     maxBin = max(m);
     
-    % build the histogram
+    % Build the histogram
     symbols = {'_', '.', '-', ''''};
     h = '-180 ';
     for i = 1:n
@@ -24,7 +24,7 @@ function PlotAsciiHist(data,n)
     end
     h = [h, ' +180'];
     
-    % display the histogram
+    % Display the histogram
     disp(h);
 end
 

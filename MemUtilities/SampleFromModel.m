@@ -7,7 +7,7 @@
 %    simulatedData = SampleFromModel(model, paramsIn, [1,1000]);
 %    paramsOut = MCMC(simulatedData, model);
 %
-%  If the model you pass in requires extra information for it's pdf, for
+%  If the model you pass in requires extra information for its pdf, for
 %  example SwapModel (which requires .distractors), then you must pass in
 %  display information as the 4th parameter (e.g., a data struct that has
 %  .distractors), and the dimensions you request back (third parameter,

@@ -21,7 +21,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   hold on;
   for i=1:length(which)
     
-    % Generate random data from this distrib. with these parameters
+    % Generate random data from this distribution with these parameters
     asCell = num2cell(posteriorSamples.vals(which(i),:));
     yrep = SampleFromModel(model, asCell, size(data.errors), data);
        
@@ -30,7 +30,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     n = n ./ sum(n(:));
     hSim = plot(x, n, '-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
     
-    % Diff between this data and real data
+    % Difference between this data and real data
     diffPlot(i,:) = nData - n;
   end  
 

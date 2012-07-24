@@ -1,22 +1,5 @@
 % SLOTMODEL returns a structure for a two-component mixture model with 
-% capacity K and precision sd.
-%
-% In addition to data.errors, requires data.n (the set size for each trial)
-%
-% Parameter explanation: 
-%
-% Capacity is the maximum number of independent representations. 
-% If the set size is greater than capacity some guesses will occur.  
-% For example, if participants can store 3 items but have to remember 6,
-% participants will guess 50% of the time. 
-%
-% Precision is the uncertainty of stored representations. 
-% Precision is constant across set size
-% 
-% SLOTMODEL uses capacity and precision to fit data across multiple set sizes. 
-%
-% TO DO
-%   Make a version that fits at one set size and generates to a novel set size
+% capacity K, precision sd, and bias mu.
 
 function model = SlotWithBiasModel()
   model.name = 'Slot model with bias';

@@ -6,7 +6,7 @@
 
 function displays = GenerateDisplays(trials, itemsPerTrial, mode)
     
-  % default mode is 0 (iid from circular)	
+  % Default mode is 0 (iid from circular)	
 	if nargin < 3
 	  mode = 1; 
   end

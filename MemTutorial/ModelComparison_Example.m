@@ -30,7 +30,7 @@ function ModelComparison_Example()
   PlotModelFit(model1, maxPosterior{1}, data, 'NewFigure', true);
   PlotModelFit(model2, maxPosterior{2}, data, 'NewFigure', true);
   
-  % Model comparison with bayes factor 
+  % Model comparison with Bayes factor 
   %--------------------------------------------
   fprintf('BAYES FACTOR \n-----------------------------------\n');
   % Run

@@ -1,31 +1,21 @@
 % SLOTMODEL returns a structure for a two-component mixture model with 
-% capacity K and precision sd.
+% capacity K and precision sd. Capacity is the maximum number of independent 
+% representations. If the set size is greater than capacity some guesses will
+% occur. For example, if participants can store 3 items but have to remember 6,
+% participants will guess 50% of the time. Precision is the uncertainty of 
+% stored representations, and is assumed to be constant across set size.
 %
 % In addition to data.errors, requires data.n (the set size for each trial)
 %
-% Parameter explanation: 
-%
-% Capacity is the maximum number of independent representations. 
-% If the set size is greater than capacity some guesses will occur.  
-% For example, if participants can store 3 items but have to remember 6,
-% participants will guess 50% of the time. 
-%
-% Precision is the uncertainty of stored representations. 
-% Precision is constant across set size
-% 
-% SLOTMODEL uses capacity and precision to fit data across multiple set sizes. 
-%
-% TO DO
-%   Make a version that fits at one set size and generates to a novel set size
 
 function model = SlotModel()
   model.name = 'Slot model';
 	model.paramNames = {'capacity', 'sd'};
-	model.lowerbound = [0 0]; % Lower bounds for the parameters
+	model.lowerbound = [0 0];     % Lower bounds for the parameters
 	model.upperbound = [Inf Inf]; % Upper bounds for the parameters
 	model.movestd = [0.25, 0.1];
 	model.pdf = @slotpdf;
-	model.start = [1, 4;  % capacity, sd
+	model.start = [1, 4;   % capacity, sd
                  4, 15;  % capacity, sd
                  6, 40]; % capacity, sd
   model.prior = @(p) (ImproperUniform(p(1)) .* ... % for capacity

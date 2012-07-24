@@ -27,7 +27,7 @@ function TestAllModels(numTrials, numItemsPerTrial)
     for s=1:size(models{md}.start,1)
       fprintf(' -- trying to recover params (%d of %d): ', s, size(models{md}.start,1));
       
-      % Try sampling and fitting this model at each value of it's start
+      % Try sampling and fitting this model at each value of its start
       % parameters:
       paramsIn = models{md}.start(s,:);
       asCell = num2cell(models{md}.start(s,:));

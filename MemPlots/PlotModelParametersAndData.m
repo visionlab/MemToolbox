@@ -29,7 +29,7 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
   for i=1:length(which)
     valuesNormalized(i,:) = (values(i,:) - minVals) ./ (maxVals - minVals);
     
-    % desaturate if not MAP
+    % Desaturate if not MAP
     if i < length(which)
         colorOfLine = desaturate(map(order==i,:));
     else

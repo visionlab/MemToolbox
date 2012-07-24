@@ -1,10 +1,10 @@
-% checks to make sure that the data is in the expected format (in the range 
+% Checks to make sure that the data is in the expected format (in the range 
 % [-180,180]. if unsalvageable, it throws errors. otherwise, throws warnings
 % and does its best to massage data into the range (-180, 180).
 function [data, pass] = ValidateData(data)
     pass = true; % always pass if you make it through without an error()
        
-    % rename according to MTB standards when appropriate
+    % Rename according to MTB standards when appropriate
     if ~isfield(data, 'errors') & isfield(data, 'error')
       data.errors = data.error;
       data = rmfield(data, 'error');
@@ -14,7 +14,7 @@ function [data, pass] = ValidateData(data)
         error('Data should be passed in as a struct with a field data.errors or data.afcCorrect');
     end
     
-    % check that the error values are in the correct range, otherwise massage
+    % Check that the error values are in the correct range, otherwise massage
     if isfield(data, 'errors')
       if(isempty(data.errors))
         error('The data vector should not be empty.');
@@ -34,7 +34,7 @@ function [data, pass] = ValidateData(data)
       end
     end
     
-    % add in some checking of auxilliary data struct fields. for example,
+    % Add in some checking of auxilliary data struct fields. for example,
     % it would probably be good to make sure that any field called RT has
     % only non-negative numbers.
 end
@@ -49,7 +49,7 @@ function throwRangeWarning(rangeString)
              ' It looks like you provided data in the range ' rangeString '.\n']);
 end
 
-% is the object an MTB data struct? passes iff the object is a struct
+% Is the object an MTB data struct? passes iff the object is a struct
 % containing a field called 'errors'.
 function pass = isDataStruct(object)
   pass = (isstruct(object) && (isfield(object,'errors') || isfield(object, 'afcCorrect')));

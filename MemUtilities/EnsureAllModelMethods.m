@@ -4,7 +4,7 @@ function model = EnsureAllModelMethods(model)
     model.prior = @(params)(1);
   end
   
-  % if no logpdf, create one from pdf
+  % If no logpdf, create one from pdf
   if ~isfield(model, 'logpdf')
     model.logpdf = @(varargin)(nansum(log(model.pdf(varargin{:}))));
   end

@@ -1,11 +1,5 @@
 % MemDataset - Return real data from examples included in MemToolbox
 %
-% Parameters:
-%   MemDataset(experimentNumber)
-%    
-%   experimentNumber - 1, 2, or 3, depending on which subject. Experimental
-%   conditions were .... [].
-%
 function data = MemDataset(whichData)
   if(nargin < 1)
     whichData = 1;

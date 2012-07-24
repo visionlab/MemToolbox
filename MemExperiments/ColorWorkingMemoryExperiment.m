@@ -4,16 +4,7 @@
 %   probed square using a continuous report task. 
 %    
 %	Preferences can be found down at the bottom, beginning on line 197. 
-%   Important preferences include:    
-%   number of distinct items
-%   retention interval
-%   encoding duration
-%   number of trials per condition
 %
-% To do:
-%		2. ensure accurate timing (i.e., kill missed flip deadlines)
-%		3. add option to remove contantly present color wheel
-%		5. add optional data visualization and analysis
 
 function ColorWorkingMemoryExperiment()
   
