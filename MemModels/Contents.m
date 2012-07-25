@@ -7,6 +7,7 @@
 % Mixture models:
 %   StandardMixtureModel   - guess rate, precision and (optional) bias.
 %   SwapModel              - guess rate, precision and swaps to other items.
+%   SwapWithBiasModel      - a SwapModel with bias mu
 %   VariablePrecisionModel - a StandardMixtureModel with higher-order variability (in the precision)
 %
 % Models parameterized based on set size:
