@@ -1,4 +1,4 @@
-% SLOTMODEL returns a structure for a two-component mixture model with 
+%SLOTMODEL returns a structure for a two-component mixture model
 % capacity K and precision sd. Capacity is the maximum number of independent 
 % representations. If the set size is greater than capacity some guesses will
 % occur. For example, if participants can store 3 items but have to remember 6,
@@ -18,20 +18,14 @@ function model = SlotModel()
 	model.start = [1, 4;   % capacity, sd
                  4, 15;  % capacity, sd
                  6, 40]; % capacity, sd
-  model.prior = @(p) (ImproperUniform(p(1)) .* ... % for capacity
+  model.prior = @(p) (JeffreysPriorForCapacity(p(1)) .* ... % for capacity
                       JeffreysPriorForKappaOfVonMises(deg2k(p(2))));
                       
   model.priorForMC = @(p) (lognpdf(p(1),2,1) .* ... % for capacity
                            lognpdf(deg2k(p(2)),2,0.5));
 end
 
-function y = slotpdf(data,capacity,sd)
-  % Limit capacity to the largest data.n
-  if all(data.n < capacity)
-    y = zeros(size(data.errors(:)));
-    return;
-  end
-  
+function y = slotpdf(data,capacity,sd)  
   g = (1 - max(0,min(1,capacity./data.n(:))));
 
   y = (1-g).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...

@@ -1,6 +1,6 @@
-% VariablePrecisionModel_Gamma_WithBias() returns a structure for a  
-% variable precision mixture model, in which the standard deviations of 
-% observers' reports are assumed to be distributed with a gamma dist.
+% VARIABLEPRECISIONMODEL_GAMMA_WITHBIAS returns a structure for a variable precision mixture model
+% in which the standard deviations of observers' reports are assumed to be
+% distributed with a gamma dist.
 %
 function model = VariablePrecisionModel_Gamma_WithBias()
   model.name = 'Variable precision model (gamma over sd) with bias';

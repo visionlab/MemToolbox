@@ -1,15 +1,16 @@
-% TwoAFC - returns a structure for a model that can be fit to 2afc data
+% TWOAFC converts a model so that can be fit to 2AFC data
 %
-% Requires two fields in data:
+% Once a model has been converted, it no longer uses data.errors, but instead
+% requires two new fields in the data struct:
 %   data.afcCorrect - a sequence of zeros and ones, saying whether observers
-%        got a 2afc correct or incorrect
+%        got a 2AFC trial correct or incorrect
 %   data.changeSize - size in degrees of the difference between correct and
-%        foil item in 2AFC
+%        foil item in the 2AFC trials. Should correspond to .afcCorrect.
 %
-% Can be wrapped around any model. However, it is much slower if wrapped
+% TwoAFC can be wrapped around any model. However, it is much slower if wrapped
 % around a model that requires additional fields of data, like data.n or
 % data.distractors (because then it must calculate a cdf for each datapoint
-% separately).
+% separately). 
 %
 function model = TwoAFC(model, samplesToApproxCDF)  
   % How many samples of pdf to take to estimate the cdf with 

@@ -1,7 +1,6 @@
-% VariablePrecisionModel_Gaussian_WithBias() returns a structure for a  
-% variable precision mixture model, in which the standard deviations of 
-% observers' reports are assumed to be themselves distributed as a normal 
-% distribution.
+% VARIABLEPRECISIONMODEL_GAUSSIAN_WITHBIAS returns a structure for a  variable precision mixture model
+% in which the standard deviations of observers' reports are assumed to be
+% themselves distributed as a normal distribution.
 function model = VariablePrecisionModel_Gaussian_WithBias()
   model.name = 'Variable precision model (gaussian over sd) with bias';
 	model.paramNames = {'g', 'mu', 'mnSTD', 'stdSTD'};

@@ -1,10 +1,15 @@
-% Orientation - converts a model to use a 180 degree space rather than
-%  a 360 degree space. To work, you need to pass in both a model and also
-%  which parameters of that model are in units of degrees - typically this
-%  will be bias and standard deviation -- as these need to be adjusted as
-%  well as the data.
+% ORIENTATION converts a model to use a 180 degree space rather
+%  than a 360 degree space (e.g., to have a "circle" that wraps at 180 deg)
+%  This might be useful if you have data where observers reported the
+%  orientation of a rotationally symmetric item like a line segment.
 %
-% e.g., model = Orientation(StandardMixtureModel(), 2)
+%  To use it, you need to pass in both a model and also which parameters
+%  of that model are in units of degrees -- typically this will be bias 
+%  and standard deviation -- as these need to be adjusted (as well as 
+%  the data).
+%
+% e.g., 
+%  model = Orientation(StandardMixtureModel(), 2)
 %  or
 %  model = Orientation(StandardMixtureModel('Bias',true), [1 3])
 %  or
@@ -12,6 +17,14 @@
 %
 % If you nest this with TwoAFC, Orientation() should go on the inside:
 %  e.g.,  model = TwoAFC(Orientation(SwapModel(), 3));
+%
+% Note that having responses only at binned, regular intervals (e.g.,
+% errors of 1, 2, 3 but not 1.2 or 1.1113) can result in overestimates of
+% the SD of models, and this can be exacerbated by conversion to a 180
+% degree space (which makes the bins twice as big). See Anderson & Awh
+% (2012). The plateau in mnemonic resolution across large set sizes 
+% indicates discrete resource limits in visual working memory. 
+% Attention, Perception and Psychophysics.
 %
 function model = Orientation(model, whichParameters)  
   % Take model and turn it into a 2AFC-model

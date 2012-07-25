@@ -1,6 +1,6 @@
-% VariablePrecisionWithBiasModel() - an infinite scale mixture model
-% with a gamma mixing distribution. This particular flavor of the infinite scale
-% mixture model assumes that the shape of the error distribution for fixed precision 
+% VARIABLEPRECISIONMODEL_TDIST_WITHBIAS an infinite scale mixture model with a gamma mixing distribution.
+% This particular flavor of the infinite scale mixture model assumes that 
+% the shape of the error distribution for fixed precision 
 % is a wrapped normal.
 %
 
@@ -16,7 +16,7 @@
 % Not sure if sampling would work as well, but I suspect it would be fine.
 %
 
-function model = VariablePrecisionWithBiasModel()
+function model = VariablePrecisionModel_TDist_WithBias()
   model.name = 'Variable precision model with bias';
 	model.paramNames = {'mu', 'g', 'sigma', 'df'};
 	model.lowerbound = [-180 0 0 0]; % Lower bounds for the parameters

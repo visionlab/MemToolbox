@@ -1,14 +1,23 @@
 % MEMMODELS
 %
-% Files
-%   2AFCMixtureModel               - MixtureModel2AFC returns a structure for a two-component mixture model
-%   AllGuessingModel               - returns a structure for a single component model. This is the same
-%   ExponentialDecayModel          - returns a struct for a model where objects drop out
-%   InfiniteScaleMixtureModel      - INFINITESCALEMIXTUREMODEL(BASE,MIXING) returns a structure for an infinite 
-%   NoGuessingModel                - returns a structure for a single component model. This is the same
-%   QuantalDeathModel              - 
-%   SlotModel                      - returns a structure for a two-component mixture model
-%   StandardMixtureModel           - returns a structure for a two-component mixture model
-%   SwapModel                      - MixtureModelWithSwaps returns a structure for a three-component model
-%   VariablePrecisionModel         - StudentsTModel() returns a structure for an infinite scale mixture model
-%   VariablePrecisionWithBiasModel - STUDENTSTMODELWITHBIAS() returns a structure for an infinite scale mixture model
+% One component models:
+%   AllGuessingModel       - only guessing
+%   NoGuessingModel        - just a precision, no guessing
+%
+% Mixture models:
+%   StandardMixtureModel   - guess rate, precision and (optional) bias.
+%   SwapModel              - guess rate, precision and swaps to other items.
+%   VariablePrecisionModel - a StandardMixtureModel with higher-order variability (in the precision)
+%
+% Models parameterized based on set size:
+%   SlotModel              - capacity K, precision sd (no benefit when K>setsize)
+%   SlotWithBiasModel      - capacity K, precision sd, and bias mu.
+%   SlotPlusResourcesModel - capacity K and precision sd (more juice when K>setsize)
+%
+% Models that depend on delay duration:
+%   ExponentialDecayModel  - a model where objects drop out over time
+%
+% Model wrappers:
+%   Orientation            - converts a model to use a 180 degree space 
+%   TwoAFC                 - converts a model so that can be fit to 2afc data
+%
