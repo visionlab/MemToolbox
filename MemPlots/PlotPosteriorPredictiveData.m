@@ -19,12 +19,21 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   % Plot samples
   subplot(2,1,1);
   hold on;
+  sampTime = tic();
+  h = [];
   for i=1:length(which)
     
     % Generate random data from this distribution with these parameters
     asCell = num2cell(posteriorSamples.vals(which(i),:));
     yrep = SampleFromModel(model, asCell, size(data.errors), data);
-       
+    if i==1 && toc(sampTime)>(5.0/length(which)) % if it will take more than 5s...
+      h = waitbar(i/length(which), 'Sampling to get posterior predictive distribution...');
+    elseif ~isempty(h)
+      if ~ishandle(h) % they closed the waitbar; stop sampling here
+        break;
+      end
+      waitbar(i/length(which), h);
+    end
     % Bin data and model
     n = hist(yrep, x)';
     n = n ./ sum(n(:));
@@ -33,6 +42,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     % Difference between this data and real data
     diffPlot(i,:) = nData - n;
   end  
+  if ishandle(h), close(h); end
 
   % Plot data
   h=plot(x,nData,'ok-','LineWidth',2, 'MarkerEdgeColor',[0 0 0], ...
