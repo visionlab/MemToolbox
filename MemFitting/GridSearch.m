@@ -1,4 +1,4 @@
-%GRIDSEARCH - Calculate full posterior of parameters given data
+%GRIDSEARCH Calculate full posterior of parameters of model given data
 %
 %    fullPosterior = GridSearch(data, model)
 %

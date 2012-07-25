@@ -1,5 +1,4 @@
-% TestModelComparison - sample from a model and then attempt to recover
-% this model
+% TESTMODELCOMPARISON sample from a model and then attempt to recover this model
 %
 % Example usage:
 %   model = StandardMixtureModel();

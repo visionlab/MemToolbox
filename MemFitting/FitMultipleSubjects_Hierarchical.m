@@ -1,25 +1,29 @@
-% FitMultipleSubjects_Hierarchical({subject1Data, subject2Data, subject3Data...}, model)
+% FITMULTIPLESUBJECTS_HIERARCHICAL fits many subjects data at once using MAP
+% estimation and a hierarchical model over subjects. 
 % 
-% The right way to do inference, in theory -- treat all subjects parameters
-% as having been samples from an underlying normal distribution and infer
-% the global mean and SD for each parameter. This causes shrinkage of each
+% Thus, we treat all of the subjects parameters as having been samples from
+% an underlying population normal distribution and infer the global mean 
+% and SD for each parameter. This causes shrinkage of each
 % subjects' parameter estimates towards the population mean and totally
 % eliminates outrageous parameter values (e.g., subjects with high guess
 % rates getting g=0, SD=200). 
 %
-% However, our MCMC function isn't quite up to the level of doing this
-% modeling for >7-8 subjects right now (or at least, even after it
-% converges it has very low acceptance rates, so we should definitely be
-% taking many more posterior samples and trimming some to remove
-% autocorrelation).
+% Warning: Our MCMC function isn't quite up to the level of doing this
+% modeling for >10-15 subjects right now (or at least, it sometimes takes 
+% forever).
 %
 % Example usage:
-%   data{1} = load('MemData/3000+trials_3items_SUBJ#1.mat');
-%   data{2} = load('MemData/3000+trials_3items_SUBJ#2.mat');
-%   paramsMean = FitMultipleSubjects_Hierarchical(data, model);
+%   data{1} = MemDataset(1);
+%   data{2} = MemDataset(2);
+%   [paramsMean, paramsSE, ...
+%             paramsSubs] = FitMultipleSubjects_Hierarchical(data, model);
 %
 function [paramsMean, paramsSE, ...
-    paramsSubs] = FitMultipleSubjects_Hierarchical(data, model)
+    paramsSubs] = FitMultipleSubjects_Hierarchical(data, model, verbosity)
+  % Optional param
+  if nargin<3
+    verbosity = 1;
+  end
   
   nParams = length(model.paramNames);
   nSubs = length(data);
@@ -42,27 +46,54 @@ function [paramsMean, paramsSE, ...
   
   % Initialize with means from independent fits
   [startMean, startSE, startSubs] =  ...
-    FitMultipleSubjects_MLE_Independent(data, model);
+    FitMultipleSubjects_Independent(data, model);
   startSubs = startSubs';
   newModel.start  = [startSE*sqrt(length(data)) startMean startSubs(:)'];
-  newModel.start = [newModel.start; newModel.start*0.90; newModel.start*1.10];
+  newModel.start = [newModel.start; newModel.start*0.80; newModel.start*1.20];
   
-  % Create logpdf
+  % Create logpdf and logprior
+  newModel.logprior = @(params) HierarchicalPrior(model.prior, params, nParams);
   newModel.logpdf = @(varargin) HierarchicalPDF(model.pdf, ...
     nParams, varargin);
   
   % In theory we could do this with MLE, but in practice it is not so good
-  % at searching this space. So do MCMC, with twice as many chains as
-  % usual:
-  posteriorSamples = MCMC(data, newModel, 2);
-  params = MCMCSummarize(posteriorSamples, 'posteriorMean');
-  % MCMC_Plot(posteriorSamples, newModel.paramNames);
+  % at searching this space. So do MCMC.
+  r = 1.2 + log(nSubs)/10; % More subs = more params that might be above 
+                           % ConvergenceVariance. So increase accordingly.
+  posteriorSamples = MCMC(data, newModel, 'Verbosity', verbosity, ...
+    'ConvergenceVariance', r);
+  params = MCMCSummarize(posteriorSamples, 'maxPosterior');
   
   % Convert back to separate params
   paramsSubs = reshape(params', nParams, [])';
   paramsSE = paramsSubs(1,:)./sqrt(nSubs);
   paramsMean = paramsSubs(2,:);
   paramsSubs(1:2,:)=[];
+end
+
+function p = HierarchicalPrior(oldPrior, params, nParams)
+  popParamsStd = GetParams(1);
+  popParamsMean = GetParams(2);
+  
+  % Population means should have same prior constraints as each individual
+  % parameter
+  p = sum(log(oldPrior(popParamsMean))); 
+  
+  % Jeffrey's prior on population SD
+  p = p + sum(log(JeffreysPriorForGaussianSD(popParamsStd)));
+  
+  % Sum each of the priors from individual parameters
+  nSubs = (length(params)/nParams) - 2*nParams;
+  for i=1:length(nSubs)
+    subjectParams = GetParams(i+2);
+    p = p + sum(log(oldPrior(subjectParams)));
+  end
+  
+  % Fetch a certain set of parameters from params (e.g., fetch
+  % param1_subject1 and param2_subject1)
+  function c = GetParams(which)
+    c = params((1+nParams*(which-1)):(0+nParams*which));
+  end  
 end
 
 function likeVal = HierarchicalPDF(oldPdf, nParams, varargin)

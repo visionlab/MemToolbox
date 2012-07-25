@@ -298,7 +298,7 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
     fprintf('Hang in there while MTB fits the model to your data...\n');
   end
   [fit.paramsMean, fit.paramsSE, fit.paramsSubs] = ...
-    FitMultipleSubjects_Hierarchical(dataCellArray, model);
+    FitMultipleSubjects_Hierarchical(dataCellArray, model, verbosity);
 end
 
 

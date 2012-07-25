@@ -1,4 +1,4 @@
-% ModelComparison_DIC - Calculates DIC values for models
+% MODELCOMPARISON_DIC Calculates DIC values for models
 %
 %  DIC is a generalization of Akaike's Information Criterion (AIC)
 %  designed for hierarchical models.  It estimates the "effective number of
@@ -58,7 +58,7 @@ function [dic, pD] = ModelComparison_DIC(data, models, varargin)
      posteriorMean = MCMCSummarize(posteriorSamples, 'posteriorMean');
      asCell = num2cell(posteriorMean);
      devianceOfMean = -2 .* (models{md}.logpdf(data, asCell{:}) ...
-       + sum(log(models{md}.prior(posteriorMean))));
+       + models{md}.logprior(posteriorMean));
      
      % Effective number of parameters is the difference of these two values
      pD(md) = meanDeviance - devianceOfMean;

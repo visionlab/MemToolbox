@@ -1,6 +1,5 @@
-% PLOTMODELFIT plots the probability density function of the model overlaid
-%  on a histogram of the data. The model and data can either be 
-%  continuous report model/data or 2AFC model/data.
+% PLOTMODELFIT plots the probability density function of the model overlaid on a histogram of the data.
+% The model and data can either be continuous report model/data or 2AFC model/data.
 %
 % The 'params' argument can be a maxPosterior, a posteriorSamples or a
 % fullPosterior. If it is a fullPosterior or posteriorSamples, the variance

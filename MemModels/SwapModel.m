@@ -22,10 +22,10 @@ function model = SwapModel()
   model.pdf = @SwapModelPDF;
   model.modelPlot = @model_plot;
   model.generator = @SwapModelGenerator;
-	model.start = [0.2, 0.1, 10;  % g, B, K
-    0.4, 0.1, 15;  % g, B, K
-    0.1, 0.5, 20]; % g, B, K
-  model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(3))); % SD
+	model.start = [0.2, 0.1, 10;  % g, B, sd
+    0.4, 0.1, 15;  % g, B, sd
+    0.1, 0.5, 20]; % g, B, sd
+  model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(3))); % sd
   
   model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
     betapdf(p(2),1.25,2.5) * ... % for B

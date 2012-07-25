@@ -1,11 +1,12 @@
-% PLOTMODELFIT(model, params, data) plots the model's probability density 
-% function overlaid on a histogram of the data. The plot is interactive, with 
-% a slider that allows you to adjust each of the parameters of the model and 
-% see the impact on the pdf.
-
-% params can be either a maxPosterior or a posteriorSamples. It currently 
-% cannot be a fullPosterior, but we should fix this.
-
+% PLOTMODELFITINTERACTIVE allow manipulation of the fit with sliders
+% This functions plots the model's probability density function
+% overlaid on a histogram of the data. The plot is interactive, with 
+% a slider that allows you to adjust each of the parameters of the model  
+% and see the impact on the pdf.
+%
+% 'params' can be either a maxPosterior, a fullPosterior or a
+% posteriorSamples.
+%
 function figHand = PlotModelFitInteractive(model, params, data, varargin)
   % Extra parameters
   args = struct('MarginalPlots', false, 'NewFigure', true); 
@@ -16,6 +17,13 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
   if isstruct(params) && isfield(params, 'vals')
     params = MCMCSummarize(params, 'maxPosterior');
   end
+  
+  % If params has a .logLikeMatrix, assume they passed a fullPosterior from
+  % GridSearch
+  if isstruct(params) && isfield(params, 'logLikeMatrix')
+    posteriorSamples = SampleFromPosterior(params, 500);
+    params = MCMCSummarize(params, 'maxPosterior');
+  end  
   
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);

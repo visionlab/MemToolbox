@@ -1,18 +1,18 @@
-% ModelComparison_BayesFactor - Compute Bayes Factor via Monte Carlo
+% MODELCOMPARISON_BAYESFACTOR Compute Bayes Factor via Monte Carlo
 % 
-%  Log Bayes Factors can be interpreted as follows: (per Jeffreys (1961))
-%   0 to 0.5  - not worth more than a mention
-%   0.5 to 1  - substantial
-%   1 to 2    - strong
-%   >2        - decisive
-%
 % A Bayes factor is computed by asking how likely the data that was observed
 % is, given the entire set of data the model can possibly predict. This 
 % penalizes complex models -- having extra freedom means they can predict
 % more different kinds of data, and thus each particular set of data is
 % less likely. 
 %
-% To compute this we use Monte Carlo. Thus we draw samples from the
+%  Log Bayes Factors can be interpreted as follows: (per Jeffreys (1961))
+%   0 to 0.5  - not worth more than a mention
+%   0.5 to 1  - substantial
+%   1 to 2    - strong
+%   >2        - decisive
+%
+% To compute a Bayes Factor we use Monte Carlo. Thus we draw samples from the
 % prior of the model (e.g., choose 'random' values of its parameters), and
 % then see how likely the data is under those parameters. Models that
 % predict the data well over their entire possible space of parameters do
@@ -26,8 +26,8 @@
 %  Take MemDataset(3), which in reality contains 20% 'swaps' with
 %  distractors.
 %  
-%    data = MemDataset(3);
-%    bf = ModelComparison_BayesFactorMonteCarlo(data, {StandardMixtureModel(), SwapModel()})
+%   data = MemDataset(3);
+%   bf = ModelComparison_BayesFactorMonteCarlo(data, {StandardMixtureModel(), SwapModel()})
 %  
 %  Posterior odds of models:
 %    0.00	  1.00	
@@ -42,8 +42,8 @@
 %
 %  Now scramble the distractors, meaning there are very few 'swaps':
 %
-%    data.distractors = Shuffle(data.distractors')'
-%    bf = ModelComparison_BayesFactorMonteCarlo(data, {StandardMixtureModel(), SwapModel()})
+%   data.distractors = Shuffle(data.distractors')';
+%   bf = ModelComparison_BayesFactorMonteCarlo(data, {StandardMixtureModel(), SwapModel()})
 %
 %  Posterior odds of models:
 %     0.84	  0.16	
@@ -52,10 +52,10 @@
 %            0      0.71015
 %     -0.71015            0
 %
-%   With no actual swaps in the data, the same process now reveals
-%   substantial evidence for the StandardMixtureModel rather than the swap
-%   model. This is because the SwapModel is penalized for its complexity
-%   (all settings of B>0 result in poor fits to the data).
+% With no actual swaps in the data, the same process now reveals
+% substantial evidence for the StandardMixtureModel rather than the swap
+% model. This is because the SwapModel is penalized for its complexity
+% (all settings of B>0 result in poor fits to the data).
 %
 
 %---------------------------------------------------------------------

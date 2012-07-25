@@ -1,4 +1,4 @@
-% PlotConvergence - show traces for each variable for each MCMC chain. 
+%PLOTCONVERGENCE Show traces for each variable for each MCMC chain. Very simple way to
 % Very simple way to diagnose convergence: They should look the same as
 % each other.
   

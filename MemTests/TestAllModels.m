@@ -1,5 +1,5 @@
-% TestAllModels - runs tests to be sure we are correctly sampling from and
-% recovering the data for all the default models.
+% TESTALLMODELS runs tests to be sure we are correctly sampling from and recovering the data
+% for all the default models.
 %
 function TestAllModels(numTrials, numItemsPerTrial)
   

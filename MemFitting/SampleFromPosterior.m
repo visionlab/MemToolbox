@@ -1,5 +1,13 @@
-% SampleFromPosterior - turn a fullPosterior into a posteriorSamples by
-% sampling from it
+% SAMPLEFROMPOSTERIOR turn a fullPosterior into a posteriorSamples by sampling
+% from it.
+%
+% This function takes the output of GridSearch and converts it into the 
+% equivalent of what you would have gotten from MCMC. 
+% 
+% Example:
+%  fullPosterior = GridSearch(data, model);
+%  posteriorSamples = SampleFromPosterior(fullPosterior, 1000);
+%
 function posteriorSamples = SampleFromPosterior(fullPosterior, numSamples)
   whichLocs = randsample(numel(fullPosterior.propToLikeMatrix), ...
     numSamples, true, fullPosterior.propToLikeMatrix(:));

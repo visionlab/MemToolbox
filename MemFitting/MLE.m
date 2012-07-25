@@ -1,6 +1,6 @@
-% MLE - Find maximum likelihood fit of model to data
+% MLE Find maximum likelihood fit of model to data
 %
-%    maxLikelihood = MLE(data, model)
+%    maxLikelihoodParameters = MLE(data, model)
 %
 %---------------------------------------------------------------------
 function [maxLikelihood, like] = MLE(data, model)

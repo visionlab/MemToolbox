@@ -1,5 +1,4 @@
-% TestSamplingAndFitting - sample from a model and then attempt to recovers
-% parameters
+% TESTSAMPLINGANDFITTING sample from a model and then attempt to recover parameters
 %
 % Example usage:
 %   model = StandardMixtureModelWithBias();

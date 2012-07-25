@@ -2,7 +2,7 @@
 %
 % One component models:
 %   AllGuessingModel       - only guessing
-%   NoGuessingModel        - just a precision, no guessing
+%   NoGuessingModel        - just fit precision, no guessing
 %
 % Mixture models:
 %   StandardMixtureModel   - guess rate, precision and (optional) bias.

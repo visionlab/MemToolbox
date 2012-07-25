@@ -9,6 +9,11 @@ function model = EnsureAllModelMethods(model)
     model.logpdf = @(varargin)(nansum(log(model.pdf(varargin{:}))));
   end
   
+  % If no logprior, create one from prior
+  if ~isfield(model, 'logprior')
+    model.logprior = @(params)(nansum(log(model.prior(params))));
+  end  
+  
   % If there's no model.pdf, create one using model.logpdf
   if ~isfield(model, 'pdf')
     model.pdf = @(varargin)(exp(model.logpdf(varargin{:})));

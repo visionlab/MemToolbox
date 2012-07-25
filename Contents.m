@@ -19,8 +19,9 @@
 % 
 % [citation goes here]
 % 
-% Contents:
 % MemFit.m            - a general purpose fitting tool
+% Setup.m             - install MemToolbox to Matlab PATH
+%
 % MemTutorial         - a walkthrough of the toolbox
 % MemModels           - models of working memory from the literature
 % MemData             - real and simulated data sets
@@ -30,3 +31,4 @@
 % MemUtilities        - internal helper functions
 % GeneralHelpers      - helper functions that might be useful elsewhere
 % MemTests            - scripts that test toolbox functionality
+%

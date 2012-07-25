@@ -1,4 +1,4 @@
-% PlotPosterior - plot results of MCMC or GridSearch; show full posterior
+%PLOTPOSTERIOR Show 2x2 correlation for each variable with each other to look for
 % 
 function figHand = PlotPosterior(posterior, paramNames)
   % Show 2x2 correlation for each variable with each other to look for

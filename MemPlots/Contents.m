@@ -1,12 +1,11 @@
 % MEMPLOTS
 %
 % Files
-%   PlotAsciiHist                    - PlotAsciiHist makes a cute little ascii histogram of error data, like this:
-%   PlotConvergence                  - Show traces for each variable for each MCMC chain. Very simple way to
-%   PlotGridSearch                   - Convert log likelihood matrix into likelihood, avoiding underflow
-%   PlotModelFit                     - Extra arguments and parsing
-%   PlotModelFitInteractive          - Extra parameters
-%   PlotModelParametersAndData       - Plot data fit
-%   PlotPosterior                    - Show 2x2 correlation for each variable with each other to look for
-%   PlotPosteriorPredictiveData      - Show data sampled from the model with the actual data overlayed, plus a
-%   PlotPosteriorPredictiveStatistic - Should break up into two functions: one to compute, and one to plot
+%   PlotAsciiHist               - makes a cute little ascii histogram of error data
+%   PlotConvergence             - show traces for each variable for each MCMC chain. 
+%   PlotModelFit                - plots the probability density function of the model overlaid on a histogram of the data.
+%   PlotModelFitInteractive     - allow manipulation of the fit of model to data with sliders
+%   PlotModelParametersAndData  - plots the parameters of the model in a parallel coordinates plot. 
+%   PlotPosterior               - show 2x2 correlation of each variable with each other
+%   PlotPosteriorPredictiveData - show data sampled from the model with the actual data overlayed
+%   PlotData                    - plots a histogram of the data 

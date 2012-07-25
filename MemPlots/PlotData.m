@@ -1,6 +1,6 @@
-% PLOTDATA plots a histogram of the data for continuous report data, and a
-% binned bar graph for 2AFC data
-
+%PLOTDATA plots a histogram of the data for continuous report data, and a
+% Can plot either continuous report data, or binned bar graph for 2AFC data
+%
 function figHand = PlotData(data, varargin)
   % Extra arguments and parsing
   args = struct('NumberOfBins', 40, 'NewFigure', false); 

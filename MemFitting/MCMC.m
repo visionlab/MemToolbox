@@ -1,11 +1,13 @@
-%MCMC - Markov chain Monte Carlo with tuned proposals
+%MCMC MCMC with tuned proposals to get samples from posterior of model
+%
 %    posteriorSamples = MCMC(data, model)
 %
-% MCMC function that automatically detects convergence using the technique
+% This MCMC function automatically detects convergence using the technique
 % of Gelman and Rubin (1992). 
 %
 % You can make this work as a normal MCMC function without any 
 % convergence detection by passing it the following parameters:
+%
 % ... 'ConvergenceVariance', Inf, 'BurnInSamplesBeforeCheck', 5000, ...
 % ... 'PostConvergenceSamples', 15000, ...
 %
@@ -70,10 +72,11 @@ function posteriorSamples = MCMC(data, model, varargin)
         startInfo(c).burnCovariance = startInfo(c).burnCovariance ./ 3;
       end
     end
-    converged = IsConverged(chainStored, args.ConvergenceVariance, args.Verbosity);
+    [converged,n] = IsConverged(chainStored, args.ConvergenceVariance, args.Verbosity);
     count = count+1;
     if ~converged && args.Verbosity > 0
-      fprintf('   ... not yet converged (%d)\n', count*startInfo(1).numMonte);
+      fprintf('   ... not yet converged (%d); btw/within variance: %0.2f\n', ...
+        count*startInfo(1).numMonte, n);
     end
   end
   if args.Verbosity > 0
@@ -113,7 +116,7 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
   % Set initial state
   asCell = num2cell(startInfo.cur);
   startInfo.curLike = model.logpdf(data, asCell{:}) + ...
-    sum(log(model.prior(startInfo.cur)));
+    model.logprior(startInfo.cur);
   
   % Initialize storage of param vals
   posteriorSamples.vals = zeros(startInfo.numMonte, length(startInfo.cur));
@@ -156,7 +159,7 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
     else
       asCell = num2cell(new);
       like = model.logpdf(data, asCell{:}) + ...
-        sum(log(model.prior(new)));
+        model.logprior(new);
     end
     
     % Accept with probability proportional to likelihood ratio
@@ -182,7 +185,7 @@ end
 
 
 %---------------------------------------------------------------------
-function b = IsConverged(posteriorSamples, convergenceVariance, verbosity)
+function [b,n] = IsConverged(posteriorSamples, convergenceVariance, verbosity)
   nChains = length(posteriorSamples);
   numPerChain = size(posteriorSamples(1).vals,1);
   nParams = size(posteriorSamples(1).vals,2);
@@ -209,6 +212,7 @@ function b = IsConverged(posteriorSamples, convergenceVariance, verbosity)
     fprintf('%0.1f ', r);
     fprintf('\n');
   end
+  n = nanmean(r);
   b = all(r<convergenceVariance | isnan(r));
 end
 
