@@ -9,7 +9,8 @@
 %
 function figHand = PlotModelFitInteractive(model, params, data, varargin)
   % Extra parameters
-  args = struct('MarginalPlots', false, 'NewFigure', true); 
+  args = struct('MarginalPlots', false, 'NewFigure', true, ...
+    'PdfColor', [0.54, 0.61, 0.06]); 
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); end
   
@@ -27,10 +28,13 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
   
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);
-  
+
   % Initial plot
   paramsCur = params;
-  PlotModelFit(model, paramsCur, data, 'ShowNumbers', false);
+  paramsCell = num2cell(params);
+  mapLikeVal = model.logpdf(data, paramsCell{:});
+  PlotModelFit(model, paramsCur, data, 'ShowNumbers', false, ...
+    'PdfColor', args.PdfColor);
   pos = get(gca, 'Position');
   
   % Decide on spacing of plot, based on how many parameters (and thus
@@ -160,7 +164,10 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
     mappingFunc = get(hObject, 'UserData');
     paramsCur(which) = mappingFunc(curValue);
     axes(mainAxis); hold off;
-    PlotModelFit(model, paramsCur, data, 'ShowNumbers', false);
+    paramsCell = num2cell(paramsCur);
+    curLike = model.logpdf(data, paramsCell{:});
+    PlotModelFit(model, paramsCur, data, 'ShowNumbers', false, 'PdfColor', ...
+      fade(args.PdfColor, exp(curLike - mapLikeVal)));
     PlotMarginals();
     set(curVals(which), 'String', sprintf('%0.2f', paramsCur(which)));
   end

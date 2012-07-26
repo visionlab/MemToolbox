@@ -43,7 +43,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
     topOfY = max(ylim);
     txt = [];
     for i=1:length(params)
-      txt = [txt sprintf('%s: %.3g\n', model.paramNames{i}, params(i))];
+      txt = [txt sprintf('%s: %.3f\n', model.paramNames{i}, params(i))];
     end
     text(180, topOfY-topOfY*0.05, txt, 'HorizontalAlignment', 'right');
   end
@@ -71,10 +71,27 @@ function Plot2AFC(model, params, data, args)
     params = params(1,:);
   end
   paramsAsCell = num2cell(params);
-  newD.changeSize = vals;
-  newD.afcCorrect = ones(size(vals));
-  plot(vals, model.pdf(newD, paramsAsCell{:}), 'Color', args.PdfColor, ... 
-         'LineWidth', 2, 'LineSmoothing', 'on');
+  
+  
+  % Sample
+  r = DoesModelRequireExtraInfo(model);
+  if r
+    vals = x;
+    newD = data;
+    sz = size(data.afcCorrect);
+    newD.afcCorrect = ones(sz);
+    for i=1:length(vals)
+      newD.changeSize = repmat(vals(i), sz);
+      y(:,i) = model.pdf(newD, paramsAsCell{:});
+    end
+    p = mean(y);
+  else
+    newD.changeSize = vals;
+    newD.afcCorrect = ones(size(vals));
+    p = model.pdf(newD, paramsAsCell{:});
+  end
+
+  plot(vals, p, 'Color', args.PdfColor, 'LineWidth', 2, 'LineSmoothing', 'on');
        
   % Label plot
   if args.ShowAxisLabels
@@ -94,7 +111,7 @@ function PlotContinuousReport(model, params, data, args)
   set(gca, 'box', 'off');
   
   % Plot scaled version of the prediction
-  vals = linspace(-180, 180, 200)';
+  vals = linspace(-180, 180, 100)';
   multiplier = length(vals)/length(x);
   
   % If params has multiple rows, as if it came from a posteriorSamples struct, then
@@ -109,12 +126,12 @@ function PlotContinuousReport(model, params, data, args)
     h = boundedline(vals, bounds(:,2) .* multiplier, ...
       [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)] .* multiplier, ...
       'cmap', args.PdfColor, 'alpha');
-    set(h, 'LineWidth', 2);
+    set(h, 'LineWidth', 3);
   else
     paramsAsCell = num2cell(params);
     p = model.pdfForPlot(vals, data, paramsAsCell{:});
     plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, ... 
-         'LineWidth', 2, 'LineSmoothing', 'on');
+         'LineWidth', 3, 'LineSmoothing', 'on');
   end
   
   if args.ShowAxisLabels
