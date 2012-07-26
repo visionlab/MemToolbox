@@ -144,30 +144,34 @@ function fit = MemFit_SingleData(data, model, verbosity)
       fprintf('\nMean percent correct: %0.2f\n', mean(data.afcCorrect));      
     end
     fprintf('          Model:   %s\n', model.name);
-    fprintf('     Parameters:   %s\n', prettyPrintCellArray(model.paramNames));
+    fprintf('     Parameters:   %s\n', prettyPrintParams(model.paramNames));
     pause(1);
-    fprintf('\nJust a moment while MTB fits a model to your data...\n');
-    pause(0.5);
   end
   
   % Do the fitting
-  posteriorSamples = MCMC(data, model, 'Verbosity', verbosity-1, ...
-    'PostConvergenceSamples', 1500*length(model.paramNames), ...
-    'BurnInSamplesBeforeCheck', 200);
-  fit = MCMCSummarize(posteriorSamples);
-  fit.posteriorSamples = posteriorSamples;
+  if(isempty(model.paramNames))
+    fit.maxPosterior = [];
+  else
+    fprintf('\nJust a moment while MTB fits a model to your data...\n');
+    pause(0.5);
+    posteriorSamples = MCMC(data, model, 'Verbosity', verbosity-1, ...
+      'PostConvergenceSamples', 1500*length(model.paramNames), ...
+      'BurnInSamplesBeforeCheck', 200);
+    fit = MCMCSummarize(posteriorSamples);
+    fit.posteriorSamples = posteriorSamples;
   
-  if(verbosity > 0)
-    % Display the results
-    fprintf('\n...finished. Now let''s view the results:\n\n')
-    fprintf('parameter\tMAP estimate\tlower CI\tupper CI\n')
-    fprintf('---------\t------------\t--------\t--------\n')
-    for paramIndex = 1:length(model.paramNames)
-      fprintf('%s\t\t%3.3f\t\t%3.3f\t\t%3.3f\n', ...
-        model.paramNames{paramIndex}, ...
-        fit.maxPosterior(paramIndex), ...
-        fit.lowerCredible(paramIndex), ...
-        fit.upperCredible(paramIndex));
+    if(verbosity > 0)
+      % Display the results
+      fprintf('\n...finished. Now let''s view the results:\n\n')
+      fprintf('parameter\tMAP estimate\tlower CI\tupper CI\n')
+      fprintf('---------\t------------\t--------\t--------\n')
+      for paramIndex = 1:length(model.paramNames)
+        fprintf('%s\t\t%3.3f\t\t%3.3f\t\t%3.3f\n', ...
+          model.paramNames{paramIndex}, ...
+          fit.maxPosterior(paramIndex), ...
+          fit.lowerCredible(paramIndex), ...
+          fit.upperCredible(paramIndex));
+      end
     end
   end
   
@@ -186,19 +190,26 @@ function fit = MemFit_SingleData(data, model, verbosity)
     r = input(['Would you like to see the tradeoffs\n' ...
       'between parameters, samples from the posterior\n'...
       'distribution and a posterior predictive check? (y/n): '], 's');
-    if(strcmp(r,'y'))      
-      % Show a figure with each parameter's correlation with each other
-      h = PlotPosterior(posteriorSamples, model.paramNames);
-      subfigure(2,2,1, h);
+    if(strcmp(r,'y'))
       
-      % Show fit
-      h = PlotModelParametersAndData(model, posteriorSamples, data);
-      subfigure(2,2,2, h);
-      
-      % Posterior predictive
-      h = PlotPosteriorPredictiveData(model, posteriorSamples, data);
-      subfigure(2,2,3, h);
-      
+      if(isempty(model.paramNames))
+        % Posterior predictive for zero-parameter models
+        h = PlotPosteriorPredictiveData(model, [], data);
+        subfigure(2,2,1, h);
+      else
+        % Show a figure with each parameter's correlation with each other
+        h = PlotPosterior(posteriorSamples, model.paramNames);
+        subfigure(2,2,1, h);
+        
+        % Show fit
+        h = PlotModelParametersAndData(model, posteriorSamples, data);
+        subfigure(2,2,2, h);
+        
+        % Posterior predictive plot
+        h = PlotPosteriorPredictiveData(model, posteriorSamples, data);
+        subfigure(2,2,3, h);
+      end
+
       % Customizable model-based plot
       if isfield(model, 'modelPlot')
         h = model.modelPlot(data, posteriorSamples);
@@ -221,9 +232,9 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
       fprintf('        Model %d:   %s\n',  ...
               modelIndex, modelCellArray{modelIndex}.name);
       fprintf('     Parameters:   %s\n', ...
-              prettyPrintCellArray(modelCellArray{modelIndex}.paramNames));
+              prettyPrintParams(modelCellArray{modelIndex}.paramNames));
       fprintf('            MLE:   %s\n', ...
-          prettyPrintCellArray(cellstr(num2str(MLE(data, modelCellArray{modelIndex})'))));
+          prettyPrintParams(cellstr(num2str(MLE(data, modelCellArray{modelIndex})'))));
       fprintf('\n');
     end
     
@@ -293,7 +304,7 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
     end
     fprintf('          Model:   %s\n', ...
         ['Hierarchical ' lower(model.name(1)) model.name(2:end)]);    
-    fprintf('     Parameters:   %s\n\n', prettyPrintCellArray(model.paramNames));
+    fprintf('     Parameters:   %s\n\n', prettyPrintParams(model.paramNames));
     pause(1);
     fprintf('Hang in there while MTB fits the model to your data...\n');
   end
@@ -307,8 +318,12 @@ end
 %-----------------------------
 
 % Converts a cell array {'a', 'b', 'c'} to string 'a, b, c'
-function str = prettyPrintCellArray(array)
-  str = [sprintf('%s, ', array{1:end-1}) array{end}];
+function str = prettyPrintParams(array)
+  if(isempty(array))
+    str = '(none)';
+  else
+    str = [sprintf('%s, ', array{1:end-1}) array{end}];
+  end
 end
 
 % Is the object an MTB model struct? passes iff the object is a struct
