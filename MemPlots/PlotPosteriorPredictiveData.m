@@ -1,4 +1,5 @@
-%PLOTPOSTERIORPREDICTIVEDATA Show data sampled from the model with the actual data overlayed, plus a
+%PLOTPOSTERIORPREDICTIVEDATA Show data sampled from the model with the actual 
+% data overlayed, plus a plot of where the two differ.
 
 function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
@@ -9,8 +10,11 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   if args.NewFigure, figHand = figure(); end
   
   % Choose which samples to use
-  which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
-  
+  if(isempty(model.paramNames))
+    which = 1:args.NumSamplesToPlot;
+  else
+    which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
+  end
   % How to bin
   x = linspace(-180, 180, args.NumberOfBins)';
   nData = hist(data.errors, x)';
@@ -24,7 +28,11 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   for i=1:length(which)
     
     % Generate random data from this distribution with these parameters
-    asCell = num2cell(posteriorSamples.vals(which(i),:));
+    if(isempty(model.paramNames))
+      asCell = {};
+    else
+      asCell = num2cell(posteriorSamples.vals(which(i),:));
+    end
     yrep = SampleFromModel(model, asCell, size(data.errors), data);
     if i==1 && toc(sampTime)>(5.0/length(which)) % if it will take more than 5s...
       h = waitbar(i/length(which), 'Sampling to get posterior predictive distribution...');
