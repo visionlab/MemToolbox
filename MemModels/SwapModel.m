@@ -52,6 +52,10 @@ function p = SwapModelPDF(data, g, B, sd)
     return;
   end
   
+  if(~isfield(data, 'distractors'))
+    error('The swap model requires that you specify the distractors.')
+  end
+  
   % This could be vectorized entirely but would be less clear; but I assume
   % people will rarely have greater than 8 or so distractors, so the loop
   % is over a relatively small dimension
