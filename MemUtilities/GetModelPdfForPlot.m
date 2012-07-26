@@ -34,9 +34,10 @@ function model = GetModelPdfForPlot(model)
   model.pdfForPlot = @NewPdfForPlot;
   function p = NewPdfForPlot(vals, data, varargin)
     sz = size(data.errors);
-    for i=1:length(vals)
-      data.errors = repmat(vals(i), sz);
-      y(:,i) = model.pdf(data, varargin{:});
+    parfor i=1:length(vals)
+      nData{i} = data;
+      nData{i}.errors = repmat(vals(i), sz);
+      y(:,i) = model.pdf(nData{i}, varargin{:});
     end
     p = mean(y);
   end

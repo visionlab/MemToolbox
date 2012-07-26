@@ -8,7 +8,7 @@ datasets = {MemDataset(1), MemDataset(2), MemDataset(3), ...
 
 % How many trials to use per dataset. Fewer trials should lead to more
 % "shrinkage" of each subject's estimate toward the average subject
-numTrialsPer = 500;
+numTrialsPer = 100;
 
 % Which model to use
 model = StandardMixtureModel();
