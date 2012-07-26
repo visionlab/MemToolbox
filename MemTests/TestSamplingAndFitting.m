@@ -56,14 +56,18 @@ function [paramsOut, lowerCI, upperCI] = ...
     end
     
     % Generate displays
-    displays = GenerateDisplays(numTrials(i), numItems);
+    displays = GenerateDisplays(numTrials(i), numItems, 2);
 
     % Generate error data for these displays:
     data = displays;
-    data.errors = SampleFromModel(model, paramsIn, [1,numTrials(i)], displays);
+    if isfield(model, 'isTwoAFC')
+      data.afcCorrect = SampleFromModel(model, paramsIn, [1,numTrials(i)], displays);
+    else
+      data.errors = SampleFromModel(model, paramsIn, [1,numTrials(i)], displays);
+    end
     
     % Now try to recover the parameters that led to these errors:
-    posteriorSamples = MCMC(data, model, 'Verbosity', 0);
+    posteriorSamples = MCMC(data, model, 'Verbosity', 1);
     fit = MCMCSummarize(posteriorSamples);
     paramsOut(i,:) = fit.posteriorMean;
     lowerCI(i,:) = fit.lowerCredible;

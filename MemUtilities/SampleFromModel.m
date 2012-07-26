@@ -28,6 +28,21 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
       'the displays you wish to sample data for as the fourth parameter.']);
   end
   
+  if r 
+    if isfield(displayInfo, 'errors')
+      sz = size(displayInfo.errors);
+    elseif isfield(displayInfo, 'distractors')
+      sz = [1 size(displayInfo.distractors,2)];
+    elseif isfield(displayInfo, 'n')
+      sz = size(displayInfo.n);
+    end
+    if all(prod(dims) ~= prod(sz))
+      error(['You passed a model that requires extra information to make ' ...
+      'a pdf. When you pass such a model, dims needs to match the number of ' ...
+      'displays you provide in the fourth parameter.']);
+    end
+  end
+  
   % If the model has an efficient generator, use it. otherwise use rejection sampling
   if(isfield(model, 'generator'))
     if r
@@ -38,7 +53,7 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
       return;
     end
   end
-
+  
   % Get CDF
   if ~r
     interpVals = linspace(-180, 180, 1000);
@@ -54,18 +69,6 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
   else
     % Make dims() samples for each display
     interpVals = linspace(-180, 180, 100);
-    if isfield(displayInfo, 'errors')
-      sz = size(displayInfo.errors);
-    elseif isfield(displayInfo, 'distractors')
-      sz = [1 size(displayInfo.distractors,2)];
-    elseif isfield(displayInfo, 'n')
-      sz = size(displayInfo.n);
-    end
-    if all(prod(dims) ~= prod(sz))
-      error(['You passed a model that requires extra information to make ' ...
-      'a pdf. When you pass such a model, dims needs to match the number of ' ...
-      'displays you provide in the fourth parameter.']);
-    end
     for i=1:length(interpVals)
       displayInfo.errors = repmat(interpVals(i), sz);
       y(i,:) = model.pdf(displayInfo, params{:});
@@ -79,3 +82,5 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
     samp = reshape(samples, dims);
   end
 end
+
+

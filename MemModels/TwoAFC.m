@@ -20,15 +20,24 @@ function model = TwoAFC(model, samplesToApproxCDF)
   
   % Check if we need extra information to call the pdf
   model.requiresSeparateCDFs = DoesModelRequireExtraInfo(model);
+  model.isTwoAFC = true;
   
   % Take model and turn it into a 2AFC-model
   model.name = ['2AFC ' model.name];
   model.oldPdf = model.pdf;
   model.interpVals = linspace(-180, 180, samplesToApproxCDF);
   model.pdf = @NewPDF;
-
+  model.generator = @NewGenerator;
+  
+  % Make a generator of afcCorrect given changeSize
+  function samples = NewGenerator(params, dims, displayInfo)
+    displayInfo.afcCorrect = ones(size(displayInfo.changeSize));
+    [p, thetas] = model.pdf(displayInfo, params{:});
+    samples = binornd(1,thetas);
+  end
+  
   % Convert pdf into a 2AFC pdf
-  function p = NewPDF(data, varargin)
+  function [p,thetas] = NewPDF(data, varargin)
     
     % Take integral from data.changeSize/2 to 180+data.changeSize/2 (the
     % area of the pdf that is closer to the target than the changed item)
@@ -66,6 +75,8 @@ function model = TwoAFC(model, samplesToApproxCDF)
       end
     end
 
-    p = binopdf(data.afcCorrect, 1, thetas);
+    thetas(thetas>1) = 1;
+    thetas(thetas<0) = 0;
+    p = binopdf(data.afcCorrect(:), 1, thetas(:));
   end
 end
