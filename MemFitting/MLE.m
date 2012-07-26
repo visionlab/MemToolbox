@@ -5,11 +5,18 @@
 %---------------------------------------------------------------------
 function [maxLikelihood, like] = MLE(data, model)
   
+  model = EnsureAllModelMethods(model);
+  
+  if(isempty(model.start))
+    maxLikelihood = [];
+    like = model.logpdf(data);
+    return
+  end
+  
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
   options = statset('MaxIter',5000,'MaxFunEvals',5000,'UseParallel','always');
   
-  model = EnsureAllModelMethods(model);
   numChains = size(model.start,1);
   for c=1:numChains
     vals{c} = mle(data, 'logpdf', model.logpdf, 'start', model.start(c,:), ...

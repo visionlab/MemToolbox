@@ -30,6 +30,12 @@ function posteriorSamples = MCMC(data, model, varargin)
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);
   
+  % Don't bother with zero-parameter models
+  if(isempty(model.paramNames))
+    posteriorSamples = [];
+    return;
+  end
+  
   % How many chains to run?
   numChains = size(model.start,1);
   if numChains < 2
