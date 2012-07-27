@@ -1,3 +1,4 @@
+%FADE Takes an RGB color and fades it
 function c = fade(color, percent)
     colorHSV = rgb2hsv(color);
     colorHSV(2) = colorHSV(2).*percent;

@@ -36,7 +36,7 @@ function model = SwapWithBiasModel()
   function figHand = model_plot(data, params, varargin)
     d.errors = [];
     for i=1:length(data.errors)
-      d.errors = [d.errors; distance(data.errors(i), data.distractors(:,i))];
+      d.errors = [d.errors; circdist(data.errors(i), data.distractors(:,i))];
     end
     m = StandardMixtureModel();
     f = MAP(d, m);
