@@ -154,6 +154,10 @@ function fit = MemFit_SingleData(data, model, verbosity)
   else
     fprintf('\nJust a moment while MTB fits a model to your data...\n');
     pause(0.5);
+    if(verbosity > 0)
+      fprintf('\nJust a moment while MTB fits a model to your data...\n');
+      pause(0.5);
+    end
     posteriorSamples = MCMC(data, model, 'Verbosity', verbosity-1, ...
       'PostConvergenceSamples', 1500*length(model.paramNames), ...
       'BurnInSamplesBeforeCheck', 200);
