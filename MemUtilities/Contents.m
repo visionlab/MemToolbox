@@ -1,8 +1,10 @@
 % MEMUTILITIES
 %
 % Files
-%   EnsureAllModelMethods - If no prior, just put a uniform prior on all parameters
-%   GenerateDisplays      - default mode is 0 (iid from circular)	
-%   Performance2K         - PERFORMANCE2K(P,N,M) returns an estimate of capacity K based on 
-%   SampleFromModel       - SampleFromModel Simulates data from a model with some parameters. This is a slightly
-%   ValidateData          - checks to make sure that the data is in the expected format (in the range 
+%   EnsureAllModelMethods     - makes sure a model is complete with all pdf/prior functions
+%   GenerateDisplays          - can be called to generate colors to present in a working memory task.  
+%   Performance2K             - returns an estimate of capacity K based on partial report task
+%   SampleFromModel           - simulates data from a model with some parameters. 
+%   ValidateData              - checks to make sure that the data is in the expected format
+%   DoesModelRequireExtraInfo - checks if a model pdf requires more than data.errors
+%   GetModelPdfForPlot        - allows PlotModelFit() to plot arbitrary pdfs.

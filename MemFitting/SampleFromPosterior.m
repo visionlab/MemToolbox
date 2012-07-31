@@ -1,6 +1,8 @@
 % SAMPLEFROMPOSTERIOR turn a fullPosterior into a posteriorSamples by sampling
 % from it.
 %
+%  posteriorSamples = SampleFromPosterior(fullPosterior, numSamples)
+%
 % This function takes the output of GridSearch and converts it into the 
 % equivalent of what you would have gotten from MCMC. 
 % 

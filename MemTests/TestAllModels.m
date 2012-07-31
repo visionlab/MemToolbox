@@ -1,6 +1,8 @@
 % TESTALLMODELS runs tests to be sure we are correctly sampling from and recovering the data
 % for all the default models.
 %
+%   TestAllModels(numTrials, numItemsPerTrial);
+%
 function TestAllModels(numTrials, numItemsPerTrial)
   
   % Default parameters

@@ -2,7 +2,6 @@
 %
 %    maxLikelihoodParameters = MLE(data, model)
 %
-%---------------------------------------------------------------------
 function [maxLikelihood, like] = MLE(data, model)
   
   model = EnsureAllModelMethods(model);

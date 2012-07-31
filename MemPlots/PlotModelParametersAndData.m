@@ -1,8 +1,21 @@
 %PLOTMODELPARAMETERSANDDATA plots the parameters of the model in a parallel coordinates plot. 
-% It then shows you the fit of the model at each set of 
-% parameter values, which you can see plotted by clicking on the parallel
-% coordinates plot.
+% It then shows you the fit of the model at each set of parameter values, 
+% which you can see plotted by clicking on the parallel coordinates plot.
 %
+%  figHand = PlotModelParametersAndData(model, posteriorSamples, ...
+%                                          data, [optionalParameters])
+%
+% Optional parameters:
+%  'NumSamplesToPlot' - how many posterior samples to show in the parallel
+%  coordinates plot. Default is 63.
+%
+%  'PdfColor' - the color to plot the model fit with. Note that this color
+%  is automatically 'faded' if the model fit being shown is not the max
+%  posterior fit.
+%
+%  'NewFigure' - whether to make a new figure or plot into the currently
+%  active subplot. Default is false (e.g., plot into current plot).
+% 
 function figHand = PlotModelParametersAndData(model, posteriorSamples, data, varargin)
   % Plot data fit
   args = struct('PdfColor', [0.54, 0.61, 0.06], 'NumSamplesToPlot', 63, 'NewFigure', true); 

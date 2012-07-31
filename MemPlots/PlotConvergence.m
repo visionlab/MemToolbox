@@ -1,7 +1,10 @@
-%PLOTCONVERGENCE Show traces for each variable for each MCMC chain. Very simple way to
-% Very simple way to diagnose convergence: They should look the same as
-% each other.
-  
+%PLOTCONVERGENCE Show traces for each variable for each MCMC chain. 
+% This provides a very simple way to diagnose convergence: They should 
+% look the same as each other.
+%
+%   figHand = PlotConvergence(posteriorSamples, paramNames)
+%
+%  
 function figHand = PlotConvergence(posteriorSamples, paramNames)
   figHand = figure;
   N = length(paramNames);

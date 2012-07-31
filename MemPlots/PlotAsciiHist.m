@@ -1,6 +1,12 @@
-% PlotAsciiHist makes a cute little ascii histogram of error data, like this:
+% PLOTASCIIHIST makes a cute little ascii histogram of error data
 %
-%     -pi ___.-'-.___ pi
+%   PlotAsciiHist(data,n);
+%
+% n says how many bins to use. So PlotAsciiHist(data, 12) prints something 
+% like this:
+%
+%     -180 ___.-'-.___ +180
+%
 %
 function PlotAsciiHist(data,n)
     % Check input

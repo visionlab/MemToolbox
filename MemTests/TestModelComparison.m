@@ -1,5 +1,13 @@
 % TESTMODELCOMPARISON sample from a model and then attempt to recover this model
 %
+%  [successAIC, successBIC, successAICc] = ...
+%      TestModelComparison(trueModel, foilModels, paramsIn, ...
+%                      numTrials, numItems, [optionalParameters])
+%  
+%  successAIC/BIC/AICc are the percentage of time that the respective model
+%  comparison metric correctly selected the true model as opposed to one of
+%  the foil models.
+%
 % Example usage:
 %   model = StandardMixtureModel();
 %   foilModels = {SwapModel(), ...

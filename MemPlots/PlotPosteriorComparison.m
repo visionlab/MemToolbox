@@ -1,6 +1,8 @@
 %PLOTPOSTERIORCOMPARISON Show multiple posteriors at once (e.g., for two conditions)
 % 
-%  e.g., 
+%    figHand = PlotPosteriorComparison(posteriors, paramNames)
+%
+%  Example usage:
 %   posteriorSamples1 = MCMC(MemDataset(1), model);
 %   posteriorSamples2 = MCMC(MemDataset(2), model);
 %   PlotPosteriorComparison({posteriorSamples1, ...

@@ -1,6 +1,15 @@
-%PLOTDATA plots a histogram of the data for continuous report data, and a
+%PLOTDATA plots a histogram of the data
 % Can plot either continuous report data, or binned bar graph for 2AFC data
 %
+%  figHand = PlotData(data, [optionalParameters])
+%
+% Optional parameters:
+%  'NumberOfBins' - the number of bins to use in display the data. Default
+%  40.
+%
+%  'NewFigure' - whether to make a new figure or plot into the currently
+%  active subplot. Default is false (e.g., plot into current plot).
+% 
 function figHand = PlotData(data, varargin)
   % Extra arguments and parsing
   args = struct('NumberOfBins', 40, 'NewFigure', false); 

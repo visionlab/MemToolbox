@@ -1,12 +1,19 @@
 % FITMULTIPLESUBJECTS_HIERARCHICAL fits many subjects data at once using MAP
 % estimation and a hierarchical model over subjects. 
 % 
-% Thus, we treat all of the subjects parameters as having been samples from
+%  [paramsMean, paramsSE, paramsSubs] = ...
+%               FitMultipleSubjects_Hierarchical(data, model, [verbosity])
+%    
+% We treat all of the subjects parameters as having been samples from
 % an underlying population normal distribution and infer the global mean 
 % and SD for each parameter. This causes shrinkage of each
 % subjects' parameter estimates towards the population mean and totally
 % eliminates outrageous parameter values (e.g., subjects with high guess
-% rates getting g=0, SD=200). 
+% rates getting g=0, SD=200). Furthermore, rather than discarding
+% differences in within-subject measurement errors (some subjects data 
+% constrain the parameters better than others), we can make use of these
+% differences in automatically weighting the more reliable subjects'
+% estimates more.
 %
 % Warning: Our MCMC function isn't quite up to the level of doing this
 % modeling for >10-15 subjects right now (or at least, it sometimes takes 
@@ -39,7 +46,7 @@ function [paramsMean, paramsSE, ...
   newModel.upperbound = [inf(size(model.upperbound)) ...
     repmat(model.upperbound, [1, nSubs+1])];
   
-  % By default assume population mean is same as subject means, and
+  % Start off by assuming population mean is same as subject means, and
   % population SD is one half of subject means
   newModel.movestd = [model.movestd./3 ...
     repmat(model.movestd, [1, nSubs+1])];

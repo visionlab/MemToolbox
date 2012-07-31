@@ -1,8 +1,10 @@
-% ColorWorkingMemoryExperiment Runs a color working memory task, 
-%   a la Zhang & Luck (2008). The task requires memory for the color of
-%   briefly presented squares. Participants then report the color of a single
-%   probed square using a continuous report task. 
+% COLORWORKINGMEMORYEXPERIMENT Runs a color working memory task
+% a la Zhang & Luck (2008). The task requires memory for the color of
+% briefly presented squares. Participants then report the color of a single
+% probed square using a continuous report task. 
 %    
+%   ColorWorkingMemoryExperiment();
+%
 %	Preferences can be found down at the bottom, beginning on line 197. 
 %
 

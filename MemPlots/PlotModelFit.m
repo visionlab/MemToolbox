@@ -1,10 +1,28 @@
 % PLOTMODELFIT plots the probability density function of the model overlaid on a histogram of the data.
-% The model and data can either be continuous report model/data or 2AFC model/data.
+% The model and data can either be continuous report model/data or 
+% 2AFC model/data.
+%
+%    figHand = PlotModelFit(model, params, data, [optionalParameters])
 %
 % The 'params' argument can be a maxPosterior, a posteriorSamples or a
 % fullPosterior. If it is a fullPosterior or posteriorSamples, the variance
 % of the model will be displayed in addition to the best fit model.
 %
+% Optional parameters:
+%  'NumberOfBins' - the number of bins to use in display the data. Default
+%  40.
+% 
+%  'PdfColor' - the color to plot the model fit with
+%
+%  'ShowNumbers' - whether to show the parameter values in the corner of
+%  the plot. Default is true.
+%
+%  'ShowAxisLabels' - whether to show the axis labels (e.g.,
+%  'Probability'). Default is true.
+%
+%  'NewFigure' - whether to make a new figure or plot into the currently
+%  active subplot. Default is false (e.g., plot into current plot).
+% 
 function figHand = PlotModelFit(model, params, data, varargin)
   % Extra arguments and parsing
   args = struct('PdfColor', [0.54, 0.61, 0.06], 'NumberOfBins', 40, ...

@@ -1,6 +1,9 @@
 % MODELCOMPARISON_CROSSVALIDATE Cross validates model likelihood by fitting on part of data
 % Fits model to (X-1)/Xs of the data and evaluating the model on 1/X of the
 % data. 
+% 
+%  [logLike, params] = ...
+%        ModelComparison_CrossValidate(data, models, [optionalParameters])
 %
 % As a default, 1/10 of the data is used for cross-validation. You may
 % change this by changing the optional parameter 'Splits' to a number other

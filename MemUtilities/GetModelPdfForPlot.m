@@ -1,10 +1,13 @@
-% GetModelPdfForPlot - allows PlotModelFit() to plot arbitrary pdfs.
+% GETMODELPDFFORPLOT allows PlotModelFit() to plot arbitrary pdfs.
+%
+% model = GetModelPdfForPlot(model)
 %
 % adds pdfForPlot to a model, a function that allows you to plot a pdf 
 % with arbitrary requirements. For example, with the swap model, it will be
 % appropriately 'bumpy', as though we averaged across all the displays.
 % 
-% It is used by PlotModelFit(), so for example you can do this:
+% It is used by PlotModelFit() as a helper function, and allows you to,
+% for example, do this:
 %
 %   newData = MemDataset(3);
 %   newData.errors = newData.errors(:,1:30);
@@ -13,8 +16,8 @@
 %   PlotModelFit(model, [.1 .5 20], newData);
 %
 %  and should see bumps where distractors were more common in the first 30
-%  displays.
-
+%  displays (by the bumps in the pdf).
+%
 function model = GetModelPdfForPlot(model)
   
   % Check if we need extra information to call the pdf

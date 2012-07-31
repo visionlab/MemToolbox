@@ -2,7 +2,6 @@
 %
 %    maxPosteriorParameters = MAP(data, model)
 %
-%---------------------------------------------------------------------
 function [maxPosterior, like] = MAP(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have

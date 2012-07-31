@@ -1,6 +1,6 @@
 %GRIDSEARCH Calculate full posterior of parameters of model given data
 %
-%    fullPosterior = GridSearch(data, model)
+%  fullPosterior = GridSearch(data, model, [optionalParameters])
 %
 % This fitting function just loops over reasonable values of each parameter
 % and evaluates the likelihood and prior at those values. It then returns a

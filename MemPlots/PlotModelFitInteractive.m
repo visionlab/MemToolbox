@@ -4,9 +4,23 @@
 % a slider that allows you to adjust each of the parameters of the model  
 % and see the impact on the pdf.
 %
+%    figHand = PlotModelFitInteractive(model, params, data, varargin)
+%
 % 'params' can be either a maxPosterior, a fullPosterior or a
 % posteriorSamples.
 %
+% Optional parameters:
+%  'PdfColor' - the color to plot the model fit with. Note that this color
+%  is automatically 'faded' if the model fit being shown is not the max
+%  posterior fit.
+%
+%  'MarginalPlots' - If this is set to true, then under each slider bar is
+%  plotted the current likelihood function for each parameter, conditioned
+%  on the values of the other parameters.
+%
+%  'NewFigure' - whether to make a new figure or plot into the currently
+%  active subplot. Default is false (e.g., plot into current plot).
+% 
 function figHand = PlotModelFitInteractive(model, params, data, varargin)
   % Extra parameters
   args = struct('MarginalPlots', false, 'NewFigure', true, ...

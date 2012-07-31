@@ -1,4 +1,9 @@
-% MemDataset - Returns data from examples included in MemToolbox
+% MEMDATASET Returns data from examples included in MemToolbox
+%
+%  data = MemDataset(whichData)
+%
+% whichData should range from 1-3, corresponding to the 3 currently
+% included datasets.
 %
 function data = MemDataset(whichData)
   if(nargin < 1)

@@ -1,18 +1,26 @@
 % MODELCOMPARISON_AIC_BIC Calculates AIC, AICc, and BIC values for models
 %
+%  [AIC, BIC, logLike, AICc] = ModelComparison_AIC_BIC(data, models)
+%
 % The Akaike Information Criterion is a measure of goodness of fit that 
 % includes a penalty term for each additional model parameter. Lower AIC 
 % denotes a better fit. To compare models A:B, look at the difference 
 % AIC(A) - AIC(B). Positive values provide evidence in favor of model B, 
-% negative in favor of model A.;
+% negative in favor of model A.
 %
 % The corrected Aikaike Information is the same as the AIC, but it includes
 % a correction for finite data. It can be interpretted in the same way.
 %
 % The Bayesian Information Criterion is similar to AIC, with different
 % assumptions about the prior of models, and thus a more stringent penalty
-% for more complex models.
-%      
+% for more complex models. Its values should be compared the same way.
+%
+%  Example usage:
+%   data = MemDataset(3);
+%   AIC = ModelComparison_AIC_BIC(data, {SwapModel(), StandardMixtureModel()})
+%   aicDiff = AIC(1) - AIC(2)
+%
+%
 % References:
 %
 %   Akaike, H. (1974). A new look at the statistical model identification.

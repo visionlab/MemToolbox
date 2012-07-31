@@ -1,5 +1,7 @@
 % MODELCOMPARISON_DIC Calculates DIC values for models
 %
+%    [dic, pD] = ModelComparison_DIC(data, models, [optionalParameters])
+%
 %  DIC is a generalization of Akaike's Information Criterion (AIC)
 %  designed for hierarchical models.  It estimates the "effective number of
 %  parameters" based on the spread of the posterior distribution, and thus

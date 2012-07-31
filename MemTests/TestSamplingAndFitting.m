@@ -1,5 +1,9 @@
 % TESTSAMPLINGANDFITTING sample from a model and then attempt to recover parameters
 %
+%  [paramsOut, lowerCI, upperCI] = ...
+%      TestSamplingAndFitting(model, paramsIn, numTrials, ...
+%                             numItems, [optionalParameters])
+%
 % Example usage:
 %   model = StandardMixtureModelWithBias();
 %   paramsIn = {0,0.1,10}; % mu, g , K

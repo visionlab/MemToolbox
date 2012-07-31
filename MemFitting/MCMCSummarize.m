@@ -1,7 +1,9 @@
 % MCMCSUMMARIZE Convert samples from MCMC into estimates of parameters
 %
-% Returns .posteriorMean, .posteriorMedian, .maxPosterior, .lowerCredible,
-%  .upperCredible. Hopefully these names are self-explanatory.
+%  s = MCMCSummarize(posteriorSamples, whichField) 
+%
+% Returns a struct with a .posteriorMean, .posteriorMedian, .maxPosterior, 
+%  .lowerCredible, .upperCredible.
 %
 % If you pass the optional second parameter whichField, it does not
 % return a struct but instead returns only that one field. Possible values
