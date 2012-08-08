@@ -2,7 +2,7 @@
 %
 %  data = MemDataset(whichData)
 %
-% whichData should range from 1-3, corresponding to the 3 currently
+% whichData should range from 1-7, corresponding to the 7 currently
 % included datasets.
 %
 function data = MemDataset(whichData)
@@ -20,6 +20,18 @@ function data = MemDataset(whichData)
     case 3
       data = load(fullfile(currentDir, 'DataFiles', ...
         'swap-data-simulated.mat'));
+    case 4
+      data = load(fullfile(currentDir, 'DataFiles', ...
+        'dataset-multiple-conditions-s1.mat'));
+    case 5
+      data = load(fullfile(currentDir, 'DataFiles', ...
+        'dataset-multiple-conditions-s2.mat'));
+    case 6
+      data = load(fullfile(currentDir, 'DataFiles', ...
+        'dataset-multiple-conditions-s3.mat'));
+    case 7
+      data = load(fullfile(currentDir, 'DataFiles', ...
+        'dataset-multiple-conditions-s4.mat'));      
     otherwise
       error('Sorry, that''s not one of the available datasets.')
   end
