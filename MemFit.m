@@ -152,8 +152,6 @@ function fit = MemFit_SingleData(data, model, verbosity)
   if(isempty(model.paramNames))
     fit.maxPosterior = [];
   else
-    fprintf('\nJust a moment while MTB fits a model to your data...\n');
-    pause(0.5);
     if(verbosity > 0)
       fprintf('\nJust a moment while MTB fits a model to your data...\n');
       pause(0.5);
@@ -234,60 +232,75 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     
     for modelIndex = 1:length(modelCellArray)
       fprintf('        Model %d:   %s\n',  ...
-              modelIndex, modelCellArray{modelIndex}.name);
+        modelIndex, modelCellArray{modelIndex}.name);
       fprintf('     Parameters:   %s\n', ...
-              prettyPrintParams(modelCellArray{modelIndex}.paramNames));
-      fprintf('            MLE:   %s\n', ...
-          prettyPrintParams(cellstr(num2str(MLE(data, modelCellArray{modelIndex})'))));
+        prettyPrintParams(modelCellArray{modelIndex}.paramNames));
+      %fprintf('            MLE:   %s\n', ...
+      %  prettyPrintParams(cellstr(num2str(MLE(data, modelCellArray{modelIndex})'))));
       fprintf('\n');
     end
     
-    fprintf('Just a moment while MTB fits these models to your data...\n\n\n');
+    %fprintf('Just a moment while MTB fits these models to your data...\n\n\n');
   end
   
   % Model comparison & results
-  [fit.bayesFactor,fit.logPosteriorOdds,fit.posteriorOdds] = ...
-    ModelComparison_BayesFactor(data, modelCellArray, 'Verbosity', 0);
-    
+  fprintf('Computing AIC, AICc and BIC...\n');
   [fit.AIC, fit.BIC, fit.logLike, fit.AICc] = ModelComparison_AIC_BIC(data, modelCellArray);
   
   % Print stats
   if verbosity > 0
-    printStat('Log Bayes factor', fit.bayesFactor, @(s,m1,m2) (s(m1,m2)));
-    printStat('Log likelihood', fit.logLike);
-    printStat('AIC', fit.AIC);
-    printStat('AICc', fit.AICc);
-    printStat('BIC', fit.BIC);
-    printStat('Log posterior odds', fit.logPosteriorOdds);
+    printStat('Log likelihood', fit.logLike, @max);
+    printStat('AIC', fit.AIC, @min);
+    printStat('AICc', fit.AICc, @min);
+    printStat('BIC', fit.BIC, @min);
   end
   
-  fit.DIC = ModelComparison_DIC(data, modelCellArray);
+  fprintf('Computing Bayes Factors...\n');
+  [fit.bayesFactor,fit.logPosteriorOdds,fit.posteriorOdds] = ...
+    ModelComparison_BayesFactor(data, modelCellArray, 'Verbosity', 1);
+  fit.posteriorOdds = 10.^(fit.logPosteriorOdds - max(fit.logPosteriorOdds));
+  fit.posteriorOdds = fit.posteriorOdds ./ sum(fit.posteriorOdds);
+  
+  % Print stats
+  if verbosity > 0  
+    printStat('Log Bayes factor', fit.bayesFactor, @(x)(x), @(s,m1,m2) (s(m1,m2)));
+    printStat('Posterior odds', fit.posteriorOdds, @max);
+  end 
+   
+  fprintf('Computing DIC...\n');
+  fit.DIC = ModelComparison_DIC(data, modelCellArray, 'Verbosity', 1);
   if verbosity > 0
     fprintf('\n');
-    printStat('DIC', fit.DIC);
+    printStat('DIC', fit.DIC, @min);
   end
   
-  function printStat(name,stats,f)
+  function printStat(name,stats,bestF,f)
     DescribeModelComparisonMethod(name);
     % Print headers
-    fprintf(['\nmodel\t' name '\n']);
-    fprintf(['-----\t' repmat('-', 1, length(name)) '\n']);
+    fprintf(['\nmodel  \t' name '\n']);
+    fprintf(['-----  \t' repmat('-', 1, length(name)) '\n']);
     % Print model-specific stats
     if(~strcmp(name,'Log Bayes factor'))
       for modelIndex = 1:length(stats)
-        fprintf('%d\t%g\n',modelIndex,stats(modelIndex));
+        fprintf('%2d     %0.2f\n',modelIndex,stats(modelIndex));
       end
     end
     % Print model vs. model stats, default is difference
-    if nargin < 3
+    if nargin < 4
       f = @(s,m1,m2) (s(m1) - s(m2));
     end
-    combos = combnk([1:length(stats)],2);
-    for i = 1:size(combos,1)
-      fprintf('%d:%d\t%g\n', combos(i,1), combos(i,2), ...
-              f(stats, combos(i,1), combos(i,2)));
+    if(~strcmp(name,'Posterior odds'))
+      combos = combnk([1:length(stats)],2);
+      for i = 1:size(combos,1)
+        fprintf('%d:%d  \t%0.2f\n', combos(i,1), combos(i,2), ...
+          f(stats, combos(i,1), combos(i,2)));
+      end
     end
-    fprintf('\n\n\n');
+    if(~strcmp(name,'Log Bayes factor'))
+      [tmp, best] = bestF(stats);
+      fprintf('Preferred model: %d (%s)\n', best, modelCellArray{best}.name);
+    end
+    fprintf('\n');
   end
 end
 
