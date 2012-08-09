@@ -1,6 +1,8 @@
 % TESTALLMODELSTWOAFC runs tests to be sure we are correctly sampling from and recovering the data
 % for all the default models when they are converted to 2AFC format
 %
+%    TestAllModelsTwoAFC(numTrials, numItemsPerTrial);
+%
 function TestAllModelsTwoAFC(numTrials, numItemsPerTrial)
   
   % Default parameters

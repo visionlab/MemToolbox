@@ -1,11 +1,13 @@
 % GENERATEDISPLAYS can be called to generate colors to present in a working memory task.  
 %
-% Mode is called to select the mode in which the colors are selected.
+%  displays = GenerateDisplays(numTrials, itemsPerTrial, mode)
+%
+% 'mode' chooses the method by which the colors are selected.
 % Currently the only supported mode is drawing randomly from a circular
 % uniform.
 %    mode = 1: returns information needed to do continuous report
 %    mode = 2: returns information needed to do 2AFC
-
+%
 function displays = GenerateDisplays(trials, itemsPerTrial, mode)
     
   % Default mode is 1 (iid from circular)	

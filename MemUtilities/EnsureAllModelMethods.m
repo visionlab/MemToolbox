@@ -1,3 +1,13 @@
+% ENSUREALLMODELMETHODS makes sure a model is complete with all pdf/prior functions
+%
+% model = EnsureAllModelMethods(model)
+%
+% This function is a helper function used by all the functions in
+% MemFitting to ensure that all models have a .prior, .logprior, .pdf and
+% .logpdf. .logpdf and .logprior are created from .pdf and .prior, if they
+% do not exist. If nor prior is specified, .prior is assumed to be uniform
+% over all parameters.
+%
 function model = EnsureAllModelMethods(model)
   % If no prior, just put a uniform prior on all parameters
   if ~isfield(model, 'prior')

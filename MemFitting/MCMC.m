@@ -1,6 +1,6 @@
 %MCMC MCMC with tuned proposals to get samples from posterior of model
 %
-%    posteriorSamples = MCMC(data, model)
+%    posteriorSamples = MCMC(data, model, [optionalParameters])
 %
 % This MCMC function automatically detects convergence using the technique
 % of Gelman and Rubin (1992). 
@@ -11,8 +11,6 @@
 % ... 'ConvergenceVariance', Inf, 'BurnInSamplesBeforeCheck', 5000, ...
 % ... 'PostConvergenceSamples', 15000, ...
 %
-%---------------------------------------------------------------------
-
 function posteriorSamples = MCMC(data, model, varargin)
   % Extra arguments and parsing
   %  Verbosity = 0,  Print nothing
