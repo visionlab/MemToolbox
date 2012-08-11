@@ -1,6 +1,24 @@
 %PLOTPOSTERIORPREDICTIVEDATA Show data sampled from the model with the actual 
-% data overlayed, plus a plot of where the two differ.
-
+% data overlayed, plus a plot of where the two differ. This can be thought
+% of as the 'residual' of the data, given the model fit, and is helpful for
+% diagnosing bad fits in the model.
+%
+%   figHand = PlotPosteriorPredictiveData(model, posteriorSamples,...
+%                                             data, [optionalParameters])
+% 
+%
+% Optional parameters:
+%  'NumberOfBins' - the number of bins to use in display the data. Default
+%  55.
+% 
+%  'NumSamplesToPlot' - how many posterior samples to show in the posterior
+%  predictive plot. Default is 48.
+%
+%  'PdfColor' - the color to plot the model fit with. 
+%
+%  'NewFigure' - whether to make a new figure or plot into the currently
+%  active subplot. Default is false (e.g., plot into current plot).
+% 
 function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
   % difference plot.
@@ -67,8 +85,8 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   set(h, 'LineWidth', 2, 'LineSmoothing', 'on');
   line([-180 180], [0 0], 'LineStyle', '--', 'Color', [.5 .5 .5]);
   xlim([-180 180]);
-  title('Difference between real data and simulated data');
+  title('Difference between actual and simulated data');
   xlabel('(Note: deviations from zero indicate bad fit)');
-  palettablehistogram();
+  makepalettable();
 end
 

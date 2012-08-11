@@ -1,5 +1,12 @@
-%PLOTPOSTERIOR Show 2x2 correlation for each variable with each other to look for
-% 
+%PLOTPOSTERIOR Show 2x2 correlation for each variable with each other
+% This allows you to visualize the entire posterior (what you should
+% believe about the parameters, given the data you've seen).
+%
+%   figHand = PlotPosterior(posterior, paramNames)
+%
+% posterior can be either a posteriorSamples, from MCMC, or a
+% fullPosterior, from GridSearch.
+%
 function figHand = PlotPosterior(posterior, paramNames)
   % Show 2x2 correlation for each variable with each other to look for
   % structure; Visualize both as a scatter and as a 2D histogram
@@ -44,7 +51,7 @@ function figHand = PlotPosterior_MCMC(posteriorSamples, paramNames)
   
   % Comestics
   colormap(palettablecolormap('sequential'));
-  palettablehistogram;
+  makepalettable(figHand);
 end
 
 function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
@@ -86,5 +93,5 @@ function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
   
   % Comestics
   colormap(palettablecolormap('sequential'));
-  palettablehistogram();
+  makepalettable(figHand);
 end

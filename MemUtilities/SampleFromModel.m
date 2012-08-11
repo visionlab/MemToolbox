@@ -1,4 +1,6 @@
-% SampleFromModel - Simulates data from a model with some parameters. 
+% SAMPLEFROMMODEL simulates data from a model with some parameters. 
+%
+%  samp = SampleFromModel(model, params, dims, displayInfo)
 %
 %  Example usage:
 %
@@ -12,11 +14,22 @@
 %  display information as the 4th parameter (e.g., a data struct that has
 %  .distractors), and the dimensions you request back (third parameter,
 %  dims) must match the number of displays you provide.
+% 
+% e.g.,
+%    model = SwapModel();
+%    displays = GenerateDisplays(100, 3); % 100 trials, 3 items/trial
+%    paramsIn = {0, 0.1, 1};
+%    simulatedData = SampleFromModel(model, paramsIn, [100,1], displays);
 %
 function samp = SampleFromModel(model, params, dims, displayInfo)
   % Default to 1 sample
   if(nargin < 3)
     dims = [1 1];
+  end
+  
+  % Make sure params is a cell array of parameters
+  if ~iscell(params)
+    params = num2cell(params);
   end
   
   % Check if the model needs extra information about the displays

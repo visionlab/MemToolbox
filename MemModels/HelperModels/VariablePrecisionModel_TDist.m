@@ -8,7 +8,7 @@ function model = VariablePrecisionModel_TDist()
 	model.paramNames = {'g', 'sigma', 'df'};
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters
 	model.upperbound = [1 Inf 100]; % Upper bounds for the parameters
-	model.movestd = [0.02, 0.1, 0.25];
+	model.movestd = [0.05, 1, 0.5];
 	model.pdf = @ismpdf;
 	model.start = [0.0, 0.2, 0.2;
                    0.2, 0.3, 1.0;
