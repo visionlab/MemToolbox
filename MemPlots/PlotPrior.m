@@ -1,19 +1,17 @@
-%PLOTSAMPLESFROMPRIOR Show a model's prior by sampling from it
+%PLOTPRIOR Show a model's prior
 % This allows you to visualize the entire prior (what you 
 % believe about the parameters, before you see any data).
 %
-%   figHand = PlotSamplesFromPrior(model, [optionalParameters])
+%   figHand = PlotPrior(model, [optionalParameters])
 %
 % Optional parameters:
-%  'NumSamples' - how many samples from the prior to take 
 %
 %  'UseModelComparisonPrior' - whether to use the normal diffuse prior for
-%  the model (as used in estimation), model.prior (default), or whether to
-%  use the prior used for computing Bayes Factors, model.priorForMC (if set
-%  to true).
+%  the model, model.prior (default), or whether to use the prior used for 
+%  computing Bayes Factors, model.priorForMC (if set to true).
 %
-function figHand = PlotSamplesFromPrior(model, varargin)
-  args = struct('NumSamples', 20000, 'UseModelComparisonPrior', false);
+function figHand = PlotPrior(model, varargin)
+  args = struct('UseModelComparisonPrior', false);
   args = parseargs(varargin, args);
   
   if args.UseModelComparisonPrior && ~isfield(model, 'priorForMC')
@@ -32,6 +30,7 @@ function figHand = PlotSamplesFromPrior(model, varargin)
   priorModel.pdf = @(data, varargin)(1);
   priorModel.logpdf = @(data, varargin)(0);
   priorSamples = MCMC([], priorModel, 'Verbosity', 0, ...
-    'PostConvergenceSamples', args.NumSamples);
-  figHand = PlotPosterior(priorSamples, model.paramNames);
+    'PostConvergenceSamples', 1000);
+  fullPrior = GridSearch([], priorModel, 'PosteriorSamples', priorSamples);
+  figHand = PlotPosterior(fullPrior, model.paramNames);
 end
