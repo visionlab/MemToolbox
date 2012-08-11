@@ -31,7 +31,7 @@ function model = VariablePrecisionModel_TDist_WithBias()
 end
 
 % To sample from it
-function allT = VariablePrecisionWithBiasGenerator(parameters, dims)
+function allT = VariablePrecisionWithBiasGenerator(parameters, dims, displayInfo)
   n = prod(dims);
   allT = parameters{3}*trnd(parameters{4},n,1)+parameters{1};
   allT = mod(allT+180, 360)-180;

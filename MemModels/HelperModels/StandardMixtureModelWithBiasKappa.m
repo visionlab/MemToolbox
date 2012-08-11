@@ -28,7 +28,7 @@ function model = StandardMixtureModelWithBiasKappa()
 end
 
 % acheives a 15x speedup over the default rejection sampler
-function r = StandardMixtureModelWithBiasGenerator(parameters, dims)
+function r = StandardMixtureModelWithBiasGenerator(parameters, dims, displayInfo)
   n = prod(dims); % figure out how many numbers to cook
   r = rand(n,1)*360 - 180; % fill array with blind guesses
   guesses = logical(rand(n,1) < parameters{2}); % figure out which ones will be guesses

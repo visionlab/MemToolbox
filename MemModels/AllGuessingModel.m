@@ -9,5 +9,5 @@ function model = AllGuessingModel()
 	model.movestd = [];
 	model.pdf = @(data) 1*unifpdf(data.errors(:),-180,180);
 	model.start = []; % g
-  model.generator = @(parameters,dims,varargin) (unifrnd(-180,180,dims));
+  model.generator = @(parameters,dims,displayInfo) (unifrnd(-180,180,dims));
 end

@@ -18,7 +18,7 @@ function model = VariablePrecisionModel_TDist()
 end
 
 % To sample from this model
-function r = ismgen(params, dims)
+function r = ismgen(params, dims, displayInfo)
   paramsNew = {0, params{1}, params{2}, params{3}};
   model = VariablePrecisionModel_TDist_WithBias();
   r = model.generator(paramsNew, dims);

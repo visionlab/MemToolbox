@@ -58,13 +58,8 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
   
   % If the model has an efficient generator, use it. otherwise use rejection sampling
   if(isfield(model, 'generator'))
-    if r
-      samp = model.generator(params, dims, displayInfo);
-      return
-    else 
-      samp = model.generator(params, dims);
-      return;
-    end
+    samp = model.generator(params, dims, displayInfo);
+    return
   end
   
   % Get CDF
