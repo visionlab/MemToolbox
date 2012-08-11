@@ -34,7 +34,9 @@ function model = Orientation(model, whichParameters)
   
   % Convert orientation data to a format that is useable in all the models
   function p = NewPDF(data, varargin)
-    data.errors = data.errors .* 2;
+    if isfield(data, 'errors')
+      data.errors = data.errors .* 2;
+    end
     if isfield(data, 'distractors')
       data.distractors = data.distractors .* 2;
     end
@@ -47,6 +49,11 @@ function model = Orientation(model, whichParameters)
     p = model.oldPdf(data, varargin{:});
     
     % To make plotting functions work right:
-    p(data.errors<-180 | data.errors>180) = 0;
+    if isfield(data, 'errors')
+      p(data.errors<-180 | data.errors>180) = 0;
+    end
+    if isfield(data, 'changeSize')
+      p(data.changeSize<-180 | data.changeSize>180) = 0;
+    end    
   end
 end
