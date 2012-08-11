@@ -1,13 +1,12 @@
 % FITMULTIPLESUBJECTS_HIERARCHICAL fits many subjects data at once using MAP
 % estimation and a hierarchical model over subjects. 
 % 
-%  [paramsMean, paramsSE, paramsSubs] = ...
-%               FitMultipleSubjects_Hierarchical(data, model, [verbosity])
+%  fit = FitMultipleSubjects_Hierarchical(data, model, [verbosity])
 %    
-% We treat all of the subjects parameters as having been samples from
+% We treat all of the subjects' parameters as having been samples from
 % an underlying population normal distribution and infer the global mean 
 % and SD for each parameter. This causes shrinkage of each
-% subjects' parameter estimates towards the population mean and totally
+% subject's parameter estimates towards the population mean and totally
 % eliminates outrageous parameter values (e.g., subjects with high guess
 % rates getting g=0, SD=200). Furthermore, rather than discarding
 % differences in within-subject measurement errors (some subjects data 
@@ -22,11 +21,9 @@
 % Example usage:
 %   data{1} = MemDataset(1);
 %   data{2} = MemDataset(2);
-%   [paramsMean, paramsSE, ...
-%             paramsSubs] = FitMultipleSubjects_Hierarchical(data, model);
+%   fit = FitMultipleSubjects_Hierarchical(data, model);
 %
-function [paramsMean, paramsSE, ...
-    paramsSubs] = FitMultipleSubjects_Hierarchical(data, model, verbosity)
+function fit = FitMultipleSubjects_Hierarchical(data, model, verbosity)
   % Optional param
   if nargin<3
     verbosity = 1;
@@ -65,17 +62,25 @@ function [paramsMean, paramsSE, ...
   
   % In theory we could do this with MLE, but in practice it is not so good
   % at searching this space. So do MCMC.
+  
   r = 1.2 + log(nSubs)/10; % More subs = more params that might be above 
                            % ConvergenceVariance. So increase accordingly.
   posteriorSamples = MCMC(data, newModel, 'Verbosity', verbosity, ...
     'ConvergenceVariance', r);
-  params = MCMCSummarize(posteriorSamples, 'maxPosterior');
+  params = MCMCSummarize(posteriorSamples);
   
-  % Convert back to separate params
-  paramsSubs = reshape(params', nParams, [])';
-  paramsSE = paramsSubs(1,:)./sqrt(nSubs);
-  paramsMean = paramsSubs(2,:);
-  paramsSubs(1:2,:)=[];
+  % Convert to outputs
+  paramsMax = params.maxPosterior;
+  paramsLower = reshape(params.lowerCredible', nParams, [])';
+  paramsUpper = reshape(params.upperCredible', nParams, [])';
+  
+  fit.paramsSubs = reshape(paramsMax', nParams, [])';
+  fit.paramsStd = fit.paramsSubs(1,:);
+  fit.paramsMean = fit.paramsSubs(2,:);
+  fit.paramsSubs(1:2,:)=[];
+  
+  fit.paramsMeanLowerCredible = paramsLower(2,:);
+  fit.paramsMeanUpperCredible = paramsUpper(2,:);
 end
 
 function p = HierarchicalPrior(oldPrior, params, nParams)

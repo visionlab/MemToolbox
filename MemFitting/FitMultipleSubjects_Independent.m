@@ -2,8 +2,7 @@
 % estimation. This is just a shortcut for a loop over subjects that calls
 % MAP for each one.
 % 
-%  [paramsMean, paramsSE, paramsSubs] = ...
-%                    FitMultipleSubjects_Independent(data, model)
+%  fit = FitMultipleSubjects_Independent(data, model)
 %
 % Uses maximum a posterior estimation to get parameter estimates for each
 % of the subject's data; the output averages across subjects. Data for each 
@@ -16,14 +15,12 @@
 % Example usage:
 %   data{1} = MemDataset(1);
 %   data{2} = MemDataset(2);
-%   [paramsMean, paramsSE, ...
-%             paramsSubs] = FitMultipleSubjects_Independent(data, model);
+%   fit = FitMultipleSubjects_Independent(data, model);
 %
-function [paramsMean, paramsSE, ...
-    paramsSubs] = FitMultipleSubjects_Independent(data, model)
+function fit = FitMultipleSubjects_Independent(data, model)
   for i=1:length(data)
-    paramsSubs(i,:) = MAP(data{i}, model);
+    fit.paramsSubs(i,:) = MAP(data{i}, model);
   end
-  paramsMean = mean(paramsSubs);
-  paramsSE = std(paramsSubs)./sqrt(length(data));
+  fit.paramsMean = mean(fit.paramsSubs);
+  fit.paramsSE = std(fit.paramsSubs)./sqrt(length(data));
 end
