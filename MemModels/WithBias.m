@@ -28,13 +28,20 @@ function model = WithBias(model, priorForMu)
   model.movestd = [1 model.movestd];
   model.start = [rand(size(model.start,1),1)*10  model.start];
   
+  
   % Adjust pdf and prior
   model.oldPdf = model.pdf;
   model.pdf = @NewPDF;
   
+  model.priorForMu = priorForMu;
   if isfield(model, 'prior')
     model.oldPrior = model.prior;
-    model.prior = @(p)(model.prior(p(2:end)) .* priorForMu(p(1)));
+    model.prior = @(p)(model.oldPrior(p(2:end)) .* model.priorForMu(p(1)));
+  end
+  
+  if isfield(model, 'priorForMC')
+    model.oldPriorForMC = model.priorForMC;
+    model.priorForMC = @(p)(model.oldPriorForMC(p(2:end)) .* model.priorForMu(p(1)));
   end
   
   % Adjust generator function
