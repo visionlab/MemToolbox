@@ -56,10 +56,16 @@ function p = SwapModelPDF(data, mu, g, B, sd)
   % people will rarely have greater than 8 or so distractors, so the loop
   % is over a relatively small dimension
   nDistractors = size(data.distractors,1);
-  p = (1-g-B).*vonmisespdf(data.errors(:),mu,deg2k(sd)) + ...
+  p = (1-g-B).*vonmisespdf(data.errors(:), mu, deg2k(sd)) + ...
           (g).*unifpdf(data.errors(:), -180, 180);
+        
+  % Allow for the possibility of NaN's in distractors, as in the case where
+  % different trials have different set sizes
+  numDistractorsPerTrial = sum(~isnan(data.distractors));
   for i=1:nDistractors
-    p = p + (B/nDistractors).*vonmisespdf(data.errors(:),mu+data.distractors(i,:)',deg2k(sd));
+    pdfOut = vonmisespdf(data.errors(:), mu+data.distractors(i,:)', deg2k(sd));
+    pdfOut(isnan(pdfOut)) = 0;
+    p = p + (B./numDistractorsPerTrial(:)).*pdfOut;
   end
 end
 
@@ -70,8 +76,9 @@ function y = SwapModelGenerator(params,dims,displayInfo)
   % Assign types to trials
   r = rand(n,1);
   which = zeros(n,1); % default = remembered
-  which(r<params{2}+params{3}) = randi(size(displayInfo.distractors,1), ...
-    sum(r<params{2}+params{3}), 1); % swap to random distractor
+  numDistractorsPerTrial = sum(~isnan(displayInfo.distractors))';
+  which(r<params{2}+params{3}) = ceil(rand(sum(r<params{2}+params{3}), 1) ...
+    .* numDistractorsPerTrial(r<params{2}+params{3})); % swap to random distractor
   which(r<params{2}) = -1; % guess
   
   % Fill in with errors

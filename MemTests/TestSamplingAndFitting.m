@@ -8,7 +8,8 @@
 %   model = StandardMixtureModelWithBias();
 %   paramsIn = {0,0.1,10}; % mu, g , K
 %   numTrials = round(logspace(1,4,4)); % 10, 100, 1000, and 10000 trials
-%   numItems = 3; % set size of displays to simulate
+%   numItems = [3 5]; % set size of displays to simulate; will make half
+%   the trials set size 3 and half set size 5
 %   [paramsOut, lowerCI, upperCI] = TestSamplingAndFitting(model, paramsIn, numTrials, numItems)
 %
 % or just:
@@ -37,9 +38,9 @@ function [paramsOut, lowerCI, upperCI] = ...
     numTrials = round(logspace(1,4,4));
   end
   
-  % Simulate displays with 3 items on them
+  % Simulate displays with 3 and 5 items on them
   if(nargin < 4)
-    numItems = 3;
+    numItems = [3 5];
   end
   
   if args.Verbosity > 0
@@ -60,7 +61,13 @@ function [paramsOut, lowerCI, upperCI] = ...
     end
     
     % Generate displays
-    displays = GenerateDisplays(numTrials(i), numItems, 2);
+    if length(numItems)>1
+      numItemsVec = ceil((1:numTrials(i))./(numTrials(i)/length(numItems)));
+      numItemsVec = numItems(numItemsVec);
+      displays = GenerateDisplays(numTrials(i), numItemsVec, 2);
+    else
+      displays = GenerateDisplays(numTrials(i), numItems, 2);
+    end
 
     % Generate error data for these displays:
     data = displays;
@@ -71,7 +78,7 @@ function [paramsOut, lowerCI, upperCI] = ...
     end
     
     % Now try to recover the parameters that led to these errors:
-    posteriorSamples = MCMC(data, model, 'Verbosity', 1);
+    posteriorSamples = MCMC(data, model, 'Verbosity', 0);
     fit = MCMCSummarize(posteriorSamples);
     paramsOut(i,:) = fit.posteriorMean;
     lowerCI(i,:) = fit.lowerCredible;

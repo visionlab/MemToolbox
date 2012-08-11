@@ -8,6 +8,11 @@
 %   ...
 %   data.distractors, Row N: distance of distractor N from target
 %
+% data.distractors may contain NaNs. For example, if you have data with 
+% different set sizes, data.distractors should contain as many rows as you
+% need for the largest set size, and for displays with smaller set sizes
+% the last several rows can be filled with NaNs.
+%
 % This model includes a custom .modelPlot function that is called by
 % MemFit(). This function produces a plot of the distance of observers'
 % reports from the distractors, rather than from the target, as in Bays,
@@ -36,7 +41,7 @@ function model = SwapModel()
   function figHand = model_plot(data, params, varargin)
     d.errors = [];
     for i=1:length(data.errors)
-      d.errors = [d.errors; distance(data.errors(i), data.distractors(:,i))];
+      d.errors = [d.errors; circdist(data.errors(i), data.distractors(:,i))];
     end
     m = StandardMixtureModel();
     f = MAP(d, m);
@@ -62,8 +67,14 @@ function p = SwapModelPDF(data, g, B, sd)
   nDistractors = size(data.distractors,1);
   p = (1-g-B).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
           (g).*unifpdf(data.errors(:), -180, 180);
+        
+  % Allow for the possibility of NaN's in distractors, as in the case where
+  % different trials have different set sizes
+  numDistractorsPerTrial = sum(~isnan(data.distractors));
   for i=1:nDistractors
-    p = p + (B/nDistractors).*vonmisespdf(data.errors(:),data.distractors(i,:)',deg2k(sd));
+    pdfOut = vonmisespdf(data.errors(:), data.distractors(i,:)', deg2k(sd));
+    pdfOut(isnan(pdfOut)) = 0;
+    p = p + (B./numDistractorsPerTrial(:)).*pdfOut; 
   end
 end
 
@@ -74,8 +85,9 @@ function y = SwapModelGenerator(params,dims,displayInfo)
   % Assign types to trials
   r = rand(n,1);
   which = zeros(n,1); % default = remembered
-  which(r<params{1}+params{2}) = randi(size(displayInfo.distractors,1), ...
-    sum(r<params{1}+params{2}), 1); % swap to random distractor
+  numDistractorsPerTrial = sum(~isnan(displayInfo.distractors))';
+  which(r<params{1}+params{2}) = ceil(rand(sum(r<params{1}+params{2}), 1) ...
+    .* numDistractorsPerTrial(r<params{1}+params{2})); % swap to random distractor
   which(r<params{1}) = -1; % guess
   
   % Fill in with errors

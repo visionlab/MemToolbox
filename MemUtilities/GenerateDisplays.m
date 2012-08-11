@@ -2,6 +2,10 @@
 %
 %  displays = GenerateDisplays(numTrials, itemsPerTrial, mode)
 %
+% numTrials must be an integer. itemsPerTrial can be either an integer or
+% a vector the 1 x numTrials in size, specifying the number of items on
+% each trial separately.
+%
 % 'mode' chooses the method by which the colors are selected.
 % Currently the only supported mode is drawing randomly from a circular
 % uniform.
@@ -18,8 +22,11 @@ function displays = GenerateDisplays(trials, itemsPerTrial, mode)
 	% iid from ciruclar uniform
 	if mode == 1 || mode == 2
     % Generate random items
-	  displays.items = unifrnd(0, 360, itemsPerTrial, trials);
-    displays.whichIsTestItem = ceil(rand(1,trials)*itemsPerTrial);
+	  displays.items = unifrnd(0, 360, max(itemsPerTrial), trials);
+    for i=1:max(itemsPerTrial)
+      displays.items(i,i>itemsPerTrial) = NaN;
+    end
+    displays.whichIsTestItem = ceil(rand(1, trials).*itemsPerTrial);
     
     % Extract useful information for models
     displays = AddUsefulInfo(displays);
@@ -39,7 +46,7 @@ function displays = AddUsefulInfo(displays)
   allItems = 1:size(displays.items,1);
   for i=1:size(displays.items,2)
     whichTest = displays.whichIsTestItem(i);
-    displays.distractors(:,i) = distance(displays.items(whichTest,i), ...
+    displays.distractors(:,i) = circdist(displays.items(whichTest,i), ...
       displays.items(allItems~=whichTest, i));
   end
   
