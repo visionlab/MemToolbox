@@ -54,7 +54,7 @@ function fit = MemFit(varargin)
     % One input argument, assumed to be (errors) or (data).
     if(isnumeric(varargin{1}))
       data = struct('errors', varargin{1});
-      fit = MemFit(data, StandardMixtureModel('Bias', false), 1);
+      fit = MemFit(data, StandardMixtureModel(), 1);
       
     elseif(isfield(varargin{1}, 'afcCorrect'))
       warning('MemToolbox:MemFit:InputFormat', ...
@@ -63,11 +63,11 @@ function fit = MemFit(varargin)
       
     elseif(any(isfield(varargin{1}, {'errors','error'})))
       data = varargin{1};
-      fit = MemFit(data, StandardMixtureModel('Bias', false), 1);
+      fit = MemFit(data, StandardMixtureModel(), 1);
       
     elseif(isCellArrayOfDataStructs(varargin{1}))
       data = varargin{1};
-      fit = MemFit(data, StandardMixtureModel('Bias', false), 1);
+      fit = MemFit(data, StandardMixtureModel(), 1);
       
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
@@ -168,7 +168,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
       fprintf('parameter\tMAP estimate\tlower CI\tupper CI\n')
       fprintf('---------\t------------\t--------\t--------\n')
       for paramIndex = 1:length(model.paramNames)
-        fprintf('%s\t\t%3.3f\t\t%3.3f\t\t%3.3f\n', ...
+        fprintf('%8s\t\t%3.3f\t\t%3.3f\t\t%3.3f\n', ...
           model.paramNames{paramIndex}, ...
           fit.maxPosterior(paramIndex), ...
           fit.lowerCredible(paramIndex), ...
@@ -244,7 +244,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   end
   
   % Model comparison & results
-  fprintf('Computing AIC, AICc and BIC...\n');
+  fprintf('Computing log likelihood, AIC, AICc and BIC...\n\n');
   [fit.AIC, fit.BIC, fit.logLike, fit.AICc] = ModelComparison_AIC_BIC(data, modelCellArray);
   
   % Print stats
@@ -255,23 +255,52 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     printStat('BIC', fit.BIC, @min);
   end
   
-  fprintf('Computing Bayes Factors...\n');
-  [fit.bayesFactor,fit.logPosteriorOdds,fit.posteriorOdds] = ...
-    ModelComparison_BayesFactor(data, modelCellArray, 'Verbosity', 1);
-  fit.posteriorOdds = 10.^(fit.logPosteriorOdds - max(fit.logPosteriorOdds));
-  fit.posteriorOdds = fit.posteriorOdds ./ sum(fit.posteriorOdds);
-  
-  % Print stats
-  if verbosity > 0  
-    printStat('Log Bayes factor', fit.bayesFactor, @(x)(x), @(s,m1,m2) (s(m1,m2)));
-    printStat('Posterior odds', fit.posteriorOdds, @max);
-  end 
-   
-  fprintf('Computing DIC...\n');
-  fit.DIC = ModelComparison_DIC(data, modelCellArray, 'Verbosity', 1);
   if verbosity > 0
+    r = input(['Would you like to compute the DIC (note that this can be slow,\n' ...
+      'since it requires running MCMC on each model)? (y/n): '], 's');
     fprintf('\n');
-    printStat('DIC', fit.DIC, @min);
+  end
+  
+  posteriorSamples = [];
+  if(strcmp(r,'y')) || verbosity == 0
+    fprintf('Computing DIC...\n');
+    for m=1:length(modelCellArray)
+      posteriorSamples{m} = MCMC(data, modelCellArray{m}, ...
+        'Verbosity', 0, 'PostConvergenceSamples', 5000);
+    end
+    fit.DIC = ModelComparison_DIC(data, modelCellArray, 'Verbosity', verbosity, ...
+      'PosteriorSamples', posteriorSamples);
+    if verbosity > 0
+      fprintf('\n');
+      printStat('DIC', fit.DIC, @min);
+    end
+  end
+  
+  if verbosity > 0
+    r = input(['Would you like to compute an approximate Bayes Factor? Note that\n'...
+      'the Bayes Factor is heavily dependent on the prior in order to understand\n'...
+      'how flexible each model is; it is thus important that before examining Bayes\n'...
+      'factors you carefully consider the priors for your models. If you wish to\n'...
+      'specify a more concentrated prior to be used for Bayes factor calculation\n'...
+      'but not for inference, you can specify a model.priorForMC in addition to a\n'...
+      'model.prior. Also note that Bayes Factor calculations are slow. (y/n): '], 's');
+    fprintf('\n');
+  end
+  
+  if(strcmp(r,'y')) || verbosity == 0
+    fprintf('Computing Bayes Factors...\n');
+    [fit.bayesFactor,fit.logPosteriorOdds,fit.posteriorOdds] = ...
+      ModelComparison_BayesFactor(data, modelCellArray, 'Verbosity', verbosity, ...
+      'PosteriorSamples', posteriorSamples);
+    fit.posteriorOdds = 10.^(fit.logPosteriorOdds - max(fit.logPosteriorOdds));
+    fit.posteriorOdds = fit.posteriorOdds ./ sum(fit.posteriorOdds);
+    
+    % Print stats
+    if verbosity > 0
+      fprintf('\n');
+      printStat('Log Bayes factor', fit.bayesFactor, @(x)(x), @(s,m1,m2) (s(m1,m2)));
+      printStat('Posterior odds', fit.posteriorOdds, @max);
+    end
   end
   
   function printStat(name,stats,bestF,f)
