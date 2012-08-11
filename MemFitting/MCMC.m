@@ -88,9 +88,16 @@ function posteriorSamples = MCMC(data, model, varargin)
       fprintf('   ... collecting %d samples from converged distribution\n', args.PostConvergenceSamples);
   end
   
+  % Split between chains
+  total = 0;
+  for c=1:numChains-1
+    total = total+ceil(args.PostConvergenceSamples / numChains);
+    startInfo(c).numMonte = ceil(args.PostConvergenceSamples / numChains);
+  end
+  startInfo(numChains).numMonte = args.PostConvergenceSamples - total;
+  
   % Collect args.PostConvergenceSamples samples from converged chains
   parfor c=1:numChains
-    startInfo(c).numMonte = ceil(args.PostConvergenceSamples / numChains);
     verbosity = args.Verbosity;
     if c == 1 && verbosity > 0
       verbosity = -1;
