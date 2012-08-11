@@ -81,7 +81,8 @@ function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
     
     subplot(N,N,sub2ind([N N],p,p));
     marginal = ndsum(likeMatrix, find(1:N ~= p)); 
-    bar(valuesUsed{p}, marginal);
+    h = bar(valuesUsed{p}, marginal, 'hist');
+    set(h, 'LineStyle','none');
     axis tight;
     set(gca, 'YTick', []);
     set(gca, 'box', 'off');
