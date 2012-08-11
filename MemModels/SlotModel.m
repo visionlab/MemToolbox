@@ -7,7 +7,7 @@
 %
 % In addition to data.errors, requires data.n (the set size for each trial)
 %
-
+%
 function model = SlotModel()
   model.name = 'Slot model';
 	model.paramNames = {'capacity', 'sd'};
@@ -18,6 +18,7 @@ function model = SlotModel()
 	model.start = [1, 4;   % capacity, sd
                  4, 15;  % capacity, sd
                  6, 40]; % capacity, sd
+               
   model.prior = @(p) (JeffreysPriorForCapacity(p(1)) .* ... % for capacity
                       JeffreysPriorForKappaOfVonMises(deg2k(p(2))));
                       

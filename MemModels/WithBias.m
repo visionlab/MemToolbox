@@ -31,8 +31,11 @@ function model = WithBias(model, priorForMu)
   % Adjust pdf and prior
   model.oldPdf = model.pdf;
   model.pdf = @NewPDF;
-  model.oldPrior = model.prior;
-  model.prior = @(p)(model.prior(p(2:end)) .* priorForMu(p(1)));
+  
+  if isfield(model, 'prior')
+    model.oldPrior = model.prior;
+    model.prior = @(p)(model.prior(p(2:end)) .* priorForMu(p(1)));
+  end
   
   % Adjust generator function
   if isfield(model, 'generator')
