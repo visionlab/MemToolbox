@@ -4,9 +4,13 @@
 %
 % This fitting function just loops over reasonable values of each parameter
 % and evaluates the likelihood and prior at those values. It then returns a
-% log likelihood and prior matrix whose size is N-dimensional for an
-% N-parameter model (e.g., the full posterior, evaluated at discrete
-% points on each parameter).
+% posterior matrix whose size is N-dimensional for an N-parameter model 
+% (e.g., the full posterior, evaluated at discrete points on each parameter).
+% The .logLikeMatrix is the log posterior; for visualization purposes, it
+% is often useful to have a version of this that is proportional to the
+% actual posterior rather than the log posterior. This is available as 
+% .propToLikeMatrix. The .valuesUsed contains the values at which
+% each dimension/parameter was evaluated.
 %
 % Optional parameters:
 %  'PointsPerParam' - how many bins to break up each model parameter into
@@ -34,7 +38,6 @@
 %    If you do not pass this parameter, GridSearch simply uses the
 %    model.upperbound and model.lowerbound on parameters to center the search.
 %
-%---------------------------------------------------------------------
 function fullPosterior = GridSearch(data, model, varargin)
   args = struct('MleParams', [], 'PosteriorSamples', [], ...
     ... % Default to 5000 total points
@@ -91,15 +94,13 @@ function fullPosterior = GridSearch(data, model, varargin)
   
   % Evaluate
   logLikeMatrix = zeros(size(allVals{1}));
-  priorMatrix = zeros(size(allVals{1}));
   parfor i=1:numel(allVals{1})
     curParams = cellfun(@(x)x(i), allVals);
     curParamsCell = num2cell(curParams);
-    logLikeMatrix(i) = model.logpdf(data, curParamsCell{:});
-    priorMatrix(i) = model.prior(curParams(:));
+    logLikeMatrix(i) = model.logpdf(data, curParamsCell{:}) ...
+      + model.logprior(curParams(:));
   end
   fullPosterior.logLikeMatrix = logLikeMatrix;
-  fullPosterior.priorMatrix = priorMatrix;
   
   % Convert log likelihood matrix into likelihood, avoiding underflow
   fullPosterior.propToLikeMatrix = exp(logLikeMatrix-max(logLikeMatrix(:)));
