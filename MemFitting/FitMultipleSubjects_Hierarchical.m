@@ -49,10 +49,9 @@ function fit = FitMultipleSubjects_Hierarchical(data, model, verbosity)
     repmat(model.movestd, [1, nSubs+1])];
   
   % Initialize with means from independent fits
-  [startMean, startSE, startSubs] =  ...
-    FitMultipleSubjects_Independent(data, model);
-  startSubs = startSubs';
-  newModel.start  = [startSE*sqrt(length(data)) startMean startSubs(:)'];
+  start = FitMultipleSubjects_Independent(data, model);
+  start.paramsSubs = start.paramsSubs';
+  newModel.start  = [start.paramsSE*sqrt(length(data)) start.paramsMean start.paramsSubs(:)'];
   newModel.start = [newModel.start; newModel.start*0.80; newModel.start*1.20];
   
   % Create logpdf and logprior
