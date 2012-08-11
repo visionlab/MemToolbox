@@ -44,6 +44,28 @@ function model = WithBias(model, priorForMu)
       wrap(model.oldGenerator(params(2:end), dims, displayInfo)+params{1}));
   end
   
+  % Adjust model_plot
+  if isfield(model, 'modelPlot')
+    model.oldModelPlot = model.modelPlot;
+    model.modelPlot = @NewModelPlot;
+  end
+  function figHand = NewModelPlot(data, params, varargin)
+    if isstruct(params) && isfield(params, 'vals')
+      mu = mean(params.vals(:,1));
+      params.vals = params.vals(:, 2:end);
+    else
+      mu = params(1);
+      params = params(2:end);
+    end
+    if isfield(data, 'errors')
+      data.errors = wrap(data.errors - mu);
+    end
+    if isfield(data, 'changeSize')
+      data.changeSize = wrap(data.changeSize - mu);
+    end    
+    figHand =  model.oldModelPlot(data, params, varargin);
+  end
+  
   % Shift errors and/or changeSize 
   function p = NewPDF(data, mu, varargin)
     if isfield(data, 'errors')
