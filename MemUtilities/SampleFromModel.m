@@ -48,6 +48,8 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
       sz = [1 size(displayInfo.distractors,2)];
     elseif isfield(displayInfo, 'n')
       sz = size(displayInfo.n);
+    elseif isfield(displayInfo, 'afcCorrect')
+      sz = size(displayInfo.afcCorrect);  
     end
     if all(prod(dims) ~= prod(sz))
       error(['You passed a model that requires extra information to make ' ...

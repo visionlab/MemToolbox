@@ -70,7 +70,7 @@ end
 function Plot2AFC(model, params, data, args)
   % Plot data histogram
   set(gcf, 'Color', [1 1 1]);
-  x = linspace(-180, 180, args.NumberOfBins)';
+  x = linspace(-180.01, 180.01, args.NumberOfBins)';
   for i=2:length(x)
     which = data.changeSize>=x(i-1) & data.changeSize<x(i);
     mn(i-1) = mean(data.afcCorrect(which));

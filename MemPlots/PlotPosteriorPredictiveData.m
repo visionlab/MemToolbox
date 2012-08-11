@@ -33,10 +33,10 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   else
     which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
   end
+  
   % How to bin
   x = linspace(-180, 180, args.NumberOfBins)';
-  nData = hist(data.errors, x)';
-  nData = nData ./ sum(nData(:));
+  [normalizedData, nSamples] = getNormalizedBinnedData(data, x);
   
   % Plot samples
   subplot(2,1,1);
@@ -51,7 +51,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     else
       asCell = num2cell(posteriorSamples.vals(which(i),:));
     end
-    yrep = SampleFromModel(model, asCell, size(data.errors), data);
+    yrep = SampleFromModel(model, asCell, [1 nSamples], data);
     if i==1 && toc(sampTime)>(5.0/length(which)) % if it will take more than 5s...
       h = waitbar(i/length(which), 'Sampling to get posterior predictive distribution...');
     elseif ~isempty(h)
@@ -60,18 +60,22 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
       end
       waitbar(i/length(which), h);
     end
+    
     % Bin data and model
-    n = hist(yrep, x)';
-    n = n ./ sum(n(:));
-    hSim = plot(x, n, '-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
+    normalizedYRep = getNormalizedBinnedReplication(yrep, data, x);
+    if any(isnan(normalizedYRep))
+      hSim = plot(x, normalizedYRep, 'x-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
+    else
+      hSim = plot(x, normalizedYRep, '-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
+    end
     
     % Difference between this data and real data
-    diffPlot(i,:) = nData - n;
+    diffPlot(i,:) = normalizedData - normalizedYRep;
   end  
   if ishandle(h), close(h); end
 
   % Plot data
-  h=plot(x,nData,'ok-','LineWidth',2, 'MarkerEdgeColor',[0 0 0], ...
+  h=plot(x,normalizedData,'ok-','LineWidth',2, 'MarkerEdgeColor',[0 0 0], ...
        'MarkerFaceColor', [0 0 0], 'MarkerSize', 5, 'LineSmoothing', 'on');
   title('Simulated data from model');
   legend([h, hSim], {'Actual data', 'Simulated data'});
@@ -81,12 +85,49 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   % Plot difference
   subplot(2,1,2);
   bounds = quantile(diffPlot, [.05 .50 .95])';
-  h = boundedline(x, bounds(:,2), [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)], 'cmap', [0.3 0.3 0.3]);
-  set(h, 'LineWidth', 2, 'LineSmoothing', 'on');
+  if any(isnan(bounds))
+    h = errorbar(x, bounds(:,2), bounds(:,2)-bounds(:,1), bounds(:,3)-bounds(:,2), ...
+      'x', 'Color', [.3 .3 .3], 'LineWidth', 2, 'MarkerSize', 10);
+  else
+    h = boundedline(x, bounds(:,2), [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)], ...
+      'cmap', [0.3 0.3 0.3]);
+    set(h, 'LineWidth', 2, 'LineSmoothing', 'on');
+  end
   line([-180 180], [0 0], 'LineStyle', '--', 'Color', [.5 .5 .5]);
-  xlim([-180 180]);
+  xlim([-180.1 180.1]);
   title('Difference between actual and simulated data');
   xlabel('(Note: deviations from zero indicate bad fit)');
   makepalettable();
 end
 
+function y = getNormalizedBinnedReplication(yrep, data, x)
+  if isfield(data, 'errors')
+    y = hist(yrep, x)';
+    y = y ./ sum(y(:));
+  else
+    for i=1:length(x)
+      distM(:,i) = (data.changeSize - x(i)).^2;
+    end
+    [tmp, whichBin] = min(distM,[],2);
+    for i=1:length(x)
+      y(i) = mean(yrep(whichBin==i));
+    end
+  end
+end
+
+function [nData, nSamples] = getNormalizedBinnedData(data, x)
+  if isfield(data, 'errors')
+    nData = hist(data.errors, x)';
+    nData = nData ./ sum(nData(:));
+    nSamples = numel(data.errors);
+  else
+    for i=1:length(x)
+      distM(:,i) = (data.changeSize - x(i)).^2;
+    end
+    [tmp, whichBin] = min(distM,[],2);
+    for i=1:length(x)
+      nData(i) = mean(data.afcCorrect(whichBin==i));
+    end
+    nSamples = numel(data.changeSize);
+  end
+end
