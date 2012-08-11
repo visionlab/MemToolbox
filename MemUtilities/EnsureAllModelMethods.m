@@ -14,6 +14,11 @@ function model = EnsureAllModelMethods(model)
     model.prior = @(params)(1);
   end
   
+  % If there's no model.pdf, create one using model.logpdf
+  if ~isfield(model, 'pdf')
+    model.pdf = @(varargin)(exp(model.logpdf(varargin{:})));
+  end
+  
   % If no logpdf, create one from pdf
   if ~isfield(model, 'logpdf')
     model.logpdf = @(varargin)(nansum(log(model.pdf(varargin{:}))));
@@ -23,11 +28,6 @@ function model = EnsureAllModelMethods(model)
   if ~isfield(model, 'logprior')
     model.logprior = @(params)(nansum(log(model.prior(params))));
   end  
-  
-  % If there's no model.pdf, create one using model.logpdf
-  if ~isfield(model, 'pdf')
-    model.pdf = @(varargin)(exp(model.logpdf(varargin{:})));
-  end
   
   % If there's no model.priorForMC, use the uninformative prior
   if ~isfield(model, 'priorForMC')
