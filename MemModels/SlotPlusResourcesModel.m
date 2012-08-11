@@ -12,7 +12,7 @@
 %
 % Precision is the maximum uncertainty. When set size is less than the
 % upper limit on storage, precision can be improved by averaging (Shaw, 1980) 
-% (pooling resources to an item)
+% e.g., by pooling resources to an item.
 %
 % Uses the capacity and precision to fit data across multiple sizes. 
 %
@@ -32,6 +32,10 @@ end
 
 function y = slotpdf(data,capacity,sd)
   g = (1 - max(0,min(1,capacity./data.n(:))));
-  y = (1-g).*vonmisespdf(data.errors(:),0,deg2k( min(sd./sqrt(capacity./data.n(:)),sd))) + ...
+  
+  % if capacity > data.n, sd is better by sqrt of the difference
+  curSD = min(sd./sqrt(capacity./data.n(:)), sd);
+  
+  y = (1-g).*vonmisespdf(data.errors(:),0,deg2k(curSD)) + ...
         (g).*unifpdf(data.errors(:),-180,180);
 end
