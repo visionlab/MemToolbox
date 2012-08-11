@@ -8,6 +8,10 @@
 %   ...
 %   data.distractors, Row N: distance of distractor N from target
 %
+% Note that these values are the *distance from the correct answer*, not
+% the actual color values of the distractors. They should thus range from
+% -180 to 180. 
+%
 % data.distractors may contain NaNs. For example, if you have data with 
 % different set sizes, data.distractors should contain as many rows as you
 % need for the largest set size, and for displays with smaller set sizes
@@ -32,9 +36,10 @@ function model = SwapModel()
     0.1, 0.5, 20]; % g, B, sd
   model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(3))); % sd
   
-  model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
-    betapdf(p(2),1.25,2.5) * ... % for B
-    lognpdf(deg2k(p(3)),2,0.5)); % for sd
+  % Example of a possible .priorForMC:
+  % model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
+  %   betapdf(p(2),1.25,2.5) * ... % for B
+  %   lognpdf(deg2k(p(3)),2,0.5)); % for sd
   
   % Use our custom modelPlot to make a plot of errors centered on
   % distractors (ala Bays, Catalao & Husain, 2009, Figure 2B)

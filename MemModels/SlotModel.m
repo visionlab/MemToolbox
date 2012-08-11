@@ -21,9 +21,10 @@ function model = SlotModel()
                
   model.prior = @(p) (JeffreysPriorForCapacity(p(1)) .* ... % for capacity
                       JeffreysPriorForKappaOfVonMises(deg2k(p(2))));
-                      
-  model.priorForMC = @(p) (lognpdf(p(1),2,1) .* ... % for capacity
-                           lognpdf(deg2k(p(2)),2,0.5));
+                    
+  % Example of a possible .priorForMC:
+  % model.priorForMC = @(p) (lognpdf(p(1),2,1) .* ... % for capacity
+  %                            lognpdf(deg2k(p(2)),2,0.5));
 end
 
 function y = slotpdf(data,capacity,sd)  
