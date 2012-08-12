@@ -17,7 +17,8 @@
 %   ExponentialDecayModel  - a model where objects drop out over time
 %
 % Model wrappers:
-%   WithBias               - adds a bias terms (mu) to a model
+%   WithBias               - adds a bias terms (mu) to any model
+%   FixParameterValue      - fix any parameter in a model to a specific value
 %   Orientation            - converts a model to use a 180 degree space 
 %   TwoAFC                 - converts a model so that can be fit to 2afc data
 %
