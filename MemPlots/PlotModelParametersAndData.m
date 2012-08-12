@@ -49,14 +49,15 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
     colorOfLine(i,:) = fade(startCol, ...
       exp(posteriorSamples.like(which(i)) - mapLikeVal));
     
-    seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), ... 
-                         'Color', colorOfLine(i,:), 'LineSmoothing', 'on');
-    
     % Special case of only one parameter
     if size(values,2) == 1
       seriesInfo(i) = plot(1:size(values,2), ...
         valuesNormalized(i,:), 'x', 'MarkerSize', 15, ...
         'Color', colorOfLine(i,:));
+      xlim([0 2]);
+    else
+      seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), ...
+        'Color', colorOfLine(i,:), 'LineSmoothing', 'on');
     end
     hold on;
   end
@@ -83,7 +84,6 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
   set(gca,'ButtonDownFcn', @Click_Callback);
   set(get(gca,'Children'),'ButtonDownFcn', @Click_Callback);
   line([1.001 1.001], [0 1], 'Color', [0 0 0]);
-  %line([1 length(model.paramNames)], [0.001 0.001], 'Color', [0 0 0]);
   
   % Plot data histogram
   h=subplot(1,2,2);
@@ -101,8 +101,13 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
     cy = cP(1,2);
     
     % Show that series
-    diffValues = (cy-interp1(1:size(posteriorSamples.vals,2), ...
-      valuesNormalized', cx)).^2;
+    if size(posteriorSamples.vals,2)==1
+      interpolatedY = valuesNormalized';
+    else
+      interpolatedY = interp1(1:size(posteriorSamples.vals,2), ...
+        valuesNormalized', cx);
+    end
+    diffValues = (cy-interpolatedY).^2;
     [tmp,minValue] = min(diffValues);
     set(seriesInfo(minValue), 'LineWidth', 4);
     set(seriesInfo(minValue), 'Color', colorOfLine(minValue,:));
