@@ -10,8 +10,13 @@ function model = VariablePrecisionModel_Gaussian()
 	model.movestd = [0.02, 0.25, 0.15];
 	model.pdf = @vp_pdf;
   model.modelPlot = @model_plot;
-	model.start = [0.0, 30, 10;
-                   0.2, 10, 5];
+	model.start = [0.0, 15, 5;
+                 0.2, 20, 10;
+                 0.1, 10, 2;
+                 0.2, 30, 3];
+  
+  model.prior = @(p) (JeffreysPriorForGaussianSD(p(2))...
+    * JeffreysPriorForGaussianSD(p(3))); 
   
   % For speed, calculate these all out here
   stdsSumOver = linspace(0.5, 100, 500); 
@@ -45,18 +50,23 @@ function model = VariablePrecisionModel_Gaussian()
     figHand = figure();
     if isstruct(params) && isfield(params, 'vals')
       maxParams = MCMCSummarize(params, 'maxPosterior');
-      params = params.vals(randsample(size(params.vals,1), 100),:);
+      which = randsample(size(params.vals,1), 100);
+      likeVals = params.like(which);
+      params = params.vals(which,:);
     else
       maxParams = params;
+      likeVals = 1;
     end
     set(gcf, 'Color', [1 1 1]);
     x = stdsSumOver;
     for i=1:size(params,1)
       y = normpdf(stdsSumOver, params(i,2), params(i,3));
-      plot(x, y, 'Color', [0.54, 0.61, 0.06]); hold on;
+      colorOfLine = fade([0.54, 0.61, 0.06], ...
+        exp(likeVals(i) - max(likeVals)));
+      plot(x, y, 'Color', colorOfLine); hold on;
     end
     y = normpdf(stdsSumOver, maxParams(2), maxParams(3));
-    plot(x, y, 'k', 'LineWidth', 3);
+    plot(x, y, 'Color', [0.54, 0.61, 0.06], 'LineWidth', 3);
     title('Higher-order distribution', 'FontSize', 14);
     xlabel('Standard dev. (degrees)', 'FontSize', 14);
     ylabel('Probability', 'FontSize', 14);  

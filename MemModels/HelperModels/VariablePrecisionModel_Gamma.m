@@ -18,6 +18,9 @@ function model = VariablePrecisionModel_Gamma()
                  0.2, 20, 10;
                  0.1, 10, 2;
                  0.2, 30, 3];
+               
+  model.prior = @(p) (JeffreysPriorForGaussianSD(p(2))...
+    * JeffreysPriorForGaussianSD(p(3))); 
   
   % For speed, calculate these all out here
   stdsSumOver = linspace(0.5, 100, 500); 
