@@ -4,5 +4,5 @@
 %   MemDataset - Retrieve one of the sample datasets
 %
 % Data manipulation
-%   Resample             - Resample the data
-%   SplitDataByCondition - Splits a dataset into subsets based on the condition
+%   Resample          - Resample the data
+%   SplitDataByField  - Splits a dataset into subsets based on the given field

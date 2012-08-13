@@ -33,8 +33,7 @@ function model = SlotModel()
     if isstruct(params) && isfield(params, 'vals')
       params = MCMCSummarize(params, 'maxPosterior');
     end
-    data.condition = data.n;
-    [datasets, setSizes] = SplitDataByCondition(data);
+    [datasets, setSizes] = SplitDataByField(data,'n');
     m = StandardMixtureModel();
     for i=1:length(setSizes)
       subplot(1, length(setSizes), i);
