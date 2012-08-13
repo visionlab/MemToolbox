@@ -9,7 +9,7 @@ in MATLAB using the MemToolbox (citation)."
 Citation goes here
 
 Contents:
-MemFit.m				    - a general purpose fitting tool
+MemFit.m            - a general purpose fitting tool
 MemTutorial         - a walkthrough of the toolbox
 MemModels           - models of working memory from the literature
 MemData             - real and simulated data sets
