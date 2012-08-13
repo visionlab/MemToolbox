@@ -48,10 +48,16 @@ function model = SwapModel()
     for i=1:length(data.errors)
       d.errors = [d.errors; circdist(data.errors(i), data.distractors(:,i))];
     end
+    if isstruct(params) && isfield(params, 'vals')
+      params = MCMCSummarize(params, 'maxPosterior');
+    end
     m = StandardMixtureModel();
-    f = MAP(d, m);
-    figHand = PlotModelFit(m, f, d, 'NewFigure', true);
+    f = [1-(params(2)/size(data.distractors,1)) params(3)];
+    figHand = PlotModelFit(m, f, d, 'NewFigure', true, 'ShowNumbers', false);
     title('Error relative to distractor locations', 'FontSize', 14);
+    topOfY = max(ylim); 
+    txt = sprintf('B: %.3f\nsd: %0.2f\n', params(2), params(3));
+    text(180, topOfY-topOfY*0.05, txt, 'HorizontalAlignment', 'right');
   end
 end
 
