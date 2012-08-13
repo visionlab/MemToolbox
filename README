@@ -16,7 +16,9 @@ in MATLAB using the MemToolbox (citation)."
 Citation goes here
 
 Contents:
-MemFit.m				    - a general purpose fitting tool
+MemFit.m            - a general purpose fitting tool
+Setup.m             - adds the toolbox and its subfolders to the path
+
 MemTutorial         - a walkthrough of the toolbox
 MemModels           - models of working memory from the literature
 MemData             - real and simulated data sets
@@ -25,10 +27,10 @@ MemModelComparison  - tools to compare the ability of models to fit the data
 MemPlots            - visualization tools
 MemExperiments      - experiment scripts
 MemUtilities        - internal helper functions
-GeneralHelpers      - helper functions that might be useful elsewhere
 MemTests            - scripts that test toolbox functionality
+GeneralHelpers      - helper functions that might be useful elsewhere
+
 paper.pdf           - a high-level overview of the toolbox
-Setup.m             - adds the toolbox and its subfolders to the path
 LICENSE             - the terms under which this toolbox is licensed (BSD)
 README              - chances are you've figured this out by now
 Contents            - a list very much like this one
