@@ -34,11 +34,14 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
   
   % Check if the model needs extra information about the displays
   r = DoesModelRequireExtraInfo(model);
-  if nargin < 4 && r
-    error(['You passed a model that requires extra information to make ' ... 
-      'a pdf; for example, maybe the set size (data.n) or the distractor ' ... 
-      'locations (data.distractors). Please pass the data struct describing ' ...
-      'the displays you wish to sample data for as the fourth parameter.']);
+  if nargin < 4
+    displayInfo = [];
+    if r
+      error(['You passed a model that requires extra information to make ' ...
+        'a pdf; for example, maybe the set size (data.n) or the distractor ' ...
+        'locations (data.distractors). Please pass the data struct describing ' ...
+        'the displays you wish to sample data for as the fourth parameter.']);
+    end
   end
   
   if r 
