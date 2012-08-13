@@ -1,6 +1,13 @@
 MemToolbox beta.
 
-The MemToolbox is a collection of MATLAB functions that ...
+The MemToolbox is a collection of MATLAB functions for modeling visual
+working memory. In support of its goal to provide a full suite of data
+analysis tools, the toolbox includes implementations of popular models of
+visual working memory, real and simulated data sets, Bayesian and maximum
+likelihood estimation procedures for fitting models to data,
+visualizations of data and fit, validation routines, model comparison
+metrics, and experiment scripts. The MemToolbox is released under a BSD
+license and is freely available.
 
 If you want to acknowledge use of this software when you publish your
 research, you might say something like, "Data analysis was performed
@@ -27,5 +34,7 @@ README              - chances are you've figured this out by now
 Contents            - a list very much like this one
 
 Dependencies:
-1. The Statistics Toolbox (http://www.mathworks.com/products/statistics/) is needed for all of the major functionality of the toolbox.
-2. The Psychophysics Toolbox (http://psychtoolbox.org) is needed only for the experiment scripts in MemExperiments.
+1. The Statistics Toolbox (http://www.mathworks.com/products/statistics/) is
+   needed for all of the major functionality of the toolbox.
+2. The Psychophysics Toolbox (http://psychtoolbox.org) is needed only for 
+   the experiment scripts in MemExperiments.
