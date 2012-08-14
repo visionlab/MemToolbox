@@ -15,7 +15,7 @@
 % **BUG: this breaks when calling MemFit's model comparison routine, e.g.:
 %
 %     data = load('slotplusResources-model-simulate.mat')
-%     MemFit(data, {StandardMixtureModel,SlotsPlusAveraging})
+%     MemFit(data, {StandardMixtureModel,SlotsPlusAveragingModel})
 %
 % because the model's pdf sometimes returns 0. This doesn't seem to be a
 % problem when fitting the data with that model alone through MemFit. Hm.
@@ -29,10 +29,9 @@ function model = SlotsPlusAveragingModel()
 	model.pdf = @slotpdf;
   model.prior = @(p) (JeffreysPriorForCapacity(p(1)) .* ...
                       JeffreysPriorForKappaOfVonMises(deg2k(p(2))));  
-	model.start = [2, 1;    % capacity, sd
+	model.start = [2, 5;    % capacity, sd
                  3, 10;
-                 4, 100];
-  
+                 4, 100];   
 end
 
 function y = slotpdf(data,capacity,sd)
