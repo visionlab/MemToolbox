@@ -7,7 +7,6 @@
 %
 % In addition to data.errors, requires data.n (the set size for each trial)
 %
-%
 function model = SlotModel()
   model.name = 'Slot model';
 	model.paramNames = {'capacity', 'sd'};
@@ -25,6 +24,29 @@ function model = SlotModel()
   % Example of a possible .priorForMC:
   % model.priorForMC = @(p) (lognpdf(p(1),2,1) .* ... % for capacity
   %                            lognpdf(deg2k(p(2)),2,0.5));
+  
+  % Use our custom modelPlot to make a plot of errors separately for each
+  % set size
+  model.modelPlot = @model_plot;
+  function figHand = model_plot(data, params, varargin)
+    figHand = figure();
+    if isstruct(params) && isfield(params, 'vals')
+      params = MCMCSummarize(params, 'maxPosterior');
+    end
+    [datasets, setSizes] = SplitDataByField(data,'n');
+    m = StandardMixtureModel();
+    for i=1:length(setSizes)
+      subplot(1, length(setSizes), i);
+      g = (1 - max(0,min(1,params(1)/setSizes(i))));
+      curSD = params(2);
+      PlotModelFit(m, [g curSD], datasets{i}, 'NewFigure', false, ...
+        'ShowNumbers', true, 'ShowAxisLabels', false);
+      if i==1
+        ylabel('Probability', 'FontSize', 14);
+      end
+      title(sprintf('Set size %d', setSizes(i)), 'FontSize', 14);
+    end
+  end     
 end
 
 function y = slotpdf(data,capacity,sd)  

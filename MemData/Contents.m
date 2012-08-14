@@ -1,5 +1,8 @@
+% MEMDATA
 %
-% MemToolbox::MemData
-% 
-% MemDataset - Quickly retrieves one of the built-in datasets.
+% Sample data
+%   MemDataset - Retrieve one of the sample datasets
 %
+% Data manipulation
+%   Resample          - Resample the data
+%   SplitDataByField  - Splits a dataset into subsets based on the given field
