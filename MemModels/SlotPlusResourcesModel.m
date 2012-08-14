@@ -1,11 +1,11 @@
-% SLOTPLUSRESOURCESMODEL returns a structure for the slots+averaging model of
+% SLOTPLUSRESOURCESMODEL returns a structure for the slots+resources model of
 % Zhang & Luck (2008), though it assumes even allocation of the resource to
-% the represented objects. The model has two parameters: capacity, which is
-% the number of available slots, and bestSD, which is the standard deviation
-% of memory for an item when all of the resource is thrown at it.
-% model with capacity K and precision sd. Assumes even allocation of the
+% whichever objects are assigned a slot. The model has two parameters: capacity,
+% which is the number of available slots, and bestSD, which is the standard 
+% deviation of memory for an item when all of the resource is thrown at it.
+% model with capacity K and precision sd.
 %
-% In addition to data.errors, requires data.n (the set size for each
+% In addition to data.errors, this requires data.n (the set size for each
 % trial). The model is not particularly well-formed unless you have tested
 % multiple set sizes; with only a single set size you may be better off
 % with a model that does not make predictions across set size, like
