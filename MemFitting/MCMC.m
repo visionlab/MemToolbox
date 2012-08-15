@@ -11,6 +11,13 @@
 % ... 'ConvergenceVariance', Inf, 'BurnInSamplesBeforeCheck', 5000, ...
 % ... 'PostConvergenceSamples', 15000, ...
 %
+% This may be useful if the variance calculation is wrong for one of your
+% models. For example, if you have data where the bias (shift) parameter
+% is near 180 degrees, then if some chains settle near -180 and some near
+% +180, this should be considered low-variance, but MCMC will consider it
+% high variance. In this case it may be useful to turn off the automatic
+% convergence detection and simply run a large number of MCMC samples.
+%
 function posteriorSamples = MCMC(data, model, varargin)
   % Extra arguments and parsing
   %  Verbosity = 0,  Print nothing
