@@ -226,6 +226,7 @@ end
 
 %-----------------------------
 function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
+
   % Introduction & model listing
   if verbosity > 0
     fprintf('\nYou''ve chosen to compare the following models:\n\n')
@@ -259,10 +260,12 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     r = input(['Would you like to compute the DIC (note that this can be slow,\n' ...
       'since it requires running MCMC on each model)? (y/n): '], 's');
     fprintf('\n');
+  else
+    r = 'n';
   end
   
   posteriorSamples = [];
-  if(strcmp(r,'y')) || verbosity == 0
+  if(strcmp(r,'y'))
     fprintf('Computing DIC...\n');
     for m=1:length(modelCellArray)
       posteriorSamples{m} = MCMC(data, modelCellArray{m}, ...
