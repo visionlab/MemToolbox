@@ -83,7 +83,7 @@ function figHand = PlotPosteriorPredictiveDataNew(model, posteriorSamples, data,
   hSim = plot(-191:-190, [1 1], '-', 'Color', args.PdfColor);
   h=plot3(x,normalizedData,ones(size(x)),'ok-','LineWidth', 1.5, 'MarkerEdgeColor',[0 0 0], ...
        'MarkerFaceColor', [0 0 0], 'MarkerSize', 4);
-  title('Simulated data from model');
+  title('Simulated data from model', 'FontSize', 13);
   legend([h, hSim], {'Actual data', 'Simulated data'});
   legend boxoff;
   if isfield(model, 'isOrientationModel')
@@ -109,7 +109,7 @@ function figHand = PlotPosteriorPredictiveDataNew(model, posteriorSamples, data,
   else
     xlim([-180 180]);
   end
-  title('Difference between actual and simulated data');
+  title('Difference between actual and simulated data', 'FontSize', 13);
   xlabel('(Note: deviations from zero indicate bad fit)');
       
   % Allow the user to limit this figure to any subset of the data
@@ -119,13 +119,13 @@ function figHand = PlotPosteriorPredictiveDataNew(model, posteriorSamples, data,
   function redrawFig(whichField, whichValue)
     if strcmp(whichField, 'all')
       subplot(1,1,1);
-      PlotPosteriorPredictiveDataNew(model, posteriorSamples, data, ...
+      PlotPosteriorPredictiveData(model, posteriorSamples, data, ...
         'NewFigure', false);
     elseif sum(data.(whichField)==whichValue) > 0
       [datasets,conditionOrder] = SplitDataByField(data, whichField);
       newData = datasets{conditionOrder==whichValue};
       subplot(1,1,1);
-      PlotPosteriorPredictiveDataNew(model, posteriorSamples, newData, ...
+      PlotPosteriorPredictiveData(model, posteriorSamples, newData, ...
         'NewFigure', false);
     end
   end
