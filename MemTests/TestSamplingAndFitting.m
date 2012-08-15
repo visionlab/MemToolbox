@@ -5,7 +5,7 @@
 %                             numItems, [optionalParameters])
 %
 % Example usage:
-%   model = StandardMixtureModelWithBias();
+%   model = WithBias(StandardMixtureModel);
 %   paramsIn = {0,0.1,10}; % mu, g , K
 %   numTrials = round(logspace(1,4,4)); % 10, 100, 1000, and 10000 trials
 %   numItems = [3 5]; % set size of displays to simulate; will make half
@@ -13,7 +13,7 @@
 %   [paramsOut, lowerCI, upperCI] = TestSamplingAndFitting(model, paramsIn, numTrials, numItems)
 %
 % or just:
-%   model = StandardMixtureModelWithBias();
+%   model = WithBias(StandardMixtureModel);
 %   [paramsOut, lowerCI, upperCI] = TestSamplingAndFitting(model)
 %
 % Takes optional parameter 'Verbosity'. 1 (default) print information about

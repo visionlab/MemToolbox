@@ -1,6 +1,6 @@
 % RESAMPLE Resamples a data set. You can optionally specify a parameter n that
 % will detemine how many trials are included in the sample.
-function sample = Resample(data,n)
+function sample = Resample(data, n)
   
   fields = fieldnames(data);
   
