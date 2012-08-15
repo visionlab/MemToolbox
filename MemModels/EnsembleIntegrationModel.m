@@ -34,19 +34,20 @@ function model = EnsembleIntegrationModel()
     0.1, 20, 5]; % g, B, sd
   model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(2)).* ...
     JeffreysPriorForCapacity(p(3)));
+  
+  function p = IntegrationModelPDF(data, g, sd, samples)
+    if(~isfield(data, 'distractors'))
+      error('The integration model requires that you specify the distractors.')
+    end
+    
+    data.distractors(end+1, :) = 0; % (target is always at zero)
+    ensembleMean = nanmean(data.distractors);
+    ensembleStd = nanstd(data.distractors);
+    w = (1./(ensembleStd.^2)) ./ ((1./(ensembleStd.^2)) + (samples./(sd.^2)));
+    shiftedMean = w.*ensembleMean + (1-w)*0;  % (target is always at zero)
+    
+    p = (1-g).*vonmisespdf(data.errors(:), shiftedMean(:), deg2k(sd)) ...
+      + (g).*1/360;
+  end
 end
 
-function p = IntegrationModelPDF(data, g, sd, samples)  
-  if(~isfield(data, 'distractors'))
-    error('The integration model requires that you specify the distractors.')
-  end
-  
-  data.distractors(end+1, :) = 0; % (target is always at zero)
-  ensembleMean = nanmean(data.distractors);
-  ensembleStd = nanstd(data.distractors);
-  w = (1./(ensembleStd.^2)) ./ ((1./(ensembleStd.^2)) + (samples./(sd.^2)));
-  shiftedMean = w.*ensembleMean + (1-w)*0;  % (target is always at zero)
-  
-  p = (1-g).*vonmisespdf(data.errors(:), shiftedMean(:), deg2k(sd)) ...
-    + (g).*1/360;
-end
