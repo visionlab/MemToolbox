@@ -52,10 +52,10 @@ end
 
 function y = slotpdf(data,capacity,bestSD)
   
-  numRepresented = min(capacity, data.n);
-  g = 1 - numRepresented ./ data.n;
-  sd = bestSD .* sqrt(numRepresented);
+  numRepresented = min(capacity, data.n(:));
+  g = 1 - numRepresented ./ data.n(:);
+  sd = bestSD .* sqrt(numRepresented(:));
   
-  y = (1-g).*vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
+  y = (1-g).*vonmisespdf(data.errors(:),0,deg2k(sd(:))) + ...
         (g).*unifpdf(data.errors(:),-180,180);
 end
