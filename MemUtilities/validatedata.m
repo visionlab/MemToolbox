@@ -38,12 +38,7 @@ function [data, pass] = ValidateData(data)
         data.errors = rad2deg(data.errors-pi);
       elseif(all(isInRange(data.errors,0,180))) % then assume (0,180)
         throwRangeWarning('(0,180)');
-        data.errors = 2*(data.errors-90);
-      elseif(all(isInRange(data.errors,-90,90)) & ...
-            (countInRanges(data.errors,[-90,-80],[80,90]) > 10) & ...
-             (countInRanges(data.errors,[-100,-91],[91,100]) == 0))
-        throwRangeWarning('(-90,90)');
-        data.errors = 2*data.errors; 
+        data.errors = 2*(data.errors-90); 
       end    
     end
     
@@ -52,23 +47,6 @@ function [data, pass] = ValidateData(data)
     % only non-negative numbers.
 end
 
-
-function y = isInRange(x,lower,upper)
-  y = (x >= lower) & (x <= upper);
-end
-
-% COUNTINRANGES Counts the elements of x that fall within the specified ranges,
-% inclusive of the boundaries. It allows you to specify multiple ranges, each
-% as a two-item vector:
-function y = countInRanges(x,varargin)
-  numBounds = length(varargin); 
-  y = 0;
-  for i = 1:numBounds
-    lower = varargin{i}(1);
-    upper = varargin{i}(2);
-    y = y + sum(isInRange(x,lower,upper));
-  end
-end
 
 function throwRangeError()
     error('Data should be in the range (-180,180)');
