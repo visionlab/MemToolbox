@@ -1,8 +1,8 @@
-% FITMULTIPLESUBJECTS_INDEPENDENT fits many subjects data using MAP
+% FITMULTIPLESUBJECTS_MAP fits many subjects data using MAP
 % estimation. This is just a shortcut for a loop over subjects that calls
 % MAP for each one.
 % 
-%  fit = FitMultipleSubjects_Independent(data, model)
+%  fit = FitMultipleSubjects_MAP(data, model)
 %
 % Uses maximum a posterior estimation to get parameter estimates for each
 % of the subject's data; the output averages across subjects. Data for each 
@@ -15,7 +15,7 @@
 % Example usage:
 %   data{1} = MemDataset(1);
 %   data{2} = MemDataset(2);
-%   fit = FitMultipleSubjects_Independent(data, model);
+%   fit = FitMultipleSubjects_MAP(data, model);
 %
 function fit = FitMultipleSubjects_Independent(data, model)
   for i=1:length(data)
