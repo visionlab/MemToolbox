@@ -85,7 +85,11 @@ function figHand = PlotPriorPredictive(model, data, varargin)
     hold on;
   end  
   if ishandle(h), close(h); end
-  xlim([-180, 180]);
+  if isfield(model, 'isOrientationModel')
+    xlim([-90 90]);
+  else
+    xlim([-180 180]);
+  end
   makepalettable();
 end
 

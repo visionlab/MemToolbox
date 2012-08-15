@@ -63,7 +63,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
     for i=1:length(params)
       txt = [txt sprintf('%s: %.3f\n', model.paramNames{i}, params(i))];
     end
-    text(180, topOfY-topOfY*0.05, txt, 'HorizontalAlignment', 'right');
+    text(max(xlim), topOfY-topOfY*0.05, txt, 'HorizontalAlignment', 'right');
   end
 end
 
@@ -80,7 +80,11 @@ function Plot2AFC(model, params, data, args)
   bar(binX, mn, 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
   hold on;
   errorbar(binX, mn, se, '.', 'Color', [.5 .5 .5]);  
-  xlim([-180 180]);
+  if isfield(model, 'isOrientationModel')
+    xlim([-90 90]);
+  else
+    xlim([-180 180]);
+  end
   set(gca, 'box', 'off');
   
   % Plot prediction
@@ -89,7 +93,6 @@ function Plot2AFC(model, params, data, args)
     params = params(1,:);
   end
   paramsAsCell = num2cell(params);
-  
   
   % Sample
   r = DoesModelRequireExtraInfo(model);
@@ -108,13 +111,17 @@ function Plot2AFC(model, params, data, args)
     newD.afcCorrect = ones(size(vals));
     p = model.pdf(newD, paramsAsCell{:});
   end
-
   plot(vals, p, 'Color', args.PdfColor, 'LineWidth', 2, 'LineSmoothing', 'on');
        
   % Label plot
   if args.ShowAxisLabels
     xlabel('Distance (degrees)', 'FontSize', 14);
     ylabel('Probability Correct', 'FontSize', 14);
+  end
+  if isfield(model, 'isOrientationModel')
+    xlim([-90 90]);
+  else
+    xlim([-180 180]);
   end
   ylim([0 1]);
 end
@@ -125,7 +132,7 @@ function PlotContinuousReport(model, params, data, args)
   x = linspace(-180, 180, args.NumberOfBins)';
   n = hist(data.errors(:), x);
   bar(x, n./sum(n), 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
-  xlim([-180 180]); hold on;
+  hold on;
   set(gca, 'box', 'off');
   
   % Plot scaled version of the prediction
@@ -160,5 +167,10 @@ function PlotContinuousReport(model, params, data, args)
   % fit
   topOfY = max(n./sum(n))*1.20;
   ylim([0 topOfY]);
+  if isfield(model, 'isOrientationModel')
+    xlim([-90 90]);
+  else
+    xlim([-180 180]);
+  end  
 end
 

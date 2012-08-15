@@ -7,7 +7,6 @@
 %
 %     -180 ___.-'-.___ +180
 %
-%
 function PlotAsciiHist(data,n)
     % Check input
     if nargin < 2

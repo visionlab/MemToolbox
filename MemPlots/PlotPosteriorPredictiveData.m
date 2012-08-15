@@ -80,7 +80,11 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   title('Simulated data from model');
   legend([h, hSim], {'Actual data', 'Simulated data'});
   legend boxoff;
-  xlim([-180, 180]);
+  if isfield(model, 'isOrientationModel')
+    xlim([-90 90]);
+  else
+    xlim([-180 180]);
+  end
   
   % Plot difference
   subplot(2,1,2);
@@ -94,7 +98,11 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     set(h, 'LineWidth', 2, 'LineSmoothing', 'on');
   end
   line([-180 180], [0 0], 'LineStyle', '--', 'Color', [.5 .5 .5]);
-  xlim([-180.1 180.1]);
+  if isfield(model, 'isOrientationModel')
+    xlim([-90 90]);
+  else
+    xlim([-180 180]);
+  end
   title('Difference between actual and simulated data');
   xlabel('(Note: deviations from zero indicate bad fit)');
   makepalettable();
