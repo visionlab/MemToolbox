@@ -241,11 +241,10 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
       fprintf('\n');
     end
     
-    %fprintf('Just a moment while MTB fits these models to your data...\n\n\n');
+    fprintf('Computing log likelihood, AIC, AICc and BIC...\n\n');
   end
   
   % Model comparison & results
-  fprintf('Computing log likelihood, AIC, AICc and BIC...\n\n');
   [fit.AIC, fit.BIC, fit.logLike, fit.AICc] = ModelComparison_AIC_BIC(data, modelCellArray);
   
   % Print stats
@@ -260,13 +259,17 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     r = input(['Would you like to compute the DIC (note that this can be slow,\n' ...
       'since it requires running MCMC on each model)? (y/n): '], 's');
     fprintf('\n');
-  else
-    r = 'n';
+  end
+  
+  if verbosity == 0
+    r = 'y';  % compute dic and bayes factors
   end
   
   posteriorSamples = [];
   if(strcmp(r,'y'))
-    fprintf('Computing DIC...\n');
+    if verbosity > 0
+      fprintf('Computing DIC...\n');
+    end
     for m=1:length(modelCellArray)
       posteriorSamples{m} = MCMC(data, modelCellArray{m}, ...
         'Verbosity', 0, 'PostConvergenceSamples', 5000);
@@ -290,8 +293,10 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     fprintf('\n');
   end
   
-  if(strcmp(r,'y')) || verbosity == 0
-    fprintf('Computing Bayes Factors...\n');
+  if(strcmp(r,'y'))
+    if verbosity > 0
+      fprintf('Computing Bayes Factors...\n');
+    end
     [fit.bayesFactor,fit.logPosteriorOdds,fit.posteriorOdds] = ...
       ModelComparison_BayesFactor(data, modelCellArray, 'Verbosity', verbosity>0, ...
       'PosteriorSamples', posteriorSamples);
@@ -313,8 +318,8 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     fprintf(['-----  \t' repmat('-', 1, length(name)) '\n']);
     % Print model-specific stats
     if(~strcmp(name,'Log Bayes factor'))
-      for modelIndex = 1:length(stats)
-        fprintf('%2d     %0.2f\n',modelIndex,stats(modelIndex));
+      for curModel = 1:length(stats)
+        fprintf('%2d     %0.2f\n', curModel, stats(curModel));
       end
     end
     % Print model vs. model stats, default is difference
