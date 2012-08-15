@@ -11,7 +11,7 @@
 % e.g., 
 %  model = Orientation(StandardMixtureModel(), 2)
 %  or
-%  model = Orientation(StandardMixtureModel('Bias',true), [1 3])
+%  model = Orientation(WithBias(StandardMixtureModel), [1 3])
 %  or
 %  model = Orientation(SwapModel(), 3)
 %
@@ -28,11 +28,46 @@
 %
 function model = Orientation(model, whichParameters)  
   % Take model and turn it into a 2AFC-model
-  model.name = ['Orientation -' model.name];
+  model.name = [model.name ' (for orientation)'];
+  model.isOrientationModel = true;
+  model.upperbound(whichParameters) = model.upperbound(whichParameters) ./ 2;
+  model.lowerbound(whichParameters) = model.lowerbound(whichParameters) ./ 2;
+  
+  % Adjust prior
+  if isfield(model, 'prior')
+    model.oldPrior = model.prior;
+    model.prior = @NewPrior;
+  end
+  function p = NewPrior(params)
+    params(whichParameters) = params(whichParameters).*2;
+    p = model.oldPrior(params);
+  end
+  
+  % Adjust prior for MC
+  if isfield(model, 'priorForMC')
+    model.oldPriorForMC = model.priorForMC;
+    model.priorForMC = @NewPriorMC;
+  end
+  function p = NewPriorMC(params)
+    params(whichParameters) = params(whichParameters).*2;
+    p = model.oldPriorForMC(params);
+  end
+  
+  % Adjust generator function
+  if isfield(model, 'generator')
+    model.oldGenerator = model.generator;
+    model.generator = @NewGenerator;
+  end
+  function s = NewGenerator(params,dims,displayInfo)
+    params(whichParameters) = cellfun(@(x){x.*2}, params(whichParameters));
+    s = model.oldGenerator(params, dims, displayInfo);
+    s = s ./ 2;
+  end  
+  
+  % Adjust pdf - 
+  % Convert orientation data to a format that is useable in all the models
   model.oldPdf = model.pdf;
   model.pdf = @NewPDF;
-  
-  % Convert orientation data to a format that is useable in all the models
   function p = NewPDF(data, varargin)
     if isfield(data, 'errors')
       data.errors = data.errors .* 2;
@@ -43,9 +78,7 @@ function model = Orientation(model, whichParameters)
     if isfield(data, 'changeSize')
       data.changeSize = data.changeSize .* 2;
     end
-    for i=1:length(whichParameters)
-      varargin{whichParameters(i)} = varargin{whichParameters(i)}.*2;
-    end
+    varargin(whichParameters) = cellfun(@(x){x.*2}, varargin(whichParameters));
     p = model.oldPdf(data, varargin{:});
     
     % To make plotting functions work right:
