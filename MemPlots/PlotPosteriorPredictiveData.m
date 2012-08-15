@@ -19,13 +19,13 @@
 %  'NewFigure' - whether to make a new figure or plot into the currently
 %  active subplot. Default is false (e.g., plot into current plot).
 % 
-function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, varargin)
+function figHand = PlotPosteriorPredictiveDataNew(model, posteriorSamples, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
   % difference plot.
   args = struct('NumSamplesToPlot', 48, 'NumberOfBins', 55, ...
     'PdfColor', [0.54, 0.61, 0.06], 'NewFigure', true); 
   args = parseargs(varargin, args);
-  if args.NewFigure, figHand = figure(); end
+  if args.NewFigure, figHand = figure(); else figHand = []; end
   
   % Choose which samples to use
   if(isempty(model.paramNames))
@@ -40,11 +40,12 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   
   % Plot samples
   subplot(2,1,1);
+  set(gcf, 'Color', [1 1 1]);
+  curFigure = gcf;
   hold on;
   sampTime = tic();
-  h = [];
+  curHandle = [];
   for i=1:length(which)
-    
     % Generate random data from this distribution with these parameters
     if(isempty(model.paramNames))
       asCell = {};
@@ -53,12 +54,13 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     end
     yrep = SampleFromModel(model, asCell, [1 nSamples], data);
     if i==1 && toc(sampTime)>(5.0/length(which)) % if it will take more than 5s...
-      h = waitbar(i/length(which), 'Sampling to get posterior predictive distribution...');
-    elseif ~isempty(h)
-      if ~ishandle(h) % they closed the waitbar; stop sampling here
+      curHandle = awaitbar(i/length(which), ...
+        'Sampling to get posterior predictive distribution...');
+    elseif ~isempty(curHandle)
+      if awaitbar(i/length(which), curHandle)
         break;
       end
-      waitbar(i/length(which), h);
+      set(0, 'CurrentFigure', curFigure);
     end
     
     % Bin data and model
@@ -66,17 +68,21 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     if any(isnan(normalizedYRep))
       hSim = plot(x, normalizedYRep, 'x-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
     else
-      hSim = plot(x, normalizedYRep, '-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
+      hSim = patchline(x, normalizedYRep, 'LineStyle', '-', 'EdgeColor', ...
+        args.PdfColor, 'EdgeAlpha', 0.15, 'LineSmoothing', 'on');
     end
     
     % Difference between this data and real data
     diffPlot(i,:) = normalizedData - normalizedYRep;
   end  
-  if ishandle(h), close(h); end
-
+  if ishandle(curHandle)
+    close(curHandle); 
+  end
+  
   % Plot data
-  h=plot(x,normalizedData,'ok-','LineWidth',2, 'MarkerEdgeColor',[0 0 0], ...
-       'MarkerFaceColor', [0 0 0], 'MarkerSize', 5, 'LineSmoothing', 'on');
+  hSim = plot(-191:-190, [1 1], '-', 'Color', args.PdfColor);
+  h=plot3(x,normalizedData,ones(size(x)),'ok-','LineWidth', 1.5, 'MarkerEdgeColor',[0 0 0], ...
+       'MarkerFaceColor', [0 0 0], 'MarkerSize', 4);
   title('Simulated data from model');
   legend([h, hSim], {'Actual data', 'Simulated data'});
   legend boxoff;
@@ -90,12 +96,12 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   subplot(2,1,2);
   bounds = quantile(diffPlot, [.05 .50 .95])';
   if any(isnan(bounds))
-    h = errorbar(x, bounds(:,2), bounds(:,2)-bounds(:,1), bounds(:,3)-bounds(:,2), ...
+    hB = errorbar(x, bounds(:,2), bounds(:,2)-bounds(:,1), bounds(:,3)-bounds(:,2), ...
       'x', 'Color', [.3 .3 .3], 'LineWidth', 2, 'MarkerSize', 10);
   else
-    h = boundedline(x, bounds(:,2), [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)], ...
+    hB = boundedline(x, bounds(:,2), [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)], ...
       'cmap', [0.3 0.3 0.3]);
-    set(h, 'LineWidth', 2, 'LineSmoothing', 'on');
+    set(hB, 'LineWidth', 2, 'LineSmoothing', 'on');
   end
   line([-180 180], [0 0], 'LineStyle', '--', 'Color', [.5 .5 .5]);
   if isfield(model, 'isOrientationModel')
@@ -105,7 +111,24 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   end
   title('Difference between actual and simulated data');
   xlabel('(Note: deviations from zero indicate bad fit)');
-  makepalettable();
+      
+  % Allow the user to limit this figure to any subset of the data
+  if ~isempty(figHand)
+    CreateMenus(data, @redrawFig);
+  end
+  function redrawFig(whichField, whichValue)
+    if strcmp(whichField, 'all')
+      subplot(1,1,1);
+      PlotPosteriorPredictiveDataNew(model, posteriorSamples, data, ...
+        'NewFigure', false);
+    elseif sum(data.(whichField)==whichValue) > 0
+      [datasets,conditionOrder] = SplitDataByField(data, whichField);
+      newData = datasets{conditionOrder==whichValue};
+      subplot(1,1,1);
+      PlotPosteriorPredictiveDataNew(model, posteriorSamples, newData, ...
+        'NewFigure', false);
+    end
+  end
 end
 
 function y = getNormalizedBinnedReplication(yrep, data, x)
