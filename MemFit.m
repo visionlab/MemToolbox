@@ -135,9 +135,23 @@ end
 
 %-----------------------------
 function fit = MemFit_SingleData(data, model, verbosity)
+  if isfield(data, 'errors')
+    if (all(isInRange(data.errors,-90,90)) && ...
+      (countInRanges(data.errors,[-90,-80],[80,90]) > 10) && ...
+      (countInRanges(data.errors,[-100,-91],[91,100]) == 0)) && ...
+      ~isfield(model, 'isOrientationModel')
+       % Should we do this automatically for people, like we do for 2AFC data?
+       fprintf(['WARNING: It looks like your data is from an orientation\n'...
+       'experiment or something else where the errors can only span from\n'...
+       '-90 to 90. If so, you should wrap your model with the function\n'...
+       'Orientation() so that the MemToolbox knows that it should wrap the\n'...
+       'distributions at +/-90 rather than +/-180.\n']);
+    end
+  end
+  
   if(verbosity > 0)
     % Tell the user what's to come;
-    if isfield(data, 'errors')
+    if isfield(data, 'errors') && ~isfield(model, 'isOrientationModel')
       fprintf('\nError histogram:   ')
       PlotAsciiHist(data.errors);
     elseif isfield(data, 'afcCorrect')
