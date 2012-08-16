@@ -16,6 +16,7 @@ function figHand = PlotPosteriorComparison(posteriors, paramNames)
   % Show 2x2 correlation for each variable with each other to look for
   % structure; Visualize both as a scatter and as a 2D histogram
   figHand = figure; 
+  set(gcf, 'Color', [1 1 1]);
   for i=1:length(posteriors)
     if isfield(posteriors{i}, 'vals')
       % posteriorSamples:

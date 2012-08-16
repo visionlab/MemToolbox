@@ -23,13 +23,11 @@ function f = PlotShift(cond1,cond2,paramNames,averagingFunctions)
   end
   
   f = figure();
-  
   numParameters = size(cond1,2);
   combos = combnk([1:numParameters],2);
   numCombos = size(combos,1);
   
   for i = 1:numCombos
-    
     p1 = combos(i,1);
     p2 = combos(i,2);
     
@@ -40,10 +38,10 @@ function f = PlotShift(cond1,cond2,paramNames,averagingFunctions)
     hold on;
   
     % plot subject changes
-    for j = 1:size(cond1,1)
-      line([cond1(j,p1) cond2(j,p1)], [cond1(j,p2) cond2(j,p2)], ... 
-        'LineStyle', '-', 'Color', [0.85,0.85,0.85])
-    end
+    % for j = 1:size(cond1,1)
+    %   line([cond1(j,p1) cond2(j,p1)], [cond1(j,p2) cond2(j,p2)], ... 
+    %     'LineStyle', '-', 'Color', [0.85,0.85,0.85])
+    % end
     plot(cond1(:,p1), cond1(:,p2), 'MarkerSize', 18, 'Marker', '.', ...
       'Color', [0.75 0.75 0.75]);
     plot(cond2(:,p1), cond2(:,p2), 'MarkerSize', 18, 'Marker', '.', ...
@@ -57,8 +55,8 @@ function f = PlotShift(cond1,cond2,paramNames,averagingFunctions)
     plot(mean1(cond2(:,p1)),mean2(cond2(:,p2)), 'Marker', '.', 'MarkerSize', 32, ...
       'Color', [0, 0.2431, 0.3725])
       
-    xlabel(paramNames{p1});
-    ylabel(paramNames{p2});
+    xlabel(paramNames{p1}, 'FontSize', 13);
+    ylabel(paramNames{p2}, 'FontSize', 13);
     
     makepalettable(f);
   end
