@@ -49,7 +49,7 @@ function fit = FitMultipleSubjects_Hierarchical(data, model, verbosity)
     repmat(model.movestd, [1, nSubs+1])];
   
   % Initialize with means from independent fits
-  start = FitMultipleSubjects_Independent(data, model);
+  start = FitMultipleSubjects_MAP(data, model);
   start.paramsSubs = start.paramsSubs';
   newModel.start  = [start.paramsSE*sqrt(length(data)) start.paramsMean start.paramsSubs(:)'];
   newModel.start = [newModel.start; newModel.start*0.80; newModel.start*1.20];
