@@ -16,7 +16,11 @@ function [data, pass] = ValidateData(data)
     end
         
     if(~isDataStruct(data))
-        error('Data should be passed in as a struct with a field data.errors or data.afcCorrect');
+      error('Data should be passed in as a struct with a field data.errors or data.afcCorrect');
+    end
+    
+    if isfield(data, 'errors') && isfield(data, 'afcCorrect')
+      error('Your data struct specified both a .errors and a .afcCorrect. Please pass only one kind of data at a time.');
     end
     
     % Check that the error values are in the correct range, otherwise massage
