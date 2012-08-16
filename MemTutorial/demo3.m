@@ -1,2 +1,2 @@
-data = MemDataset(3);
+data = MemDataset(3)
 MemFit(data, SwapModel);
