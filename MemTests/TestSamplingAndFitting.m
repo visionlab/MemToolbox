@@ -58,6 +58,9 @@ function [paramsOut, lowerCI, upperCI] = ...
   for i = 1:length(numTrials)
     if args.Verbosity > 0
       fprintf('\nNow running pipeline with %d trials.', numTrials(i))
+      if(i == length(numTrials)) 
+        fprintf('\n'); 
+      end
     end
     
     % Generate displays
