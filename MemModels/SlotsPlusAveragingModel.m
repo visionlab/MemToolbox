@@ -10,15 +10,6 @@
 % StandardMixtureModel().
 %
 % Uses the capacity and SD to fit data across multiple sizes. 
-%
-%
-% **BUG: this breaks when calling MemFit's model comparison routine, e.g.:
-%
-%     data = load('slotplusResources-model-simulate.mat')
-%     MemFit(data, {StandardMixtureModel,SlotsPlusAveragingModel})
-%
-% because the model's pdf sometimes returns 0. This doesn't seem to be a
-% problem when fitting the data with that model alone through MemFit. Hm.
 % 
 function model = SlotsPlusAveragingModel()
   model.name = 'Slots+averaging model';
@@ -37,17 +28,17 @@ end
 function y = slotpdf(data,capacity,sd)
   
   % First compute the number of items that get at least one slot
-  numRepresented = min(capacity, data.n);
+  numRepresented = min(capacity, data.n(:));
 
   % ... which we can use to compute the guess rate
-  g = 1 - numRepresented ./ data.n;
+  g = 1 - numRepresented ./ data.n(:);
 
   % Then pass around the slots evenly and compute the sd
-  slotsPerItemEvenly = floor(capacity ./ data.n);
+  slotsPerItemEvenly = floor(capacity ./ data.n(:));
   worseSD = sd ./ max(sqrt(slotsPerItemEvenly),1); % to avoid Infs
 
   % Count the items that get an extra slot and the resulting sd
-  numItemsWithExtraSlot = mod(capacity, data.n);
+  numItemsWithExtraSlot = mod(capacity, data.n(:));
   pExtraSlot = numItemsWithExtraSlot ./ numRepresented;
   betterSD = sd ./ sqrt(slotsPerItemEvenly+1);
 

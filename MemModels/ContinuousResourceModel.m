@@ -22,11 +22,11 @@ function model = ContinuousResourceModel()
 end
 
 function y = crpdf(data,lapse,k,bestSD)
-  propResources = 1./data.n;
+  propResources = 1./data.n(:);
   pMax = 1./(bestSD.^2);
-  precision = (propResources .^ k) * pMax;
+  precision = (propResources .^ k) .* pMax;
   sd = sqrt(1./precision);
 
-  y = (1-lapse) .* vonmisespdf(data.errors(:),0,deg2k(sd)) + ...
+  y = (1-lapse) .* vonmisespdf(data.errors(:),0,deg2k(sd(:))) + ...
         (lapse) .* 1/360;
 end
