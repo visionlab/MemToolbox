@@ -26,7 +26,10 @@ function figHand = PlotPriorPredictive(model, data, varargin)
   args = struct('NumSamplesToPlot', 48, 'NumberOfBins', 55, ...
     'PdfColor', [0.54, 0.61, 0.06], 'NewFigure', true, ...
     'UseModelComparisonPrior', false); 
+  
+  % Figure options
   args = parseargs(varargin, args);
+  if args.NewFigure, figHand = figure(); else figHand = []; end
   
   % Check for right functions
   if args.UseModelComparisonPrior && ~isfield(model, 'priorForMC')
@@ -34,10 +37,6 @@ function figHand = PlotPriorPredictive(model, data, varargin)
      'but the model you specified does not include such a prior. We will \n'...
      'instead show samples from the normal prior.']);
   end
-  
-  % Figure options
-  args = parseargs(varargin, args);
-  if args.NewFigure, figHand = figure(); end
   
   % Sample from prior
   priorModel = EnsureAllModelMethods(model);
@@ -59,20 +58,23 @@ function figHand = PlotPriorPredictive(model, data, varargin)
   end
     
   % Plot samples
+  set(gcf, 'Color', [1 1 1]);
+  curFigure = gcf;
   sampTime = tic();
-  h = [];
+  curHandle = [];
   for i=1:args.NumSamplesToPlot
     
     % Generate random data from this distribution with these parameters
     asCell = num2cell(priorSamples.vals(i,:));
     yrep = SampleFromModel(model, asCell, [1 nSamples], data);
-    if i==1 && toc(sampTime)>(2.0/args.NumSamplesToPlot) % if it will take more than 5s...
-      h = waitbar(i/args.NumSamplesToPlot, 'Sampling to get prior predictive distribution...');
-    elseif ~isempty(h)
-      if ~ishandle(h) % they closed the waitbar; stop sampling here
+    if i==1 && toc(sampTime)>(5.0/args.NumSamplesToPlot) % if it will take more than 5s...
+      curHandle = awaitbar(i/args.NumSamplesToPlot, ...
+        'Sampling to get prior predictive distribution...');
+    elseif ~isempty(curHandle)
+      if awaitbar(i/args.NumSamplesToPlot, curHandle)
         break;
       end
-      waitbar(i/args.NumSamplesToPlot, h);
+      set(0, 'CurrentFigure', curFigure);
     end
     
     % Bin data
@@ -80,17 +82,43 @@ function figHand = PlotPriorPredictive(model, data, varargin)
     if any(isnan(normalizedYRep))
       hSim = plot(x, normalizedYRep, 'x-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
     else
-      hSim = plot(x, normalizedYRep, '-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
+      hSim = patchline(x, normalizedYRep, 'LineStyle', '-', 'EdgeColor', ...
+        args.PdfColor, 'EdgeAlpha', 0.15, 'LineSmoothing', 'on');    
     end
     hold on;
   end  
-  if ishandle(h), close(h); end
+  if ishandle(curHandle)
+    close(curHandle);
+  end
+  title('Simulated data from model prior', 'FontSize', 13);
   if isfield(model, 'isOrientationModel')
     xlim([-90 90]);
   else
     xlim([-180 180]);
   end
-  makepalettable();
+  xlabel('Error (degrees)');
+  
+  % Allow the user to limit this figure to any subset of the data
+  if ~isempty(figHand)
+    CreateMenus(data, @redrawFig);
+  end
+  function redrawFig(whichField, whichValue)
+    if strcmp(whichField, 'all')
+      cla;
+      PlotPriorPredictive(model, data, ...
+        'NewFigure', false, 'NumSamplesToPlot', args.NumSamplesToPlot, ...
+        'NumberOfBins', args.NumberOfBins, 'PdfColor', args.PdfColor, ...
+        'UseModelComparisonPrior', args.UseModelComparisonPrior);
+    elseif sum(ismember(data.(whichField),whichValue)) > 0
+      [datasets,conditionOrder] = SplitDataByField(data, whichField);
+      newData = datasets{ismember(conditionOrder,whichValue)};
+      cla;
+      PlotPriorPredictive(model, newData, ...
+        'NewFigure', false, 'NumSamplesToPlot', args.NumSamplesToPlot, ...
+        'NumberOfBins', args.NumberOfBins, 'PdfColor', args.PdfColor, ...
+        'UseModelComparisonPrior', args.UseModelComparisonPrior);
+    end
+  end  
 end
 
 function y = getNormalizedBinnedReplication(yrep, data, x)

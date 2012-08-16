@@ -20,7 +20,7 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
   % Plot data fit
   args = struct('PdfColor', [0.54, 0.61, 0.06], 'NumSamplesToPlot', 63, 'NewFigure', true); 
   args = parseargs(varargin, args);
-  if args.NewFigure, figHand = figure(); end
+  if args.NewFigure, figHand = figure(); else figHand = []; end
   
   startCol = args.PdfColor;
   
@@ -92,6 +92,26 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
   PlotModelFit(model, params, data, 'PdfColor', colorOfLine(end,:));
   line([-179.99 -179.99], [0 max(ylim)], 'Color', [0 0 0]);
   line([-180 180], [0.0001 0.0001], 'Color', [0 0 0]);
+  
+  % Allow the user to limit this figure to any subset of the data
+  if ~isempty(figHand)
+    CreateMenus(data, @redrawFig);
+  end
+  function redrawFig(whichField, whichValue)
+    if strcmp(whichField, 'all')
+      subplot(1,1,1);
+      PlotModelParametersAndData(model, posteriorSamples, data, ...
+        'NumSamplesToPlot', args.NumSamplesToPlot, 'NewFigure', false, ...
+        'PdfColor', args.PdfColor);
+    elseif sum(ismember(data.(whichField),whichValue)) > 0
+      [datasets,conditionOrder] = SplitDataByField(data, whichField);
+      newData = datasets{ismember(conditionOrder,whichValue)};
+      subplot(1,1,1);
+      PlotModelParametersAndData(model, posteriorSamples, newData, ...
+        'NumSamplesToPlot', args.NumSamplesToPlot, 'NewFigure', false, ...
+        'PdfColor', args.PdfColor);
+    end
+  end
   
   % What to do when series is clicked
   function Click_Callback(tmp,tmp2)

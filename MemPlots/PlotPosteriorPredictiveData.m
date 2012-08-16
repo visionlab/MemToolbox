@@ -19,7 +19,7 @@
 %  'NewFigure' - whether to make a new figure or plot into the currently
 %  active subplot. Default is false (e.g., plot into current plot).
 % 
-function figHand = PlotPosteriorPredictiveDataNew(model, posteriorSamples, data, varargin)
+function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
   % difference plot.
   args = struct('NumSamplesToPlot', 48, 'NumberOfBins', 55, ...
@@ -120,13 +120,15 @@ function figHand = PlotPosteriorPredictiveDataNew(model, posteriorSamples, data,
     if strcmp(whichField, 'all')
       subplot(1,1,1);
       PlotPosteriorPredictiveData(model, posteriorSamples, data, ...
-        'NewFigure', false);
-    elseif sum(data.(whichField)==whichValue) > 0
+        'NewFigure', false, 'NumSamplesToPlot', args.NumSamplesToPlot, ...
+        'NumberOfBins', args.NumberOfBins, 'PdfColor', args.PdfColor);
+    elseif sum(ismember(data.(whichField),whichValue)) > 0
       [datasets,conditionOrder] = SplitDataByField(data, whichField);
-      newData = datasets{conditionOrder==whichValue};
+      newData = datasets{ismember(conditionOrder,whichValue)};
       subplot(1,1,1);
       PlotPosteriorPredictiveData(model, posteriorSamples, newData, ...
-        'NewFigure', false);
+        'NewFigure', false, 'NumSamplesToPlot', args.NumSamplesToPlot, ...
+        'NumberOfBins', args.NumberOfBins, 'PdfColor', args.PdfColor);
     end
   end
 end

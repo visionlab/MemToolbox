@@ -28,7 +28,7 @@ function figHand = PlotModelFit(model, params, data, varargin)
   args = struct('PdfColor', [0.54, 0.61, 0.06], 'NumberOfBins', 40, ...
                 'ShowNumbers', true, 'ShowAxisLabels', true, 'NewFigure', false); 
   args = parseargs(varargin, args);
-  if args.NewFigure, figHand = figure(); end
+  if args.NewFigure, figHand = figure(); else figHand = []; end
   
   % If params has a .vals, assume they passed a posteriorSamples from MCMC
   if isstruct(params) && isfield(params, 'vals')
@@ -65,6 +65,26 @@ function figHand = PlotModelFit(model, params, data, varargin)
     end
     text(max(xlim), topOfY-topOfY*0.05, txt, 'HorizontalAlignment', 'right');
   end
+  
+  % Allow the user to limit this figure to any subset of the data
+  if ~isempty(figHand)
+    CreateMenus(data, @redrawFig);
+  end
+  function redrawFig(whichField, whichValue)
+    if strcmp(whichField, 'all')
+      cla;
+      PlotModelFit(model, params, data, ...
+        'ShowAxisLabels', args.ShowAxisLabels, 'NewFigure', false, ...
+        'PdfColor', args.PdfColor, 'NumberOfBins', args.NumberOfBins);
+    elseif sum(ismember(data.(whichField),whichValue)) > 0
+      [datasets,conditionOrder] = SplitDataByField(data, whichField);
+      newData = datasets{ismember(conditionOrder,whichValue)};
+      cla;
+      PlotModelFit(model, params, newData, ...
+        'ShowAxisLabels', args.ShowAxisLabels, 'NewFigure', false, ...
+        'PdfColor', args.PdfColor, 'NumberOfBins', args.NumberOfBins);
+    end
+  end  
 end
 
 function Plot2AFC(model, params, data, args)

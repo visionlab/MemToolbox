@@ -12,9 +12,9 @@
 % 
 function figHand = PlotData(data, varargin)
   % Extra arguments and parsing
-  args = struct('NumberOfBins', 40, 'NewFigure', false); 
+  args = struct('NumberOfBins', 40, 'NewFigure', true); 
   args = parseargs(varargin, args);
-  if args.NewFigure, figHand = figure(); end
+  if args.NewFigure, figHand = figure(); else figHand = []; end
   
   % Clean data up if it is just errors
   if(~isfield(data,'errors')) && (~isfield(data,'afcCorrect'))
@@ -52,5 +52,21 @@ function figHand = PlotData(data, varargin)
     xlabel('Distance (degrees)', 'FontSize', 14);
     ylabel('Probability Correct', 'FontSize', 14);
     ylim([0 1]);
+  end
+  
+  % Allow the user to limit this figure to any subset of the data
+  if ~isempty(figHand)
+    CreateMenus(data, @redrawFig);
+  end
+  function redrawFig(whichField, whichValue)
+    if strcmp(whichField, 'all')
+      cla;
+      PlotData(data, 'NewFigure', false, 'NumberOfBins', args.NumberOfBins);
+    elseif sum(ismember(data.(whichField),whichValue)) > 0
+      [datasets,conditionOrder] = SplitDataByField(data, whichField);
+      newData = datasets{ismember(conditionOrder,whichValue)};
+      cla;
+      PlotData(newData, 'NewFigure', false, 'NumberOfBins', args.NumberOfBins);
+    end
   end
 end

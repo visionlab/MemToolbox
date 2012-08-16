@@ -26,7 +26,7 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
   args = struct('MarginalPlots', false, 'NewFigure', true, ...
     'PdfColor', [0.54, 0.61, 0.06]); 
   args = parseargs(varargin, args);
-  if args.NewFigure, figHand = figure(); end
+  if args.NewFigure, figHand = figure(); else figHand = []; end
   
   % If you pass a 'posteriorSamples' struct instead of params
   if isstruct(params) && isfield(params, 'vals')
@@ -133,6 +133,26 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
       'String', sprintf('%0.2f', paramsCur(i)), ...
       'Callback', @(hObject,eventdata) edit_Callback(hObject, i), ...
       'UserData', InverseMappingFunction{i});
+  end
+  
+  % Allow the user to limit this figure to any subset of the data
+  if ~isempty(figHand)
+    CreateMenus(data, @redrawFig);
+  end
+  function redrawFig(whichField, whichValue)
+    if strcmp(whichField, 'all')
+      subplot(1,1,1);
+      PlotModelFitInteractive(model, params, data, ...
+        'MarginalPlots', args.MarginalPlots, 'NewFigure', false, ...
+        'PdfColor', args.PdfColor);
+    elseif sum(ismember(data.(whichField),whichValue)) > 0
+      [datasets,conditionOrder] = SplitDataByField(data, whichField);
+      newData = datasets{ismember(conditionOrder,whichValue)};
+      subplot(1,1,1);
+      PlotModelFitInteractive(model, params, newData, ...
+        'MarginalPlots', args.MarginalPlots, 'NewFigure', false, ...
+        'PdfColor', args.PdfColor);
+    end
   end
   
   PlotMarginals();
