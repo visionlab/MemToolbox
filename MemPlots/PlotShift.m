@@ -37,14 +37,14 @@ function f = PlotShift(cond1,cond2,paramNames,averagingFunctions)
     subplot(1,numCombos,i)
     hold on;
   
-    % plot subject changes
-    % for j = 1:size(cond1,1)
-    %   line([cond1(j,p1) cond2(j,p1)], [cond1(j,p2) cond2(j,p2)], ... 
-    %     'LineStyle', '-', 'Color', [0.85,0.85,0.85])
-    % end
-    plot(cond1(:,p1), cond1(:,p2), 'MarkerSize', 18, 'Marker', '.', ...
+    %plot subject changes
+    for j = 1:size(cond1,1)
+      line([cond1(j,p1) cond2(j,p1)], [cond1(j,p2) cond2(j,p2)], ... 
+        'LineStyle', '-', 'Color', [0.85,0.85,0.85])
+    end
+    plot(cond1(:,p1), cond1(:,p2), 'LineStyle', 'none', 'MarkerSize', 18, 'Marker', '.', ...
       'Color', [0.75 0.75 0.75]);
-    plot(cond2(:,p1), cond2(:,p2), 'MarkerSize', 18, 'Marker', '.', ...
+    plot(cond2(:,p1), cond2(:,p2), 'LineStyle', 'none', 'MarkerSize', 18, 'Marker', '.', ...
       'Color', [0.3 0.3 0.3]);
     
     % plot mean changes 
