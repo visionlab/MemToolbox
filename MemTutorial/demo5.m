@@ -20,4 +20,4 @@ model.priorForMC = @(p) (betapdf(p(1), 1.25, 2.5) * ... % for g
 PlotPrior(model)
 
 % Plot the prior used for model comparsion
-PlotPrior(model, ‘UseModelComparisonPrior’, true)
+PlotPrior(model, 'UseModelComparisonPrior', true)
