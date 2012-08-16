@@ -2,15 +2,11 @@ function MCMC_Example()
   close all;
     
   % Example data
-  data = load('MemData/3000+trials_3items_SUBJ#1.mat');
+  data = MemDataset(1);
   
   % Choose a model
   model = StandardMixtureModel();
-  %model = NoGuessingModel();
-  %model = StandardMixtureModelWithBias();
-  %model = InfiniteScaleMixtureModel('wrappednormal','gamma');
-  %model = BinomialModel();
-  
+
   % Run MCMC
   posteriorSamples = MCMC(data, model);
   maxPosterior = MCMCSummarize(posteriorSamples, 'maxPosterior');
