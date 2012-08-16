@@ -21,16 +21,24 @@ function model = EnsureAllModelMethods(model)
   
   % If no logpdf, create one from pdf
   if ~isfield(model, 'logpdf')
-    model.logpdf = @(varargin)(nansum(log(model.pdf(varargin{:}))));
+    model.logpdf = @(varargin)(sumWithNans(log(model.pdf(varargin{:}))));
   end
-  
+
   % If no logprior, create one from prior
   if ~isfield(model, 'logprior')
-    model.logprior = @(params)(nansum(log(model.prior(params))));
+    model.logprior = @(params)(sumWithNans(log(model.prior(params))));
   end  
   
   % If there's no model.priorForMC, use the uninformative prior
   if ~isfield(model, 'priorForMC')
     model.priorForMC = model.prior;
+  end
+end
+
+function s = sumWithNans(v)
+  if any(~isnan(v))
+    s = nansum(v);
+  else
+    s = NaN;
   end
 end
