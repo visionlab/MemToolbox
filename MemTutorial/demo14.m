@@ -1,3 +1,7 @@
+% MemToolbox demo 14: Fitting a model with one set of data and evaluating it
+% with another
+clear all;
+
 data.errors = [-10, 2, 43, -2, 1, 100, 119, -34, 11];
 data.n = [1, 1, 1, 3, 3, 3, 5, 5, 5]
 

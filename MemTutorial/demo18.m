@@ -1,3 +1,6 @@
+% MemToolbox demo 18: Checking a model and sampling data
+clear all;
+
 % Test to see if we can recover some parameter values
 model = WithBias(StandardMixtureModel);
 paramsIn = {0, 0.1, 10}; % mu, g , sd

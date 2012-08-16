@@ -1,3 +1,5 @@
+% MemToolbox demo 16: Advanced MCMC diagnostics
+clear all;
 data.errors = [-10 0 10];
 model = StandardMixtureModel();
 

@@ -1,3 +1,5 @@
+% MemToolbox demo 5: Model comparison
+clear all;
 data = MemDataset(1);
 
 % First model:

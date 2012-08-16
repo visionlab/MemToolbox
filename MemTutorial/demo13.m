@@ -1,3 +1,6 @@
+% MemToolbox demo 13: Comparing data across conditions
+clear all;
+
 % Splitting a dataset by condition
 data.errors = [-89, 29, -2, 6, -16, 65, 43, -12, 10, 0, 178, -42, 52, 1];
 data.condition = [1 1 1 1 1 1 1 2 2 2 2 2 2 2];
