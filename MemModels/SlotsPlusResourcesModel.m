@@ -1,4 +1,4 @@
-% SLOTPLUSRESOURCESMODEL returns a structure for the slots+resources model of
+% SLOTSPLUSRESOURCESMODEL returns a structure for the slots+resources model of
 % Zhang & Luck (2008), though it assumes even allocation of the resource to
 % whichever objects are assigned a slot. The model has two parameters: capacity,
 % which is the number of available slots, and bestSD, which is the standard 
@@ -13,7 +13,7 @@
 %
 % Uses the capacity and bestSD to fit data across multiple sizes. 
 %
-function model = SlotPlusResourcesModel()
+function model = SlotsPlusResourcesModel()
   model.name = 'Slot plus resouces model';
 	model.paramNames = {'capacity', 'bestSD'};
 	model.lowerbound = [0 0]; % Lower bounds for the parameters
