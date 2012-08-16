@@ -24,30 +24,7 @@ function model = SlotPlusResourcesModel()
                       JeffreysPriorForKappaOfVonMises(deg2k(p(2))));  
 	model.start = [2, 0.1;  % g, sd
                  3, 1;  % g, sd
-                 4, 10]; % g, sd
-  
-  % Use our custom modelPlot to make a plot of errors separately for each
-  % set size
-  model.modelPlot = @model_plot;
-  function figHand = model_plot(data, params, varargin)
-    figHand = figure();
-    if isstruct(params) && isfield(params, 'vals')
-      params = MCMCSummarize(params, 'maxPosterior');
-    end
-    [datasets, setSizes] = SplitDataByField(data,'n');
-    m = StandardMixtureModel();
-    for i=1:length(setSizes)
-      subplot(1, length(setSizes), i);
-      g = (1 - max(0,min(1,params(1)/setSizes(i))));
-      curSD = min(params(2)./sqrt(params(1)./setSizes(i)), params(2));
-      PlotModelFit(m, [g curSD], datasets{i}, 'NewFigure', false, ...
-        'ShowNumbers', true, 'ShowAxisLabels', false);
-      if i==1
-        ylabel('Probability', 'FontSize', 14);
-      end
-      title(sprintf('Set size %d', setSizes(i)), 'FontSize', 14);
-    end
-  end              
+                 4, 10]; % g, sd           
 end
 
 function y = slotpdf(data,capacity,bestSD)
