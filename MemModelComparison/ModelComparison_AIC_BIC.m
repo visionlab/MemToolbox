@@ -20,6 +20,11 @@
 %   AIC = ModelComparison_AIC_BIC(data, {SwapModel(), StandardMixtureModel()})
 %   aicDiff = AIC(1) - AIC(2)
 %
+% Optional parameters:
+%  'MLEParams' - If you have already calculated the MLE parameters for each
+%  model, you may include them as an optional argument. This should be a
+%  cell array with the parameters for each model as a vector inside each
+%  cell, e.g., 'MLEParams', {[0.1, 0.1, 30], [0.4, 20]}.
 %
 % References:
 %
@@ -37,7 +42,10 @@
 %   Royal Statistical Society: Series B (Statistical Methodology), 64, 583-639.
 %   
 
-function [AIC, BIC, logLike, AICc] = ModelComparison_AIC_BIC(data, models)
+function [AIC, BIC, logLike, AICc] = ModelComparison_AIC_BIC(data, models, ...
+    varargin)
+  args = struct('MLEParams', []);
+  args = parseargs(varargin, args);
   
   if length(models) < 2
     error('Model comparison requires a cell array of at least two models.');
@@ -53,7 +61,13 @@ function [AIC, BIC, logLike, AICc] = ModelComparison_AIC_BIC(data, models)
      end
        
      % Get max posterior
-     [params, logLike(md)] = MLE(data, models{md});
+     if isempty(args.MLEParams)
+       [params, logLike(md)] = MLE(data, models{md});
+     else
+       params = args.MLEParams{md};
+       toCell = num2cell(params);
+       logLike(md) = models{md}.logpdf(data, toCell{:});
+     end
      
      % Calc AIC/AICc/BIC
      k = length(models{md}.upperbound);
