@@ -24,18 +24,21 @@ function CreateMenus(data, callbackFun)
   for i=1:length(cFields)
     if length(data.(cFields{i})) == nSamples && ...
         ~strcmp(cFields{i}, 'errors') && ~strcmp(cFields{i}, 'afcCorrect') ...
-        && ~strcmp(cFields{i}, 'changeSize')
+        && ~strcmp(cFields{i}, 'changeSize') && ~strcmp(cFields{i}, 'distractors') ...
+        && ~strcmp(cFields{i}, 'items')
       uniqueVals = unique(data.(cFields{i}));
-      for j=1:min([10, length(uniqueVals)])
-        val = uniqueVals(j);
-        if iscell(val)
-          val = sprintf('%s', val{1});
-        elseif isnumeric(val)
-          val = num2str(val);
+      if length(uniqueVals) < 10
+        for j=1:length(uniqueVals)
+          val = uniqueVals(j);
+          if iscell(val)
+            val = sprintf('%s', val{1});
+          elseif isnumeric(val)
+            val = num2str(val);
+          end
+          uimenu(hLimit, 'Label', ['<html> <font face="Courier">' cFields{i} ...
+            '</font>==' val '</html>'], 'Callback', ...
+            @(hObject, eventdata, h)(callbackFun(cFields{i}, uniqueVals(j))));
         end
-        uimenu(hLimit, 'Label', ['<html> <font face="Courier">' cFields{i} ...
-          '</font>==' val '</html>'], 'Callback', ...
-          @(hObject, eventdata, h)(callbackFun(cFields{i}, uniqueVals(j))));
       end
     end
   end
