@@ -10,9 +10,9 @@ visualizations of data and fit, validation routines, model comparison
 metrics, and experiment scripts. The MemToolbox is released under a BSD
 license and is freely available.
 
-If you want to acknowledge use of this software when you publish your
-research, you might say something like, "Data analysis was performed
-in MATLAB using the MemToolbox (citation)."
+If you wish to acknowledge use of this software when you publish your
+research, you might say something like, "Data analysis was performed 
+using the MemToolbox (memtoolbox.org)."
 
 Citation goes here
 
