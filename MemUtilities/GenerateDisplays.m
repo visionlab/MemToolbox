@@ -51,5 +51,5 @@ function displays = AddUsefulInfo(displays)
   end
   
   % Add set size for each trial
-  displays.n = repmat(size(displays.items,1), [1 size(displays.items,2)]);
+  displays.n = sum(~isnan(displays.items));
 end
