@@ -31,7 +31,11 @@ function data = MemDataset(whichData)
         'dataset-multiple-conditions-s3.mat'));
     case 7
       data = load(fullfile(currentDir, 'DataFiles', ...
-        'dataset-multiple-conditions-s4.mat'));      
+        'dataset-multiple-conditions-s4.mat'));  
+    case 8
+      f = load(fullfile(currentDir, 'DataFiles', ...
+        'allFields5SetSizes.mat'));  
+      data = f.data;
     otherwise
       error('Sorry, that''s not one of the available datasets.')
   end
