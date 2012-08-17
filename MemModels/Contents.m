@@ -8,12 +8,12 @@
 %   StandardMixtureModel    - guess rate and precision
 %   SwapModel               - guess rate, precision and swaps to other items.
 %   VariablePrecisionModel  - guess rate and variable precision
-%   EnsembleIntegrationModel- integration with distractors shifts reports
+%   EnsembleIntegrationModel - integration with distractors shifts reports
 %
 % Models parameterized based on set size:
 %   SlotModel               - capacity and precision (no benefit when cap.>setsize)
-%   SlotPlusResourcesModel  - capacity and precision (more juice when cap.>setsize)
-%   SlotPlusAveragingModel  - capacity and precision (more slots/item when cap.>setsize)
+%   SlotsPlusResourcesModel - capacity and precision (more juice when cap.>setsize)
+%   SlotsPlusAveragingModel - capacity and precision (more slots/item when cap.>setsize)
 %   ContinuousResourceModel - capacity juice split among all items equally
 %
 % Models that depend on delay duration:
