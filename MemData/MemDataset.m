@@ -36,6 +36,10 @@ function data = MemDataset(whichData)
       f = load(fullfile(currentDir, 'DataFiles', ...
         'allFields5SetSizes.mat'));  
       data = f.data;
+    case 9
+      f = load(fullfile(currentDir, 'DataFiles', ...
+        'allFieldsVariablePrecision.mat'));  
+      data = f.data;      
     otherwise
       error('Sorry, that''s not one of the available datasets.')
   end
