@@ -14,8 +14,6 @@ If you wish to acknowledge use of this software when you publish your
 research, you might say something like, "Data analysis was performed 
 using the MemToolbox (memtoolbox.org)."
 
-Citation goes here
-
 Contents:
 MemFit.m            - a general purpose fitting tool
 Setup.m             - adds the toolbox and its subfolders to the path
