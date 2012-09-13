@@ -59,6 +59,7 @@ function posteriorSamples = MCMC(data, model, varargin)
     startInfo(c).burnCovariance = coMatrix;
     startInfo(c).curLike = 0;
     startInfo(c).acceptance = 0;
+    startInfo(c).lastOneNeededNormalization = true;
   end
   
   if args.Verbosity>=1
@@ -145,33 +146,26 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
   
   % Do MCMC
   for m=1:startInfo.numMonte
-    % if mod(m,100) == 0 && verbosity > 0
-    %   if m>100
-    %     fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b');
-    %   end
-    %   fprintf('\t...%8d\n', m * startInfo.numChains);
-    % end
     % Pick move
-    % - Proposal distribution here is implicitly a mvnormal that is
+    %  Proposal distribution here is implicitly a mvnormal that is
     % renormalized to be truncated by the edges of the legal parameter
-    % values
-    tryAgain = 1;
-    while tryAgain == 1
+    % values. But we don't have to sample from it directly; just resample
+    % illegal values.
+    curCov = startInfo.burnCovariance;
+    if rand < probabilityOfBigMove
+      curCov = curCov .* sizeFactorOfBigMove;
+    end
+    tryAgain = true;
+    while tryAgain
       % Propose move
-      movement = mvnrnd(zeros(1, length(startInfo.cur)), startInfo.burnCovariance);
-      
-      % Propose move
-      if rand > probabilityOfBigMove
-        new = startInfo.cur + movement;
-      else
-        new = startInfo.cur + sizeFactorOfBigMove.*movement;
-      end
+      movement = mvnrnd(zeros(1, length(startInfo.cur)), curCov);
+      new = startInfo.cur + movement;
       
       % If any parameter is out of bounds, regenerate proposal
       tryAgain = any(new<model.lowerbound) || any(new>model.upperbound);
     end
     
-    % Calc likelihood of new position
+    % Calc likelihood of data at new parameters
     if any(new<model.lowerbound) || any(new>model.upperbound)
       like = -Inf;
     else
@@ -180,8 +174,33 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
         model.logprior(new);
     end
     
+    % Did we get close enough to the bounds of any parameters that we
+    % should worry about the fact that we are sampling from a truncated
+    % rather than a non-truncated one?
+    probSampCur = 1;
+    probSampNew = 1;
+    normalize = startInfo.lastOneNeededNormalization;
+    startInfo.lastOneNeededNormalization = 0;
+    if any((new + sqrt(diag(curCov))'*2) > model.upperbound ...
+        | (new - sqrt(diag(curCov))'*2) < model.lowerbound)
+      normalize = 1;
+      startInfo.lastOneNeededNormalization = 1;
+    end
+    
+    % If we did, normalize Metropolis-Hastings to take this into account.
+    % Don't do this if unnecessary, because mvncdf is pretty slow.
+    if normalize
+      normalConstantAtNew =  mvncdf(model.lowerbound, model.upperbound, ...
+        new, curCov);
+      normalConstantAtCur =  mvncdf(model.lowerbound, model.upperbound, ...
+        startInfo.cur, curCov);
+      symmetricPart = mvnpdf(startInfo.cur, new, curCov);
+      probSampCur = symmetricPart ./ normalConstantAtNew;
+      probSampNew = symmetricPart ./ normalConstantAtCur;
+    end
+  
     % Accept with probability proportional to likelihood ratio
-    if rand < exp(like - startInfo.curLike)
+    if rand < (exp(like - startInfo.curLike)*(probSampCur./probSampNew))
       startInfo.cur = new;
       startInfo.curLike = like;
       acceptance(m) = 1;
