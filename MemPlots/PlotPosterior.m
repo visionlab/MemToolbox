@@ -40,13 +40,26 @@ function figHand = PlotPosterior_MCMC(posteriorSamples, paramNames)
     end
     subplot(N,N,sub2ind([N N],p,p));
     hist(posteriorSamples.vals(:,p));
+    ylabel('frequency', ...
+        'FontSize', 14, 'Interpreter', 'latex');
     axis tight;
     set(gca, 'YTick', []);
     set(gca, 'box', 'off');
     subplot(N,N,sub2ind([N N],p,1));
-    title(paramNames{p}, 'FontSize', 15);
+    title(['{\makebox[1in][c]{\bf{' paramNames{p} '}}}'], ...
+      'FontSize', 14, ...
+      'Interpreter','latex')
     subplot(N,N,sub2ind([N N],1,p));
-    ylabel(paramNames{p}, 'FontSize', 15);
+    if p==1
+      ylabel({['{\makebox[1in][c]{\bf{' paramNames{p} '}}}'], ...
+        '{\makebox[1in][c]{frequency}}'}, ...
+        'FontSize', 14, ...
+        'Interpreter','latex')
+    else
+      ylabel(['$\bf{' paramNames{p} '}$'], ...
+        'FontSize', 14, 'Interpreter', 'latex');
+    end
+    
   end
   
   % Comestics
@@ -86,10 +99,22 @@ function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
     axis tight;
     set(gca, 'YTick', []);
     set(gca, 'box', 'off');
+    ylabel('frequency', ...
+      'FontSize', 14, 'Interpreter', 'latex');
     subplot(N,N,sub2ind([N N],p,1));
-    title(paramNames{p}, 'FontSize', 15);
+    title(['{\makebox[1in][c]{\bf{' paramNames{p} '}}}'], ...
+      'FontSize', 14, ...
+      'Interpreter','latex')
     subplot(N,N,sub2ind([N N],1,p));
-    ylabel(paramNames{p}, 'FontSize', 15);
+    if p==1
+      ylabel({['{\makebox[1in][c]{\bf{' paramNames{p} '}}}'], ...
+        '{\makebox[1in][c]{frequency}}'}, ...
+        'FontSize', 14, ...
+        'Interpreter','latex')
+    else
+      ylabel(['$\bf{' paramNames{p} '}$'], ...
+        'FontSize', 14, 'Interpreter', 'latex');
+    end
   end
   
   % Comestics
