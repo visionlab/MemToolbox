@@ -28,8 +28,10 @@ function posteriorSamples = MCMC(data, model, varargin)
   %    for each variable to count as convergence
   %  PostConvergenceSamples - how many samples to collect after convergence
   %  attained
-  args = struct('Verbosity', 1, 'ConvergenceVariance', 1.2, ...
-    'PostConvergenceSamples', 15000, 'BurnInSamplesBeforeCheck', 500); 
+  args = struct('Verbosity', 1, ...
+    'ConvergenceVariance', 1.1 + log(length(model.paramNames))/10, ...
+    'PostConvergenceSamples', max([6000 2000*length(model.paramNames)]), ...
+    'BurnInSamplesBeforeCheck', 200); 
   args = parseargs(varargin, args);
   
   % Ensure there is a model.prior, model.logpdf and model.pdf
@@ -39,6 +41,14 @@ function posteriorSamples = MCMC(data, model, varargin)
   if(isempty(model.paramNames))
     posteriorSamples = [];
     return;
+  end
+  
+  % Matlabpool open?
+  try
+    if matlabpool('size') == 0
+      fprintf(['Warning: You are running MCMC without first turning\n' ...
+        'on parallel processing. See Tutorial Demo 6 for help!\n']);
+    end
   end
   
   % How many chains to run?
@@ -143,6 +153,9 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
   
   % Track acceptance
   acceptance = zeros(startInfo.numMonte,1);
+  normalizeConstant = nan(startInfo.numMonte, 2);
+  wasBigMove = zeros(startInfo.numMonte, 1);
+  options = statset('TolFun', 0.01);
   
   % Do MCMC
   for m=1:startInfo.numMonte
@@ -154,6 +167,7 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
     curCov = startInfo.burnCovariance;
     if rand < probabilityOfBigMove
       curCov = curCov .* sizeFactorOfBigMove;
+      wasBigMove(m) = 1;
     end
     tryAgain = true;
     while tryAgain
@@ -189,21 +203,30 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
     
     % If we did, normalize Metropolis-Hastings to take this into account.
     % Don't do this if unnecessary, because mvncdf is pretty slow.
+    normalConstantAtNew = NaN;
+    normalConstantAtCur = NaN;
     if normalize
       normalConstantAtNew =  mvncdf(model.lowerbound, model.upperbound, ...
-        new, curCov);
-      normalConstantAtCur =  mvncdf(model.lowerbound, model.upperbound, ...
-        startInfo.cur, curCov);
+        new, curCov, options);
+      if m>1 && ~isnan(normalizeConstant(m-1, wasBigMove(m)+1))
+        normalConstantAtCur = isnan(normalizeConstant(m-1, wasBigMove(m)+1));
+      else
+        normalConstantAtCur =  mvncdf(model.lowerbound, model.upperbound, ...
+          startInfo.cur, curCov, options);
+      end
       symmetricPart = mvnpdf(startInfo.cur, new, curCov);
       probSampCur = symmetricPart ./ normalConstantAtNew;
       probSampNew = symmetricPart ./ normalConstantAtCur;
     end
   
-    % Accept with probability proportional to likelihood ratio
-    if rand < (exp(like - startInfo.curLike)*(probSampCur./probSampNew))
+    % Accept with probability proportional to likelihood ratio1
+    if rand < (exp(like-startInfo.curLike)*(probSampCur./probSampNew))
       startInfo.cur = new;
       startInfo.curLike = like;
       acceptance(m) = 1;
+      normalizeConstant(m, wasBigMove(m)+1) = normalConstantAtNew;
+    else
+      normalizeConstant(m, wasBigMove(m)+1) = normalConstantAtCur;
     end
     
     % Store trace of startInfo.current position
