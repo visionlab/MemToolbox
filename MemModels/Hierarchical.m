@@ -1,7 +1,8 @@
-% FITMULTIPLESUBJECTS_HIERARCHICAL fits many subjects data at once using MAP
-% estimation and a hierarchical model over subjects. 
+% HIERARCHICAL fits many subjects data at once using a hierarchical model 
+% over subjects. This function wraps a model+data and turns it into a new
+% model which can then be fit with MAP, MLE or MCMC.
 % 
-%  fit = FitMultipleSubjects_Hierarchical(data, model, [verbosity])
+%    hModel = Hierarchical(data, model)
 %    
 % We treat all of the subjects' parameters as having been samples from
 % an underlying population normal distribution and infer the global mean 
@@ -14,14 +15,16 @@
 % differences in automatically weighting the more reliable subjects'
 % estimates more.
 %
-% Warning: Our MCMC function isn't quite up to the level of doing this
+% Warning: Our fitting functions aren't quite up to the level of doing this
 % modeling for >10-15 subjects right now (or at least, it sometimes takes 
 % forever).
 %
 % Example usage:
-%   data{1} = MemDataset(1);
-%   data{2} = MemDataset(2);
-%   fit = FitMultipleSubjects_Hierarchical(data, model);
+%
+%   data = {MemDataset(1), MemDataset(2), MemDataset(3)};
+%   hModel = Hierarchical(data, StandardMixtureModel());
+%   params = MAP(data, hModel);
+%   fit = OrganizeHierarchicalParams(hModel, params);
 %
 function newModel = Hierarchical(data, model)  
   nParams = length(model.paramNames);
@@ -46,8 +49,23 @@ function newModel = Hierarchical(data, model)
   % Initialize with means from independent fits
   start = FitMultipleSubjects_MAP(data, model);
   start.paramsSubs = start.paramsSubs';
-  newModel.start  = [start.paramsSE*sqrt(length(data)) start.paramsMean start.paramsSubs(:)'];
-  newModel.start = [newModel.start; newModel.start*0.80; newModel.start*1.20];
+  newModel.start  = [std(start.paramsSubs,[],2)' start.paramsMean start.paramsSubs(:)'];
+  meanChoices = [start.paramsMean; start.paramsSubs'];
+  for i=2:4
+    means = meanChoices(randi(size(meanChoices,1)), :);
+    stdevs = std(start.paramsSubs,[],2)';
+    newStart = [stdevs means];
+    for j=1:nSubs
+      while true
+        paramVals = randn(1,length(means)).*stdevs+means;
+        if ~any(paramVals>model.upperbound | paramVals<model.lowerbound)
+          break;
+        end
+      end
+      newStart = [newStart paramVals];
+    end
+    newModel.start(i,:) = newStart;
+  end
   
   % Create logpdf and logprior
   newModel.logprior = @(params) HierarchicalPrior(model.prior, params, nParams);
@@ -100,7 +118,7 @@ function likeVal = HierarchicalPDF(oldPdf, nParams, varargin)
       [popParamsMean{:}], [popParamsStd{:}])));
   end 
   if isnan(likeVal) || isinf(likeVal)
-    likeVal = intmin();
+    likeVal = double(intmin());
   end
   
   % Fetch a certain set of parameters from varargin (e.g., fetch

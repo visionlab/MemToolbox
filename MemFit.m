@@ -374,7 +374,10 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
     pause(1);
     fprintf('Hang in there while MTB fits the model to your data...\n');
   end
-  fit = FitMultipleSubjects_Hierarchical(dataCellArray, model, verbosity-1);
+  
+  hModel = Hierarchical(dataCellArray, model);
+  params = MAP(dataCellArray, hModel);
+  fit = OrganizeHierarchicalParams(hModel, params);
 end
 
 
