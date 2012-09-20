@@ -5,7 +5,8 @@
 function [maxPosterior, like] = MAP(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
-  options = statset('MaxIter',5000,'MaxFunEvals',5000,'UseParallel','always');
+  options = statset('MaxIter',50000,'MaxFunEvals',50000,...
+    'UseParallel','always','FunValCheck','off');
   
   model = EnsureAllModelMethods(model);
   numChains = size(model.start,1);
