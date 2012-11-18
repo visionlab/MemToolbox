@@ -2,10 +2,10 @@
 %
 %  data = MemDataset(whichData)
 %
-% whichData should range from 1-7, corresponding to the 7 currently
+% whichData should range from 1-10, corresponding to the 10 currently
 % included datasets.
 %
-function data = MemDataset(whichData)
+function data = MemDataset(whichData,varargin)
   if(nargin < 1)
     whichData = 1;
   end
@@ -39,7 +39,33 @@ function data = MemDataset(whichData)
     case 9
       f = load(fullfile(currentDir, 'DataFiles', ...
         'allFieldsVariablePrecision.mat'));  
-      data = f.data;      
+      data = f.data;
+       
+    case 'vandenbergetal2012'
+      if(length(varargin) < 2)
+        error('You must specify both a dimension, 1 or 2, and a participant.')
+      end
+      dim = varargin{1};
+      s = varargin{2};
+      dimensions = {'color', 'orientation'};
+      participants{1} = {'cc','clc','ela','hml','jv','kw', ...
+        'mbc', 'mt','rjj','ss','stp','wc','wjm'};
+      participants{2} = {'AA','ACO','ELA','RGG','TCS','WJM'};
+      thisParticipant = participants{dim}{s};
+      dataDir = fullfile(currentDir, 'DataFiles', ...
+        'vandenbergetal2012_data', dimensions{dim});
+      listing = dir(fullfile(dataDir, [thisParticipant '*']));
+      data = [];
+      for i = 1:length(listing)
+        thisFile = load(fullfile(dataDir, listing(i).name));
+        for j = 1:4
+          data = CombineData(data,getfield(thisFile,['recording' num2str(j)]));
+        end
+      end
+      if(dim == 1)
+        data.error = data.error*2;      
+      end    
+        
     otherwise
       error('Sorry, that''s not one of the available datasets.')
   end
