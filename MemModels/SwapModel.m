@@ -22,6 +22,9 @@
 % reports from the distractors, rather than from the target, as in Bays,
 % Catalao & Husain (2009), Figure 2B.
 %
+% A prior probability distribution can be specified in model.prior. Example
+% priors are available in MemModels/Priors.
+%
 function model = SwapModel()
   model.name = 'Swap model';
 	model.paramNames = {'g', 'B', 'sd'};
@@ -34,7 +37,6 @@ function model = SwapModel()
 	model.start = [0.2, 0.1, 10;  % g, B, sd
     0.4, 0.1, 15;  % g, B, sd
     0.1, 0.5, 20]; % g, B, sd
-  model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(3))); % sd
   
   % Example of a possible .priorForMC:
   % model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g

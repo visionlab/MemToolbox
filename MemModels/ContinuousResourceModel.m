@@ -15,10 +15,6 @@ function model = ContinuousResourceModel()
   model.start = [0.2, 0.1, 10;  % lapse, k, bestSD
                  0.4, 1, 2;
                  0.1, 10, 20];
-
-  model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(3))) .* ...
-                     JeffreysPriorForCapacity(p(2));
-  
 end
 
 function y = crpdf(data,lapse,k,bestSD)

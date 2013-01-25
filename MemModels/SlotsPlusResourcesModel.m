@@ -13,6 +13,9 @@
 %
 % Uses the capacity and bestSD to fit data across multiple sizes. 
 %
+% A prior probability distribution can be specified in model.prior. Example
+% priors are available in MemModels/Priors.
+%
 function model = SlotsPlusResourcesModel()
   model.name = 'Slot plus resouces model';
 	model.paramNames = {'capacity', 'bestSD'};
@@ -20,8 +23,6 @@ function model = SlotsPlusResourcesModel()
 	model.upperbound = [Inf Inf]; % Upper bounds for the parameters
 	model.movestd = [0.1, 0.1];
 	model.pdf = @slotpdf;
-  model.prior = @(p) (JeffreysPriorForCapacity(p(1)) .* ... % for capacity
-                      JeffreysPriorForKappaOfVonMises(deg2k(p(2))));  
 	model.start = [2, 0.1;  % g, sd
                  3, 1;  % g, sd
                  4, 10]; % g, sd           

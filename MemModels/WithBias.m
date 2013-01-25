@@ -28,7 +28,6 @@ function model = WithBias(model, priorForMu)
   model.movestd = [1 model.movestd];
   model.start = [rand(size(model.start,1),1)*10  model.start];
   
-  
   % Adjust pdf and prior
   model.oldPdf = model.pdf;
   model.pdf = @NewPDF;

@@ -12,9 +12,7 @@ function model = NoGuessingModel()
 	model.start = [ 3;  % sd
                  15;  % sd
                  75]; % sd
-                   
-  model.prior = @(p) (JeffreysPriorForKappaOfVonMises(deg2k(p(1))));
-  
+                     
   % Example of a possible .priorForMC:
   % model.priorForMC = @(p) (lognpdf(deg2k(p(1)),2,0.5));
 end

@@ -17,9 +17,6 @@ function model = ExponentialDecayModel()
 	model.upperbound = [Inf Inf Inf]; % Upper bounds for the parameters
 	model.movestd = [20, 1, 1];
 	model.pdf = @sdpdf;
-  model.prior = @(p) (JeffreysPriorForCapacity(p(1)) .* ...
-    JeffreysPriorForCapacity(p(2)) .* ... % 1/x prior for tau/capacity
-    JeffreysPriorForKappaOfVonMises(deg2k(p(3))));
   
 	model.start = [1000, 4, 12;  % tau, k, sd
                  2000, 2, 20;

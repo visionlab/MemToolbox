@@ -32,8 +32,6 @@ function model = EnsembleIntegrationModel()
 	model.start = [0.2, 10, 1;  % g, B, sd
     0.4, 15, 0;  % g, B, sd
     0.1, 20, 5]; % g, B, sd
-  model.prior = @(p) JeffreysPriorForKappaOfVonMises(deg2k(p(2)).* ...
-    JeffreysPriorForCapacity(p(3)));
   
   function p = IntegrationModelPDF(data, g, sd, samples)
     if(~isfield(data, 'distractors'))

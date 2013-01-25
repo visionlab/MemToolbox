@@ -11,6 +11,9 @@
 %
 % Uses the capacity and SD to fit data across multiple sizes. 
 % 
+% A prior probability distribution can be specified in model.prior. Example
+% priors are available in MemModels/Priors.
+%
 function model = SlotsPlusAveragingModel()
   model.name = 'Slots+averaging model';
 	model.paramNames = {'capacity', 'sd'};
@@ -18,8 +21,6 @@ function model = SlotsPlusAveragingModel()
 	model.upperbound = [Inf Inf]; % Upper bounds for the parameters
 	model.movestd = [0.1, 0.1];
 	model.pdf = @slotpdf;
-  model.prior = @(p) (JeffreysPriorForCapacity(p(1)) .* ...
-                      JeffreysPriorForKappaOfVonMises(deg2k(p(2))));  
 	model.start = [2, 5;    % capacity, sd
                  3, 10;
                  4, 100];   
