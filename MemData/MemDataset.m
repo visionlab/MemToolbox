@@ -2,8 +2,38 @@
 %
 %  data = MemDataset(whichData)
 %
-% whichData should range from 1-10, corresponding to the 10 currently
-% included datasets.
+% whichData should take a value from 1-9 or the string 'vandenbergetal2012',
+% each of which corresponds to one of the datasets available in the toolbox.
+% 
+% Datasets 1 and 2 are from an experiment reported in the supplement of 
+% Fougnie et al. (2012). Each dataset is a participant performing 3000+ trials
+% of a continuous report color working memory task.
+%
+% Dataset 3 is simulated from SwapModel.
+%
+% Datasets 4, 5, 6, and 7 are each simulated from StandardMixtureModel.
+%
+% Dataset 8 is simulated from SwapModel and contains not only the errors made
+% on the task but also the colors of the target and distractors.
+%
+% Dataset 9 is simulared from VariablePrecisionModel.
+%
+% Dataset 'vandenbergetal2012' is data from van den Berg et al. (2012). When
+% chosen, requires two additional parameters. The first is a string, either
+% 'color' or 'orientation', and determines the task: remembering a color or
+% an orientation. The second is a participant. For color, the available
+% participants are 'cc','clc','ela','hml','jv','kw', 'mbc', 'mt','rjj','ss',
+% 'stp','wc', and 'wjm'. For orientation, the available participants are
+% 'AA','ACO','ELA','RGG','TCS', and 'WJM'.
+%
+% References
+%  
+% Fougnie, D. F., Suchow, J. W., & Alvarez, G. A. (2012). Variability in the
+% precision of visual working memory. Nature Communications, 1129.
+%
+% van den Berg, R., Shin, H., Chou, W-C., George, R., & Ma, W. J. (2012).
+% Variability in encoding precision accounts for visual short-term memory
+% limitations. Proceedings of the National Academy of Sciences, 
 %
 function data = MemDataset(whichData,varargin)
   if(nargin < 1)
