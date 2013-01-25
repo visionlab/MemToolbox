@@ -360,7 +360,7 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
     return
   end
   if verbosity > 0
-    fprintf('\nYou''ve chosen to fit multiple subjects'' data together...\n\n');
+    fprintf('\nYou''ve chosen to fit multiple subjects'' data at once...\n\n');
     pause(1);
     for i = 1:length(dataCellArray)
       fprintf(' Subject number:   %d\n', i)
@@ -369,15 +369,15 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
       fprintf('\n')
     end
     fprintf('          Model:   %s\n', ...
-        ['Hierarchical ' lower(model.name(1)) model.name(2:end)]);    
+        [lower(model.name(1)) model.name(2:end)]);    
     fprintf('     Parameters:   %s\n\n', prettyPrintParams(model.paramNames));
     pause(1);
-    fprintf('Hang in there while MTB fits the model to your data...\n');
+    fprintf('MTB will now fit the model to each of your datasets...\n');
   end
   
-  hModel = Hierarchical(dataCellArray, model);
-  params = MAP(dataCellArray, hModel);
-  fit = OrganizeHierarchicalParams(hModel, params);
+  for i = 1:length(dataCellArray)
+    fit{i} = MemFit(dataCellArray{i}, model, 0);
+  end
 end
 
 
