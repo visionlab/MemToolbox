@@ -18,6 +18,27 @@
 % high variance. In this case it may be useful to turn off the automatic
 % convergence detection and simply run a large number of MCMC samples.
 %
+% This function uses the Metropolis-Hastings variant of Markov Chain Monte 
+% Carlo (MCMC), which is applicable to a wide range of models (Metropolis et 
+% al., 1953; Hastings, 1970). The algorithm chooses an initial set of model 
+% parameters, specified in model.start, and then, over several thousands 
+% iterations, proposes small moves to these parameter values, accepting or 
+% rejecting them based on how probable the new parameter values are in both 
+% the prior and the likelihood function. In this way, it constructs a random 
+% walk that visits parameter settings with frequency proportional to their 
+% probability under the posterior. This allows the estimation of the full 
+% posterior of the model in a reasonable amount of time, and is theoretically 
+% equivalent to the more straightforward (but much slower) technique of 
+% evaluating the model's likelihood and prior at every possible setting of the 
+% parameters (implemented in the GridSearch function). For an introduction to 
+% MCMC, we recommend Andrieu et al. (2003).
+%
+% The particular flavor of MCMC used here is adaptive during the burn-in and samples
+% changes in all parameters jointly from a multivariate normal distribution.
+%
+%
+%
+%
 function posteriorSamples = MCMC(data, model, varargin)
   % Extra arguments and parsing
   %  Verbosity = 0,  Print nothing
@@ -190,7 +211,7 @@ function [posteriorSamples, startInfo] = MCMC_Chain(data, model, startInfo, verb
     
     % Did we get close enough to the bounds of any parameters that we
     % should worry about the fact that we are sampling from a truncated
-    % rather than a non-truncated one?
+    % rather than a non-truncated normal distribution?
     probSampCur = 1;
     probSampNew = 1;
     normalize = startInfo.lastOneNeededNormalization;

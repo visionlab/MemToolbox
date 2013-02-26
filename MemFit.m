@@ -34,9 +34,9 @@ function fit = MemFit(varargin)
   % If you want to see how MemFit() works, you should look at those
   % functions, located below this one.
   
-  % Verbosity controls the amount of output. if verbosity is 0, output is
-  % suppressed completely. if verbosity is 1, output is minimal. if verbosity
-  % is 2, then it's verbose. here, check for verbosity and then chop it off.
+  % Verbosity controls the amount of output. If verbosity is 0, output is
+  % suppressed completely. If verbosity is 1, output is minimal. If verbosity
+  % is 2, then it's verbose. Here, check for verbosity and then chop it off.
   if nargin == 3
     verbosity = varargin{3};
     nArguments = 2;
