@@ -149,7 +149,8 @@ end
 function PlotContinuousReport(model, params, data, args)
   % Plot data histogram
   set(gcf, 'Color', [1 1 1]);
-  x = linspace(-180, 180, args.NumberOfBins)';
+  x = linspace(-180, 180, args.NumberOfBins+1)';
+  x = x(1:end-1) + (x(2)-x(1))/2;
   n = hist(data.errors(:), x);
   bar(x, n./sum(n), 'EdgeColor', [1 1 1], 'FaceColor', [.8 .8 .8]);
   hold on;
