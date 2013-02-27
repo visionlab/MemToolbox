@@ -15,21 +15,33 @@
 %   1 to 2    - strong
 %   >2        - decisive
 %
-% To compute a Bayes Factor we use Monte Carlo. Thus we draw samples from 
+% Computing Bayes factors, is, in general, quite difficult because it 
+% depends on integrating over the entire parameter space (Kass & Raftery, 1995).
+% However, the models provided in the MemToolbox are quite simple and consist
+% largely of 3-4 parameter models with relatively large amounts of data to 
+% constrain the posterior. Thus, we can often make use of simple approximation
+% approaches to calculate Bayes Factors successfully with these models.
+%
+% To approximate a Bayes Factor we use Monte Carlo. Thus we draw samples from 
 % the prior of the model (e.g., choose 'random' values of its parameters), 
-% and then see how likely the data is under those parameters. Models that
-% predict the data well over their entire possible space of parameters do
-% well, and models that need very particular settings of their parameters
+% and then see how likely the data is under those parameters. Averaging
+% the likelihood of the data across many samples from the prior gives an
+% approximation to the integral of the likelihood across the prior (e.g., 
+% Kass & Raftery, 1995). Models that predict the data well over their entire
+% possible space of parameters will thus get high Bayes Factors when compared
+% to other models, and those that need particular settings of their parameters
 % to fit the data do poorly. This approximation method for computing Bayes
 % Factors is relatively accurate for small numbers of parameters (<~5) as  
 % in most models in use in MemToolbox; in particular, it is accurate enough
 % for the scale above (log units). However, Bayes factors should not be 
-% considered to be precise.
+% considered to be precise. You should be sure to calculate the Bayes Factor
+% multiple times and ensure that the approximation is relatively stable. In
+% addition, you should ensure that your prior is well specified.
 %
 % Computing a Bayes Factor depends on the prior of the model, since that is
 % what specified how flexible the model is -- what data you could have seen
 % if you generated it from this model. Thus, ModelComparison_BayesFactor
-% makes use of a different, less diffuse prior, model.priorForMC, that you
+% defaults to using a different, less diffuse prior, model.priorForMC, that you
 % should specify for each of your models. In specifying this prior, you may
 % want to make use of the PlotSamplesFromPrior function to visualize the
 % prior you have specified.

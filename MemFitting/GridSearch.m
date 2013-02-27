@@ -2,7 +2,7 @@
 %
 %  fullPosterior = GridSearch(data, model, [optionalParameters])
 %
-% This fitting function just loops over reasonable values of each parameter
+% This fitting function  loops over reasonable values of each parameter
 % and evaluates the likelihood and prior at those values. It then returns a
 % posterior matrix whose size is N-dimensional for an N-parameter model 
 % (e.g., the full posterior, evaluated at discrete points on each parameter).

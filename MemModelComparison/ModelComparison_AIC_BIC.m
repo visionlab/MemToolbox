@@ -15,6 +15,10 @@
 % assumptions about the prior of models, and thus a more stringent penalty
 % for more complex models. Its values should be compared the same way.
 %
+% Note that none of these values is appropriate to consider for hierarchical
+% models, because they overestimate the number of degrees of freedom that
+% the model has (since its parameter depend on each other).
+%
 %  Example usage:
 %   data = MemDataset(3);
 %   AIC = ModelComparison_AIC_BIC(data, {SwapModel(), StandardMixtureModel()})

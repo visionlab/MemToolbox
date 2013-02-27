@@ -9,13 +9,28 @@ function [maxPosterior, like] = MAP(data, model)
     'UseParallel','always','FunValCheck','off');
   
   model = EnsureAllModelMethods(model);
+  
+  % Special case for model's with no free parameters at all
+  if(isempty(model.start))
+    maxPosterior = [];
+    like = model.logpdf(data);
+    return;
+  end
+  
   numChains = size(model.start,1);
+  
+  % Start the search at several different points (based on model.start)
   for c=1:numChains
+    % Create a function that evaluates the posterior (prior*likelihood)
     logPosterior = @(data, varargin) (model.logpdf(data, varargin{:}) ...
       + model.logprior(cell2mat(varargin)));
+    
+    % Maximize this function
     vals{c} = mle(data, 'logpdf', logPosterior, 'start', model.start(c,:), ...
       'lowerbound', model.lowerbound, 'upperbound', model.upperbound, ...
       'options', options);
+    
+    % Store MAP value
     asCell = num2cell(vals{c});
     posterior(c) = model.logpdf(data, asCell{:}) ...
       + model.logprior(vals{c});
@@ -28,7 +43,7 @@ function [maxPosterior, like] = MAP(data, model)
     posteriorSamples.vals = [posteriorSamples.vals; vals{c}];
   end
   
-  % Find MAP estimate
+  % Find MAP estimate (best one across all the chains)
   [like,b]=max(posteriorSamples.like);
   maxPosterior = posteriorSamples.vals(b,:);
 end

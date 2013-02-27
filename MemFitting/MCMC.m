@@ -2,22 +2,6 @@
 %
 %    posteriorSamples = MCMC(data, model, [optionalParameters])
 %
-% This MCMC function automatically detects convergence using the technique
-% of Gelman and Rubin (1992). 
-%
-% You can make this work as a normal MCMC function without any 
-% convergence detection by passing it the following parameters:
-%
-% ... 'ConvergenceVariance', Inf, 'BurnInSamplesBeforeCheck', 5000, ...
-% ... 'PostConvergenceSamples', 15000, ...
-%
-% This may be useful if the variance calculation is wrong for one of your
-% models. For example, if you have data where the bias (shift) parameter
-% is near 180 degrees, then if some chains settle near -180 and some near
-% +180, this should be considered low-variance, but MCMC will consider it
-% high variance. In this case it may be useful to turn off the automatic
-% convergence detection and simply run a large number of MCMC samples.
-%
 % This function uses the Metropolis-Hastings variant of Markov Chain Monte 
 % Carlo (MCMC), which is applicable to a wide range of models (Metropolis et 
 % al., 1953; Hastings, 1970). The algorithm chooses an initial set of model 
@@ -27,17 +11,56 @@
 % the prior and the likelihood function. In this way, it constructs a random 
 % walk that visits parameter settings with frequency proportional to their 
 % probability under the posterior. This allows the estimation of the full 
-% posterior of the model in a reasonable amount of time, and is theoretically 
+% posterior of the model in a reasonable amount of time, and is, in the limit, 
 % equivalent to the more straightforward (but much slower) technique of 
 % evaluating the model's likelihood and prior at every possible setting of the 
 % parameters (implemented in the GridSearch function). For an introduction to 
 % MCMC, we recommend Andrieu et al. (2003).
 %
-% The particular flavor of MCMC used here is adaptive during the burn-in and samples
-% changes in all parameters jointly from a multivariate normal distribution.
+% This MCMC function automatically detects convergence using the technique
+% of Gelman and Rubin (1992). In short, it runs multiple chains, which are all
+% started from different points and then move around the parameter space 
+% independently. If all the chains end up in the same place in the parameter space,
+% even though they start off at very different places, this is taken as evidence
+% that the MCMC function has converged and is correctly sampling from the 
+% posterior. Formally, this is implemented by asking whether the variance in
+% the parameter values across the chains is almost the same or the same as the 
+% variance in the parameter values within each chain.
 %
+% You can make this work as a normal MCMC function without any 
+% convergence detection by passing it the following parameters:
 %
+% ... 'ConvergenceVariance', Inf, 'BurnInSamplesBeforeCheck', 5000, ...
+% ... 'PostConvergenceSamples', 15000, ...
 %
+% This may be especially useful if the variance calculation is wrong for one of 
+% your models. For example, if you have data where the bias (shift) parameter
+% is near 180 degrees, then if some chains settle near -180 and some near
+% +180, this should be considered low-variance, but this MCMC func. will consider 
+% it high variance. In this case it may be useful to turn off the automatic
+% convergence detection and simply run a large number of MCMC samples. The 
+% tutorial explains how to check for proper convergence for a fit model 
+% (e.g., using PlotConvergence and other functions). You should be especially
+% sure to do this if you turn off the automatic convergence detection.
+%
+% The particular flavor of MCMC used here is adaptive during the burn-in period
+% (until convergence is detected), and samples changes in all parameters jointly
+% from a multivariate normal distribution. Thus, the current state of all of the
+% parameters is updated in one-pass by adding a sample from the current multivariate
+% normal proposal distribution to the current state. Then, this proposal is either
+% accepted or rejected. Finally, after each 200 samples, the proposal distribution
+% is tuned to reflect the actual covariance of the parameters across the
+% samples taken so far. This process continues (independently for each chain) until
+% the chains converge. This general kind of adaptive MCMC is described in 
+% Andrieu et al. (2003). Note that, because we expect people to make use of this
+% function with only relatively simple models, we always treat the entire set of
+% parameters as a single 'block' that is all sampled simultaneously.
+%
+% The proposal distribution is truncated at the upper and lowerbound's for each
+% parameter, so that illegal moves are not proposed. This results in an asymmetric
+% proposal distribution when near the bounds of a parameter. Thus, we must 
+% normalize the Metropolis-Hasting's algorithm to account for this break in symmetry. 
+% 
 %
 function posteriorSamples = MCMC(data, model, varargin)
   % Extra arguments and parsing
@@ -85,9 +108,9 @@ function posteriorSamples = MCMC(data, model, varargin)
     startInfo(c).numMonte = args.BurnInSamplesBeforeCheck;
     startInfo(c).cur = model.start(c,:);
     startInfo(c).numChains = numChains;
-    coMatrix = eye(length(model.movestd));
-    coMatrix(coMatrix==1) = model.movestd;
-    startInfo(c).burnCovariance = coMatrix;
+    coMatrix = eye(length(model.movestd)); % note: this parameter is misleadingly 
+    coMatrix(coMatrix==1) = model.movestd; % called model.movestd when really it is
+    startInfo(c).burnCovariance = coMatrix;% variance, not std
     startInfo(c).curLike = 0;
     startInfo(c).acceptance = 0;
     startInfo(c).lastOneNeededNormalization = true;
@@ -110,7 +133,8 @@ function posteriorSamples = MCMC(data, model, varargin)
       startInfo(c).burnCovariance = startInfo(c).burnCovariance .* 0.75 + ...
         cov(chainStored(c).vals(:, :)) .* 0.25;
       
-      % Increase acceptance rate
+      % Increase acceptance rate by making smaller moves if the current acceptance
+      % rate for this chain is too low
       if startInfo(c).acceptance < 0.15
         startInfo(c).burnCovariance = startInfo(c).burnCovariance ./ 3;
       end
@@ -127,7 +151,7 @@ function posteriorSamples = MCMC(data, model, varargin)
       fprintf('   ... collecting %d samples from converged distribution\n', args.PostConvergenceSamples);
   end
   
-  % Split between chains
+  % Split the # of post-convergence samples needed between chains
   total = 0;
   for c=1:numChains-1
     total = total+ceil(args.PostConvergenceSamples / numChains);
