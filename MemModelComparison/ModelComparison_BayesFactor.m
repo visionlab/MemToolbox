@@ -22,15 +22,30 @@
 % constrain the posterior. Thus, we can often make use of simple approximation
 % approaches to calculate Bayes Factors successfully with these models.
 %
-% To approximate a Bayes Factor we use Monte Carlo. Thus we draw samples from 
+% To approximate a Bayes Factor we use Monte Carlo. Thus we can draw samples from 
 % the prior of the model (e.g., choose 'random' values of its parameters), 
 % and then see how likely the data is under those parameters. Averaging
 % the likelihood of the data across many samples from the prior gives an
 % approximation to the integral of the likelihood across the prior (e.g., 
-% Kass & Raftery, 1995). Models that predict the data well over their entire
-% possible space of parameters will thus get high Bayes Factors when compared
-% to other models, and those that need particular settings of their parameters
-% to fit the data do poorly. This approximation method for computing Bayes
+% Kass & Raftery, 1995). 
+%
+% To improve this technique for models with relatively tight posteriors, particularly
+% if those posteriors are well approximated by a multivariate normal dist.,
+% we use importance sampling rather than sampling blindly from the prior. Thus,
+% we use MCMC samples to get a sense of what the posterior distribution looks like,
+% and fit a multivariate normal to this posterior. We then make this normal distrib.
+% considerably wider, to ensure it covers nearly all of the posterior mass. We
+% can then sample from this distribution, rather than the prior, and evaluate the
+% likelihood at each sample. To account for the fact that we did not sample from
+% the prior, we must then weight each point by how likely it is under the prior. 
+% This allows us to calculate the average likelihood of the data, integrated over
+% the prior (e.g., the marginal likelihood, used for the Bayes Factor), 
+% without wasting as many samples in areas where there is zero-likelihood.
+%
+% Models that predict the data well over their entire possible space of 
+% parameters  will thus get high Bayes Factors when compared to other
+% models, and those that need particular settings of their parameters
+% to fit the data will do poorly. This approximation method for computing Bayes
 % Factors is relatively accurate for small numbers of parameters (<~5) as  
 % in most models in use in MemToolbox; in particular, it is accurate enough
 % for the scale above (log units). However, Bayes factors should not be 
