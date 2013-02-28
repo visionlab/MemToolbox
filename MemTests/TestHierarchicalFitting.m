@@ -22,8 +22,9 @@ function TestHierarchicalFitting()
   for i=1:length(datasets)
     datasets{i}.errors = datasets{i}.errors(1:numTrialsPer);
   end
-  fitH = FitMultipleSubjects_Hierarchical(datasets, model, 1);
-  fitMLE = FitMultipleSubjects_Independent(datasets, model);
+  hModel = Hierarchical(datasets, model);
+  fitH = MAP(datasets, hModel);
+  fitMLE = FitMultipleSubjects_MLE(datasets, model);
   
   % Show plots with and without hiearchical fit
   for i=1:length(datasets)

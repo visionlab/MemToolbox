@@ -19,7 +19,7 @@ model.priorForMC = @(p) (betapdf(p(1), 1.25, 2.5) * ... % for g
                          lognpdf(deg2k(p(2)), 2.5, 0.5)); % for sd
 
 % Plot the noninformative prior
-PlotPrior(model)
+PlotPrior(model);
 
 % Plot the prior used for model comparsion
-PlotPrior(model, 'UseModelComparisonPrior', true)
+PlotPrior(model, 'UseModelComparisonPrior', true);

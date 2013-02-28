@@ -1,33 +1,45 @@
 % MemFit - A general-purpose fitting tool from the MemToolbox
 %
 %   Usage example:
-%   data = MemDataset(1);
-%   fit = MemFit(data);
+%     data = MemDataset(1);
+%     fit = MemFit(data);
 %
 %   It can handle many different use cases, including:
-%   MemFit(data)
-%   MemFit(errors)
-%   MemFit(data,model)
-%   MemFit(model,data)
-%   MemFit(errors,model)
-%   MemFit(model,errors)
-%   MemFit(data, {model1, model2, model3, ...})
-%   MemFit({subj1data,subj2data,...}, model)
 %
-%   All of the 2-argument versions can optionally take a third parameter,
-%   verbosity, which controls the amount of text printed to the command window.
-%   If verbosity is 0, output is suppressed. If verbosity is 1, output is
-%   minimal. If verbosity is 2, then MemFit is verbose. The default is 2.
+%     MemFit(data)
+%     MemFit(errors)
+%     MemFit(data, model)
+%     MemFit(model, data)
+%     MemFit(errors, model)
+%     MemFit(model, errors)
+%     MemFit(data, {model1, model2, model3, ...})
+%     MemFit({subj1data,subj2data,...}, model)
 %
-
+%   All of the 2-argument versions can take an optional parameter, 'Verbosity',
+%   which controls the amount of text printed to the command window.
+%   If Verbosity is 0, output is suppressed. If Verbosity is 1, output is
+%   minimal. If Verbosity is 2, then MemFit is verbose. The default is 2.
+%   e.g., 
+%      MemFit(model, data, 'Verbosity', 0)
+%   runs MemFit in silent mode, with no output.
+%
+%   Fitting multiple subjects at once, as in MemFit({subj1data,subj2data,...},
+%   model), has two modes of operation. The default is to fit the data independently
+%   for each subject, as though you had run MemFit separately for each dataset.
+%   Alternatively, MemFit supports fitting a hierarchical model (see the paper and
+%   tutorial for more), that treats each subjects' parameters as having been sampled
+%   from a single normal distribution and fits all of the parameters jointly.
+%   To fit subjects hierarchically, you can call MemFit with the optional parameter
+%   'UseHierarchical' set to true.
+%
 %-----------------------------
 function fit = MemFit(varargin)
   % This function (MemFit) just dispatches the real work to the functions
   % below:
   %
   %    MemFit_SingleData(data,model), which fits the model to the data
-  %    MemFit_MultipleSubjects({data1,data2,...}, model), which fits a 
-  %       hierarchical model
+  %    MemFit_MultipleSubjects({data1,data2,...}, model), which fits to 
+  %       multiple subject at once
   %    MemFit_ModelComparison(data, {model1,model2,...}), which performs 
   %       model comparison
   % 
@@ -37,11 +49,15 @@ function fit = MemFit(varargin)
   % Verbosity controls the amount of output. If verbosity is 0, output is
   % suppressed completely. If verbosity is 1, output is minimal. If verbosity
   % is 2, then it's verbose. Here, check for verbosity and then chop it off.
-  if nargin == 3
-    verbosity = varargin{3};
+  if nargin > 2
+    args = struct('Verbosity', 2, 'UseHierarchical', false);
+    args = parseargs(varargin, args);
+    verbosity = args.Verbosity;
+    hierarchy = args.UseHierarchical;
     nArguments = 2;
   else
     verbosity = 2;
+    hierarchy = false;
     nArguments = nargin;
   end
   
@@ -54,24 +70,23 @@ function fit = MemFit(varargin)
     % One input argument, assumed to be (errors) or (data).
     if(isnumeric(varargin{1}))
       data = struct('errors', varargin{1});
-      fit = MemFit(data, StandardMixtureModel(), 1);
+      fit = MemFit(data, StandardMixtureModel(), 'Verbosity', 1);
       
     elseif(isfield(varargin{1}, 'afcCorrect'))
       warning('MemToolbox:MemFit:InputFormat', ...
         'It looks like you passed in 2AFC data. Trying to fit with TwoAFC(StandardMixtureModel()).');
-      fit = MemFit_SingleData(varargin{1}, TwoAFC(StandardMixtureModel()), 2);
+      fit = MemFit_SingleData(varargin{1}, TwoAFC(StandardMixtureModel()), 'Verbosity', 2);
       
     elseif(any(isfield(varargin{1}, {'errors','error'})))
       data = varargin{1};
-      fit = MemFit(data, StandardMixtureModel(), 1);
+      fit = MemFit(data, StandardMixtureModel(), 'Verbosity', 1);
       
     elseif(isCellArrayOfDataStructs(varargin{1}))
       data = varargin{1};
-      fit = MemFit(data, StandardMixtureModel(), 1);
+      fit = MemFit(data, StandardMixtureModel(), 'Verbosity', 1);
       
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
-      fit = -1;
     end
 
   elseif nArguments == 2
@@ -120,7 +135,7 @@ function fit = MemFit(varargin)
       for i = 1:length(dataCellArray)
         dataCellArray{i} = ValidateData(dataCellArray{i});
       end
-      fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity);
+      fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity, hierarchy);
       
     else
       error('MemToolbox:MemFit:InputFormat', ...
@@ -354,13 +369,16 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
 end
 
 %-----------------------------
-function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
+function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity, hierarchy)
   if length(dataCellArray) == 1
-    fit = MemFit(dataCellArray{1}, model, verbosity);
+    fit = MemFit(dataCellArray{1}, model, 'Verbosity', verbosity);
     return
   end
   if verbosity > 0
     fprintf('\nYou''ve chosen to fit multiple subjects'' data at once...\n\n');
+    if hierarchy 
+      fprintf('... using a hierarchical model to fit the subjects together\n\n');
+    end
     pause(1);
     for i = 1:length(dataCellArray)
       fprintf(' Subject number:   %d\n', i)
@@ -372,11 +390,16 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity)
         [lower(model.name(1)) model.name(2:end)]);    
     fprintf('     Parameters:   %s\n\n', prettyPrintParams(model.paramNames));
     pause(1);
-    fprintf('MTB will now fit the model to each of your datasets...\n');
+    fprintf('MTB will now fit the model to your datasets...\n');
   end
-  
-  for i = 1:length(dataCellArray)
-    fit{i} = MemFit(dataCellArray{i}, model, 0);
+  if ~hierarchy
+    for i = 1:length(dataCellArray)
+      fit{i} = MemFit(dataCellArray{i}, model, 'Verbosity', 0);
+    end
+  else
+    hModel = Hierarchical(dataCellArray, model);
+    params = MAP(dataCellArray, hModel);
+    fit = OrganizeHierarchicalParams(hModel, params);
   end
 end
 

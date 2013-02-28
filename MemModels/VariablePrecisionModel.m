@@ -21,3 +21,4 @@ function model = VariablePrecisionModel(varargin)
     model = VariablePrecisionModel_Gamma();
   end
 end
+
