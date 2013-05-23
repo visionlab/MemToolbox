@@ -1,4 +1,4 @@
-% Cauchy prior for the concentration parameter of a von Mises distritbution.
+% Wallace prior for the concentration parameter of a von Mises distritbution.
 %
 % References:
 %
