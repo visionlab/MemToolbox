@@ -37,11 +37,6 @@ function model = WithLapses(model, priorForLapseRate)
     model.oldPrior = model.prior;
     model.prior = @(p)(model.oldPrior(p(2:end)) .* model.priorForLapseRate(p(1)));
   end
-  
-  if isfield(model, 'priorForMC')
-    model.oldPriorForMC = model.priorForMC;
-    model.priorForMC = @(p)(model.oldPriorForMC(p(2:end)) .* model.priorForLapseRate(p(1)));
-  end
 
   % Shift errors and/or changeSize 
   function p = NewPDF(data, lapseRate, varargin)

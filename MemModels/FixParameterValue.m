@@ -52,17 +52,6 @@ function model = FixParameterValue(model, parameter, value)
     r = model.oldPrior(newP);
   end
   
-  % Adjust prior for MC
-  if isfield(model, 'priorForMC')
-    model.oldPriorForMC = model.priorForMC;
-    model.priorForMC = @NewPriorForMC;
-  end
-  function r = NewPriorForMC(p)
-    newP(model.allButFixed) = p;
-    newP(parameter) = value;
-    r = model.oldPriorForMC(newP);
-  end
-  
   % Adjust modelPlot
   if isfield(model, 'modelPlot')
     model.oldModelPlot = model.modelPlot;
