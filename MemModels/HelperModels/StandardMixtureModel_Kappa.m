@@ -12,10 +12,13 @@ function model = StandardMixtureModel_Kappa()
 	model.start = [.2, 10;  % g, K
                  .4, 15;  % g, K
                  .1, 20]; % g, K
-                 
-  model.prior = @(p) JeffreysPriorForKappaOfVonMises(p(2));  % K
+   
+  % To specify a prior probability distribution, change and uncomment 
+  % the following line, where p is a vector of parameter values, arranged 
+  % in the same order that they appear in model.paramNames:
+  % model.prior = @(p) (1);
   
-  % Example of a possible .priorForMC:
+  % A different prior can be specified for use in model comparison:
   % model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g ...
   %                          lognpdf(p(2),2,0.5));        % for K
         

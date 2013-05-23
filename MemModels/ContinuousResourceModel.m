@@ -15,6 +15,14 @@ function model = ContinuousResourceModel()
   model.start = [0.2, 0.1, 10;  % lapse, k, bestSD
                  0.4, 1, 2;
                  0.1, 10, 20];
+  
+  % To specify a prior probability distribution, change and uncomment 
+  % the following line, where p is a vector of parameter values, arranged 
+  % in the same order that they appear in model.paramNames:
+  % model.prior = @(p) (1);
+
+  % A different prior can be specified for use in model comparison:
+  % model.priorForMC =
 end
 
 function y = crpdf(data,lapse,k,bestSD)

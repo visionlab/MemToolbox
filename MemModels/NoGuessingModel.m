@@ -13,6 +13,11 @@ function model = NoGuessingModel()
                  15;  % sd
                  75]; % sd
                      
-  % Example of a possible .priorForMC:
-  % model.priorForMC = @(p) (lognpdf(deg2k(p(1)),2,0.5));
+  % To specify a prior probability distribution, change and uncomment 
+  % the following line, where p is a vector of parameter values, arranged 
+  % in the same order that they appear in model.paramNames:
+  % model.prior = @(p) (1);
+
+  % A different prior can be specified for use in model comparison:
+  % model.priorForMC =
 end

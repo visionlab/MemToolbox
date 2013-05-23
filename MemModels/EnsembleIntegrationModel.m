@@ -33,6 +33,14 @@ function model = EnsembleIntegrationModel()
     0.4, 15, 0;  % g, B, sd
     0.1, 20, 5]; % g, B, sd
   
+  % To specify a prior probability distribution, change and uncomment 
+  % the following line, where p is a vector of parameter values, arranged 
+  % in the same order that they appear in model.paramNames:
+  % model.prior = @(p) (1);
+
+  % A different prior can be specified for use in model comparison:
+  % model.priorForMC =
+  
   function p = IntegrationModelPDF(data, g, sd, samples)
     if(~isfield(data, 'distractors'))
       error('The integration model requires that you specify the distractors.')

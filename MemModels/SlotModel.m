@@ -21,9 +21,14 @@ function model = SlotModel()
                  4, 15;  % capacity, sd
                  6, 40]; % capacity, sd
                     
-  % Example of a possible .priorForMC:
-  % model.priorForMC = @(p) (lognpdf(p(1),2,1) .* ... % for capacity
-  %                            lognpdf(deg2k(p(2)),2,0.5));  
+  % To specify a prior probability distribution, change and uncomment 
+  % the following line, where p is a vector of parameter values, arranged 
+  % in the same order that they appear in model.paramNames:
+  % model.prior = @(p) (1);
+
+  % A different prior can be specified for use in model comparison:
+  % model.priorForMC =
+
 end
 
 function y = slotpdf(data,capacity,sd)  

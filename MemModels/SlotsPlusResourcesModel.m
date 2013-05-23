@@ -25,7 +25,15 @@ function model = SlotsPlusResourcesModel()
 	model.pdf = @slotpdf;
 	model.start = [2, 0.1;  % g, sd
                  3, 1;  % g, sd
-                 4, 10]; % g, sd           
+                 4, 10]; % g, sd 
+  
+  % To specify a prior probability distribution, change and uncomment 
+  % the following line, where p is a vector of parameter values, arranged 
+  % in the same order that they appear in model.paramNames:
+  % model.prior = @(p) (1);
+
+  % A different prior can be specified for use in model comparison:
+  % model.priorForMC =          
 end
 
 function y = slotpdf(data,capacity,bestSD)

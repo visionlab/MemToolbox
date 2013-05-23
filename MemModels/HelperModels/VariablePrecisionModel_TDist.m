@@ -15,6 +15,14 @@ function model = VariablePrecisionModel_TDist()
                    0.4, 0.1, 2.0;
                    0.6, 0.5, 5.0];
   model.generator = @ismgen;
+  
+  % To specify a prior probability distribution, change and uncomment 
+  % the following line, where p is a vector of parameter values, arranged 
+  % in the same order that they appear in model.paramNames:
+  % model.prior = @(p) (1);
+
+  % A different prior can be specified for use in model comparison:
+  % model.priorForMC =
 end
 
 % To sample from this model

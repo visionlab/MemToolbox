@@ -37,11 +37,14 @@ function model = SwapModel()
 	model.start = [0.2, 0.1, 10;  % g, B, sd
     0.4, 0.1, 15;  % g, B, sd
     0.1, 0.5, 20]; % g, B, sd
-  
-  % Example of a possible .priorForMC:
-  % model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g
-  %   betapdf(p(2),1.25,2.5) * ... % for B
-  %   lognpdf(deg2k(p(3)),2,0.5)); % for sd
+    
+  % To specify a prior probability distribution, change and uncomment 
+  % the following line, where p is a vector of parameter values, arranged 
+  % in the same order that they appear in model.paramNames:
+  % model.prior = @(p) (1);
+
+  % A different prior can be specified for use in model comparison:
+  % model.priorForMC =
   
   % Use our custom modelPlot to make a plot of errors centered on
   % distractors (ala Bays, Catalao & Husain, 2009, Figure 2B)
