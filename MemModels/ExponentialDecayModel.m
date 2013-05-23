@@ -25,10 +25,7 @@ function model = ExponentialDecayModel()
   % To specify a prior probability distribution, change and uncomment 
   % the following line, where p is a vector of parameter values, arranged 
   % in the same order that they appear in model.paramNames:
-  % model.prior = @(p) (1);
-
-  % A different prior can be specified for use in model comparison:
-  % model.priorForMC =               
+  % model.prior = @(p) (1);            
 end
 
 function y = sdpdf(data, tau, k, sd)  

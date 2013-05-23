@@ -75,15 +75,6 @@ function model = TemplateModel()
   model.prior = @(p) (1);  
 
   % (optional)
-  % One of the model comparison metrics, the Bayes factor, is heavily dependent
-  % on the prior in order to understand how flexible each model is. Rather
-  % than using the same weak prior that you used for exploratory data analysis,
-  % it would be better to specify one that acurately reflects your beliefs.
-  % Here is an example of a prior for model comparison:
-  model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for p1
-                           lognpdf(p(2),2,0.5));        % for p2
-
-  % (optional)
   % Some of the toolbox's functionality, like posterior predictive checks,
   % simulate data from the model. The toolbox includes a general purpose
   % sampler, but this is often slow and it is considerably faster to specify 

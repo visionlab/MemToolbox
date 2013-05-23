@@ -38,11 +38,6 @@ function model = WithBias(model, priorForMu)
     model.prior = @(p)(model.oldPrior(p(2:end)) .* model.priorForMu(p(1)));
   end
   
-  if isfield(model, 'priorForMC')
-    model.oldPriorForMC = model.priorForMC;
-    model.priorForMC = @(p)(model.oldPriorForMC(p(2:end)) .* model.priorForMu(p(1)));
-  end
-  
   % Adjust generator function
   if isfield(model, 'generator')
     model.oldGenerator = model.generator;
