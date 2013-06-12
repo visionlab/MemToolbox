@@ -8,7 +8,7 @@
 %
 % Thus, to take the NoGuessingModel, which has a standard deviation (sd), 
 % and add an additional lapse term (lapseRate), just use:
-%   model = WithBias(NoGuessingModel())
+%   model = WithLapses(NoGuessingModel())
 %
 % This wrapper is compatible with both Orientation() and TwoAFC(). For
 % example, the following works fine:
