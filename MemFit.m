@@ -309,45 +309,14 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     end
   end
   
-  if verbosity > 0
-    r = input(['Would you like to compute an approximate Bayes Factor? Note that\n'...
-      'the Bayes Factor is heavily dependent on the prior in order to understand\n'...
-      'how flexible each model is; it is thus important that before examining Bayes\n'...
-      'factors you carefully consider the priors for your models. If you wish to\n'...
-      'specify a more concentrated prior to be used for Bayes factor calculation\n'...
-      'but not for inference, you can specify a model.priorForMC in addition to a\n'...
-      'model.prior. Also note that Bayes Factor calculations are slow. (y/n): '], 's');
-    fprintf('\n');
-  end
-  
-  if(strcmp(r,'y'))
-    if verbosity > 0
-      fprintf('Computing Bayes Factors...\n');
-    end
-    [fit.bayesFactor,fit.logPosteriorOdds,fit.posteriorOdds] = ...
-      ModelComparison_BayesFactor(data, modelCellArray, 'Verbosity', verbosity>0, ...
-      'PosteriorSamples', posteriorSamples);
-    fit.posteriorOdds = 10.^(fit.logPosteriorOdds - max(fit.logPosteriorOdds));
-    fit.posteriorOdds = fit.posteriorOdds ./ sum(fit.posteriorOdds);
-    
-    % Print stats
-    if verbosity > 0
-      fprintf('\n');
-      printStat('Log Bayes factor', fit.bayesFactor, @(x)(x), @(s,m1,m2) (s(m1,m2)));
-      printStat('Posterior odds', fit.posteriorOdds, @max);
-    end
-  end
-  
   function printStat(name,stats,bestF,f)
     DescribeModelComparisonMethod(name);
     % Print headers
     fprintf(['\nmodel  \t' name '\n']);
     fprintf(['-----  \t' repmat('-', 1, length(name)) '\n']);
     % Print model-specific stats
-    if(~strcmp(name,'Log Bayes factor'))
-      for curModel = 1:length(stats)
-        fprintf('%2d     %0.2f\n', curModel, stats(curModel));
-      end
+    for curModel = 1:length(stats)
+      fprintf('%2d     %0.2f\n', curModel, stats(curModel));
     end
     % Print model vs. model stats, default is difference
     if nargin < 4
@@ -360,10 +329,8 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
           f(stats, combos(i,1), combos(i,2)));
       end
     end
-    if(~strcmp(name,'Log Bayes factor'))
-      [tmp, best] = bestF(stats);
-      fprintf('Preferred model: %d (%s)\n', best, modelCellArray{best}.name);
-    end
+    [tmp, best] = bestF(stats);
+    fprintf('Preferred model: %d (%s)\n', best, modelCellArray{best}.name);
     fprintf('\n');
   end
 end

@@ -28,11 +28,6 @@ function model = EnsureAllModelMethods(model)
   if ~isfield(model, 'logprior')
     model.logprior = @(params)(sumWithNans(log(model.prior(params))));
   end  
-  
-  % If there's no model.priorForMC, use the uninformative prior
-  if ~isfield(model, 'priorForMC')
-    model.priorForMC = model.prior;
-  end
 end
 
 function s = sumWithNans(v)

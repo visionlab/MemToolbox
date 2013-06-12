@@ -18,10 +18,6 @@ function model = StandardMixtureModel_Kappa()
   % in the same order that they appear in model.paramNames:
   % model.prior = @(p) (1);
   
-  % A different prior can be specified for use in model comparison:
-  % model.priorForMC = @(p) (betapdf(p(1),1.25,2.5) * ... % for g ...
-  %                          lognpdf(p(2),2,0.5));        % for K
-        
   model.generator = @StandardMixtureModelGenerator;
 end
   

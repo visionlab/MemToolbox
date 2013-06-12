@@ -15,35 +15,19 @@
 %
 %  'NewFigure' - whether to make a new figure or plot into the currently
 %  active subplot. Default is false (e.g., plot into current plot).
-% 
-%  'UseModelComparisonPrior' - whether to use the normal diffuse prior for
-%  the model, model.prior (default), or whether to use the prior used for 
-%  computing Bayes Factors, model.priorForMC (if set to true).
 %
 function figHand = PlotPriorPredictive(model, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
   % difference plot.
   args = struct('NumSamplesToPlot', 48, 'NumberOfBins', 55, ...
-    'PdfColor', [0.54, 0.61, 0.06], 'NewFigure', true, ...
-    'UseModelComparisonPrior', false); 
+    'PdfColor', [0.54, 0.61, 0.06], 'NewFigure', true); 
   
   % Figure options
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); else figHand = []; end
   
-  % Check for right functions
-  if args.UseModelComparisonPrior && ~isfield(model, 'priorForMC')
-   fprintf(['WARNING: You said to use the model comparison prior (priorForMC),\n'...
-     'but the model you specified does not include such a prior. We will \n'...
-     'instead show samples from the normal prior.']);
-  end
-  
-  % Sample from prior
+  % Sample from pr ior
   priorModel = EnsureAllModelMethods(model);
-  if args.UseModelComparisonPrior
-    priorModel.prior = priorModel.priorForMC;
-    priorModel.logprior = @(p) sum(log(priorModel.priorForMC(p)));
-  end
   priorModel.pdf = @(data, varargin)(1);
   priorModel.logpdf = @(data, varargin)(0);
   priorSamples = MCMC([], priorModel, 'Verbosity', 0, ...

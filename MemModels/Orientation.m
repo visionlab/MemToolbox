@@ -43,16 +43,6 @@ function model = Orientation(model, whichParameters)
     p = model.oldPrior(params);
   end
   
-  % Adjust prior for MC
-  if isfield(model, 'priorForMC')
-    model.oldPriorForMC = model.priorForMC;
-    model.priorForMC = @NewPriorMC;
-  end
-  function p = NewPriorMC(params)
-    params(whichParameters) = params(whichParameters).*2;
-    p = model.oldPriorForMC(params);
-  end
-  
   % Adjust generator function
   if isfield(model, 'generator')
     model.oldGenerator = model.generator;
