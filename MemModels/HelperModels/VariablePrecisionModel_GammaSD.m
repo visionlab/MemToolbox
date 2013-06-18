@@ -1,4 +1,4 @@
-% VARIABLEPRECISIONMODEL_GAMMA returns a structure for a variable precision mixture model
+% VARIABLEPRECISIONMODEL_GAMMASD returns a structure for a variable precision mixture model
 % in which the standard deviations of observers' reports are assumed to be 
 % distributed as a gamma distribution.
 %

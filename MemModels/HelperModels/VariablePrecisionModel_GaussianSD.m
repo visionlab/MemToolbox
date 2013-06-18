@@ -1,4 +1,4 @@
-% VARIABLEPRECISIONMODEL_GAUSSIAN returns a structure for a variable precision mixture model
+% VARIABLEPRECISIONMODEL_GAUSSIANSD returns a structure for a variable precision mixture model
 % in which the standard deviations of observers' reports are assumed to be
 % themselves distributed as a normal distribution.
 
