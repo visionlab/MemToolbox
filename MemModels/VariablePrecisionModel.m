@@ -6,19 +6,23 @@
 % The default model assumes observers' standard deviations are distributed
 % according to a Gaussian distribution.  However, the function takes an
 % optional argument 'HigherOrderDist'. StandardMixtureModel('HigherOrderDist',
-% 'Gamma') returns a model where the higher-order distribution is assumed 
-% to be Gamma, rather than Gaussian.
+% 'GammaSD') returns a model where the higher-order distribution of SD is assumed 
+% to be Gamma, rather than Gaussian. StandardMixtureModel('HigherOrderDist',
+% 'GammaPrecision') assumes a distribution over precisions (1/Variance) that is
+% Gamma, as in van den Berg et al. (2012).
 %
 function model = VariablePrecisionModel(varargin)
   % Default: Don't include a bias term, and a Gaussian over SDs as
   % higher-order distribution
-  args = struct('HigherOrderDist', 'Gaussian'); 
+  args = struct('HigherOrderDist', 'GaussianSD'); 
   args = parseargs(varargin, args);
   
-  if strcmp(args.HigherOrderDist, 'Gaussian')
-    model = VariablePrecisionModel_Gaussian();
-  elseif strcmp(args.HigherOrderDist, 'Gamma')
-    model = VariablePrecisionModel_Gamma();
+  if strcmp(args.HigherOrderDist, 'GaussianSD')
+    model = VariablePrecisionModel_GaussianSD();
+  elseif strcmp(args.HigherOrderDist, 'GammaSD')
+    model = VariablePrecisionModel_GammaSD();
+  elseif strcmp(args.HigherOrderDist, 'GammaPrecision')
+    model = VariablePrecisionModel_GammaPrecision();
   end
 end
 

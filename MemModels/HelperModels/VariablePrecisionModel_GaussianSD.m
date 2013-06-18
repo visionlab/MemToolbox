@@ -2,7 +2,7 @@
 % in which the standard deviations of observers' reports are assumed to be
 % themselves distributed as a normal distribution.
 
-function model = VariablePrecisionModel_Gaussian()
+function model = VariablePrecisionModel_GaussianSD()
   model.name = 'Variable precision model (gaussian over sd)';
 	model.paramNames = {'g', 'mnSTD', 'stdSTD'};
 	model.lowerbound = [0 0 0]; % Lower bounds for the parameters

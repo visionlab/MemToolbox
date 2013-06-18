@@ -6,7 +6,7 @@
 % traditional shape and rate, because this results in much better behaved
 % posterior distributions and more interpretable parameters.
 %
-function model = VariablePrecisionModel_Gamma()
+function model = VariablePrecisionModel_GammaSD()
   model.name = 'Variable precision model (gamma over sd)';
 	model.paramNames = {'g',  'modeSTD', 'sdSTD'};
 	model.lowerbound = [0 0.01 0.01]; % Lower bounds for the parameters
