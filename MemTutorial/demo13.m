@@ -10,6 +10,8 @@ datasets{2}
 
 [datasets, conditionOrder] = SplitDataByField(data, 'condition');
 
+model = StandardMixtureModel();
+
 % Create sample data sets
 clear data;
 data.errors(1:200) = SampleFromModel(model, [0.1, 20], [1 200]);
