@@ -30,6 +30,9 @@ function newModel = Hierarchical(data, model)
   nParams = length(model.paramNames);
   nSubs = length(data);
   
+  % Check model
+  model = EnsureAllModelMethods(model);
+  
   % Format: Take [param1, param2] and turn into [param1_groupSD,
   % param2_groupSD, param1_groupMean, param2_groupMean, param1_subject1,
   % param2_subject1, ... param1_subjectN, params2_subjectN]
