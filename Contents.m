@@ -1,5 +1,5 @@
 %
-% MemToolbox beta 2
+% MemToolbox 1.0.0
 % 
 % The MemToolbox is a collection of MATLAB functions for modeling visual
 % working memory. In support of its goal to provide a full suite of data
@@ -15,9 +15,12 @@
 % 
 % If you want to acknowledge use of this software when you publish your
 % research, you might say something like, "Data analysis was performed
-% in MATLAB using the MemToolbox (citation)."
+% in MATLAB using the MemToolbox (Suchow, Brady, Fougnie & Alvarez, in press)."
+%
+% and then cite
 % 
-% [citation goes here]
+% Suchow, J. W., Brady, T. F., Fougnie, D., & Alvarez, G. A. (in press).
+% Modeling visual working memory with the MemToolbox. Journal of Vision.
 % 
 % MemFit.m            - a general purpose fitting tool
 % Setup.m             - install MemToolbox to Matlab PATH

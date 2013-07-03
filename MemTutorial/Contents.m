@@ -2,12 +2,9 @@
 %
 % Files
 %   demo1                           - 
-%   demo2                           - 
-%   demo4                           - 
-%   demo7                           - 
+%   ...
+%   demo18
 %   GridSearch_Example              - 
 %   MCMC_Example                    - 
-%   ModelComparison_Example         - Example data
 %   PlotModelFitInteractive_Example - 
-%   Splines_Example                 - -------------------------------------------------------------------------
-%   SplinesWithGuesses_Example      - -------------------------------------------------------------------------
+%   TemplateModel                   - example model with helper text

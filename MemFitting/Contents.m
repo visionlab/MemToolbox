@@ -7,8 +7,8 @@
 %   MAP                              - Find maximum a posterior fit of model to data
 %
 % Fit multiple subjects at once
-%   FitMultipleSubjects_Hierarchical - treat subjects as samples from a global normal
-%   FitMultipleSubjects_Independent  - fits many subjects data using MAP
+%   FitMultipleSubjects_MAP - fits many subjects' data using MAP
+%   FitMultipleSubjects_MLE - fits many subjects' data using MLE
 %
 % Utility functions
 %   MCMCSummarize                    - Convert samples from MCMC into estimates of parameters

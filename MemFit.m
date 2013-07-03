@@ -249,7 +249,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
     end
   end
   if(verbosity > 0)
-    fprintf('\nThis analysis was performed using a\nbeta release of the MemToolbox.\n\n')
+    fprintf('\nThis analysis was performed using MemToolbox version 1.0.0.\n\n')
   end
 end
 
