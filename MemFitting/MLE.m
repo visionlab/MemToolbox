@@ -4,6 +4,18 @@
 %
 function [maxLikelihood, like] = MLE(data, model)
   
+  % If they don't pass in a model, assume the standard mixture model.
+  if nargin < 2
+    model = StandardMixtureModel();
+    fprintf('No model passed in. Assuming StandardMixtureModel().\n'); 
+  end
+  
+  % If they pass in errors instead of a data struct, fix it for them.
+  if(isnumeric(data))
+    data = struct('errors', data);
+  end
+  
+  % Make sure the model is all good:
   model = EnsureAllModelMethods(model);
   
   % Special case for model's with no free parameters at all
