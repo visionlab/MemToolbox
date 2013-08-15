@@ -14,7 +14,7 @@ function DescribeModelComparisonMethod(name)
      case 'BIC'
        str = 'The Bayesian Information Criterion is similar to AIC, with different assumptions about the prior of models, and thus a more stringent penalty for more complex models. It can be interpreted in the same way.';
      case 'DIC'
-       str = 'The Deviance Information Criterion is a generalization of the AIC and BIC that includes a penality for the effective number of parameters, estimated from the dispersion in the posterior of the models.';
+       str = 'The Deviance Information Criterion is a generalization of the AIC and BIC that includes a penalty for the effective number of parameters, estimated from the dispersion in the posterior of the models.';
      case 'Log likelihood'
        str = 'The log likelihood of the parameters given the data.';
      otherwise
