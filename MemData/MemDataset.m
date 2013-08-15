@@ -18,6 +18,8 @@
 %
 % Dataset 9 is simulared from VariablePrecisionModel.
 %
+% Dataset 10 is simulated from SlotsPlusAveragingModel
+%
 % Dataset 'vandenbergetal2012' is data from van den Berg et al. (2012). When
 % chosen, requires two additional parameters. The first is a string, either
 % 'color' or 'orientation', and determines the task: remembering a color or
@@ -70,7 +72,10 @@ function data = MemDataset(whichData,varargin)
       f = load(fullfile(currentDir, 'DataFiles', ...
         'allFieldsVariablePrecision.mat'));  
       data = f.data;
-       
+    case 10
+      f = load(fullfile(currentDir, 'DataFiles', ...
+        'multipleSetSizesSlotAverage.mat'));  
+      data = f.data;      
     case 'vandenbergetal2012'
       if(length(varargin) < 2)
         error('You must specify both a dimension, 1 or 2, and a participant.')
