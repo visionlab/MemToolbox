@@ -11,7 +11,8 @@ license and is freely available.
 
 If you wish to acknowledge use of this software when you publish your
 research, you might say something like, "Data analysis was performed 
-using the MemToolbox (memtoolbox.org)."
+using the MemToolbox (Suchow, Brady, Fougnie, & Alvarez, in press, 
+memtoolbox.org)."
 
 The MemToolbox uses semantic versioning (http://semver.org/).
 
