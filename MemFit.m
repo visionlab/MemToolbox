@@ -75,7 +75,7 @@ function fit = MemFit(varargin)
     elseif(isfield(varargin{1}, 'afcCorrect'))
       warning('MemToolbox:MemFit:InputFormat', ...
         'It looks like you passed in 2AFC data. Trying to fit with TwoAFC(StandardMixtureModel()).');
-      fit = MemFit_SingleData(varargin{1}, TwoAFC(StandardMixtureModel()), 'Verbosity', 2);
+      fit = MemFit_SingleData(varargin{1}, TwoAFC(StandardMixtureModel()), 2);
       
     elseif(any(isfield(varargin{1}, {'errors','error'})))
       data = varargin{1};
