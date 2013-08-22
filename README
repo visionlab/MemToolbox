@@ -9,10 +9,14 @@ visualizations of data and fit, validation routines, model comparison
 metrics, and experiment scripts. The MemToolbox is released under a BSD
 license and is freely available.
 
-If you wish to acknowledge use of this software when you publish your
-research, you might say something like, "Data analysis was performed 
-using the MemToolbox (Suchow, Brady, Fougnie, & Alvarez, in press, 
-memtoolbox.org)."
+If you wish to acknowledge use of this software when you publish your 
+research, you might say something like, "Data analysis was performed using the 
+MemToolbox (Suchow, Brady, Fougnie, & Alvarez, 2013; memtoolbox.org)." and 
+then cite:
+
+Suchow, J. W., Brady, T. F., Fougnie, D., & Alvarez, G. A. (2013). Modeling 
+visual working memory with the MemToolbox. Journal of Vision, 13(10):9, 1–8. 
+doi:10.1167/13.10.9.
 
 The MemToolbox uses semantic versioning (http://semver.org/).
 
