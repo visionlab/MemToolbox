@@ -87,11 +87,15 @@ function posteriorSamples = MCMC(data, model, varargin)
     return;
   end
   
-  % Matlabpool open?
-  try
-    if matlabpool('size') == 0
-      fprintf(['Warning: You are running MCMC without first turning\n' ...
-        'on parallel processing. See Tutorial Demo 6 for help!\n']);
+  % Check if the Parallel Computing Toolbox is installed
+  pass = WarnIfParallelComputingBug();
+  if(pass)
+    % Matlabpool open?
+    try
+      if matlabpool('size') == 0
+        fprintf(['\nTip: You are running MCMC without first turning on parallel\n' ...
+                 'processing. See Demo 6 in the tutorial for a speed boost.\n']);
+      end
     end
   end
   

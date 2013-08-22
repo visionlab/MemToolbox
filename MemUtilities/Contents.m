@@ -8,3 +8,4 @@
 %   ValidateData              - checks to make sure that the data is in the expected format
 %   DoesModelRequireExtraInfo - checks if a model pdf requires more than data.errors
 %   GetModelPdfForPlot        - allows PlotModelFit() to plot arbitrary pdfs.
+%   WarnIfParallelComputingBug- warns about a particular bug affecting Java >= 1.6.0 -39
