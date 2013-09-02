@@ -23,9 +23,9 @@ function model = SlotsPlusResourcesModel()
 	model.upperbound = [Inf Inf]; % Upper bounds for the parameters
 	model.movestd = [0.1, 0.1];
 	model.pdf = @slotpdf;
-	model.start = [2, 0.1;  % g, sd
-                 3, 1;  % g, sd
-                 4, 10]; % g, sd 
+	model.start = [2, 20;  % g, sd
+                   3, 60;  % g, sd
+                   4, 5]; % g, sd 
   
   % To specify a prior probability distribution, change and uncomment 
   % the following line, where p is a vector of parameter values, arranged 
