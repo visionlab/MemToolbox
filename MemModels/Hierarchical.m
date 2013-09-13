@@ -87,9 +87,6 @@ function p = HierarchicalPrior(oldPrior, params, nParams)
   % parameter
   p = sum(log(oldPrior(popParamsMean))); 
   
-  % Jeffrey's prior on population SD
-  p = p + sum(log(JeffreysPriorForGaussianSD(popParamsStd)));
-  
   % Sum each of the priors from individual parameters
   nSubs = (length(params)/nParams) - 2*nParams;
   for i=1:length(nSubs)
