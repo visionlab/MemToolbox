@@ -17,7 +17,7 @@
 %   data{2} = MemDataset(2);
 %   fit = FitMultipleSubjects_MAP(data, model);
 %
-function fit = FitMultipleSubjects_Independent(data, model)
+function fit = FitMultipleSubjects_MAP(data, model)
   for i=1:length(data)
     fit.paramsSubs(i,:) = MAP(data{i}, model);
   end
