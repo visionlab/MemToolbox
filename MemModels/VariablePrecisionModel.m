@@ -5,9 +5,9 @@
 %
 % The default model assumes observers' standard deviations are distributed
 % according to a Gaussian distribution.  However, the function takes an
-% optional argument 'HigherOrderDist'. StandardMixtureModel('HigherOrderDist',
+% optional argument 'HigherOrderDist'. VariablePrecisionModel('HigherOrderDist',
 % 'GammaSD') returns a model where the higher-order distribution of SD is assumed 
-% to be Gamma, rather than Gaussian. StandardMixtureModel('HigherOrderDist',
+% to be Gamma, rather than Gaussian. VariablePrecisionModel('HigherOrderDist',
 % 'GammaPrecision') assumes a distribution over precisions (1/Variance) that is
 % Gamma, as in van den Berg et al. (2012).
 %
