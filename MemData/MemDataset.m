@@ -94,7 +94,7 @@ function data = MemDataset(whichData,varargin)
       for i = 1:length(listing)
         thisFile = load(fullfile(dataDir, listing(i).name));
         for j = 1:4
-          data = CombineData(data,getfield(thisFile,['recording' num2str(j)]));
+          data = CombineData(data, thisFile.(['recording' num2str(j)]));
         end
       end
       if(dim == 1)

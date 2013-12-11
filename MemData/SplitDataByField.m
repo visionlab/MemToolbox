@@ -24,8 +24,7 @@ function [datasets, conditionOrder] = SplitDataByField(data, field)
   end
 
   % Otherwise figure out how many conditions there are
-  conditions = unique(getfield(data,field));
-  [conditionOrder, tmp, condNumbers] = unique(getfield(data,field));
+  [conditionOrder, tmp, condNumbers] = unique(data.(field));
   nConds = max(condNumbers);
   datasets = cell(1,nConds);
 
@@ -33,20 +32,19 @@ function [datasets, conditionOrder] = SplitDataByField(data, field)
   fields = fieldnames(data);
   for condIndex = 1:nConds
     for fieldIndex = 1:length(fields)
-      wholeField = getfield(data,fields{fieldIndex});
+      wholeField = data.(fields{fieldIndex});
 
       % Preserve all rows of fields like .distractors that are M x trials
       % and allow them to also be trials X M
       if size(wholeField, 1) == length(condNumbers)
-        datasets{condIndex} = setfield(datasets{condIndex}, fields{fieldIndex}, ...
-          wholeField(condNumbers == condIndex, :));
+        datasets{condIndex}.(fields{fieldIndex}) = ...
+          wholeField(condNumbers == condIndex, :);
       elseif size(wholeField, 2) == length(condNumbers)
-        datasets{condIndex} = setfield(datasets{condIndex}, fields{fieldIndex}, ...
-          wholeField(:, condNumbers == condIndex));
+        datasets{condIndex}.(fields{fieldIndex}) = ...
+          wholeField(:, condNumbers == condIndex);
       else
         fprintf('Warning: Could not split field "%s"!\n', fields{fieldIndex});
-        datasets{condIndex} = setfield(datasets{condIndex}, fields{fieldIndex}, ...
-          wholeField);
+        datasets{condIndex}.(fields{fieldIndex}) = wholeField;
       end
     end
   end
