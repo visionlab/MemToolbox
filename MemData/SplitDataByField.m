@@ -14,7 +14,7 @@
 %    datasets = SplitDataByField(data, field)
 %
 function [datasets, conditionOrder] = SplitDataByField(data, field)
-  
+
   % If the given field doesn't exist, return the data struct untouched
   if(~isfield(data, field))
     warning('The specified field does not exist.')
@@ -34,7 +34,7 @@ function [datasets, conditionOrder] = SplitDataByField(data, field)
   for condIndex = 1:nConds
     for fieldIndex = 1:length(fields)
       wholeField = getfield(data,fields{fieldIndex});
-      
+
       % Preserve all rows of fields like .distractors that are M x trials
       % and allow them to also be trials X M
       if size(wholeField, 1) == length(condNumbers)
@@ -48,7 +48,7 @@ function [datasets, conditionOrder] = SplitDataByField(data, field)
         datasets{condIndex} = setfield(datasets{condIndex}, fields{fieldIndex}, ...
           wholeField);
       end
-    end 
+    end
   end
 end
 

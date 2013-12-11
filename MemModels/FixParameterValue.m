@@ -12,7 +12,7 @@
 %
 %   model = FixParameterValue(StandardMixtureModel, 'g', 0.5)
 %
-function model = FixParameterValue(model, parameter, value)  
+function model = FixParameterValue(model, parameter, value)
   % turn parameter into an integer index if it is a string
   if ischar(parameter)
     parameter = find(strcmp(model.paramNames, parameter));
@@ -20,7 +20,7 @@ function model = FixParameterValue(model, parameter, value)
       error('Couldn''t find that parameter!');
     end
   end
-  
+
   % Adjust model functions
   model.originalNumParams = length(model.paramNames);
   model.allButFixed = (1:model.originalNumParams) ~= parameter;
@@ -31,8 +31,8 @@ function model = FixParameterValue(model, parameter, value)
   model.upperbound(parameter) = [];
   model.movestd(parameter) = [];
   model.start(:, parameter) = [];
-  
-  % Adjust pdf 
+
+  % Adjust pdf
   model.oldPdf = model.pdf;
   model.pdf = @NewPDF;
   function p = NewPDF(data, varargin)
@@ -40,7 +40,7 @@ function model = FixParameterValue(model, parameter, value)
     newP{parameter} = value;
     p = model.oldPdf(data, newP{:});
   end
-  
+
   % Adjust prior
   if isfield(model, 'prior')
     model.oldPrior = model.prior;
@@ -51,7 +51,7 @@ function model = FixParameterValue(model, parameter, value)
     newP(parameter) = value;
     r = model.oldPrior(newP);
   end
-  
+
   % Adjust modelPlot
   if isfield(model, 'modelPlot')
     model.oldModelPlot = model.modelPlot;
@@ -74,8 +74,8 @@ function model = FixParameterValue(model, parameter, value)
       newP(parameter) = value;
     end
     r = model.oldModelPlot(data, newP, varargin);
-  end  
-  
+  end
+
   % Remove any generator function - model must be sampled the hard way
   if isfield(model, 'generator')
     model = rmfield(model, 'generator');

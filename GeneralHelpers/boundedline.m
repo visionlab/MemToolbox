@@ -47,11 +47,11 @@ function varargout = boundedline(varargin)
 %               0.2.
 %
 %   orient:     'vert': add bounds in vertical (y) direction (default)
-%               'horiz': add bounds in horizontal (x) direction 
+%               'horiz': add bounds in horizontal (x) direction
 %
 %   cmap:       n x 3 colormap array.  If included, lines will be colored
 %               (in order of plotting) according to this colormap,
-%               overriding any linespec or default colors. 
+%               overriding any linespec or default colors.
 %
 % Output variables:
 %
@@ -66,16 +66,16 @@ function varargout = boundedline(varargin)
 % y2 = cos(x);
 % e1 = rand(size(y1))*.5+.5;
 % e2 = [.25 .5];
-% 
+%
 % subplot(2,2,1);
 % boundedline(x, y1, e1, '-b*', x, y2, e2, '--ro');
-% 
+%
 % subplot(2,2,2);
 % boundedline(x, [y1;y2], rand(length(y1),2,2)*.5+.5, 'alpha');
-% 
+%
 % subplot(2,2,3);
 % boundedline([y1;y2], x, e1(1), 'orientation', 'horiz')
-% 
+%
 % subplot(2,2,4)
 % boundedline(x, repmat(y1, 4,1), permute(0.5:-0.1:0.2, [3 1 2]), ...
 %             'cmap', cool(4), 'transparency', 0.5);
@@ -161,8 +161,8 @@ while ~isempty(varargin)
         varargin(1) = [];
     else
         linespec = [linespec {[]}];
-    end 
-end    
+    end
+end
 
 %--------------------
 % Reformat x and y
@@ -176,11 +176,11 @@ plotdata = cell(0,7);
 
 htemp = figure('visible', 'off');
 for ix = 1:length(x)
-    
+
     % Get full x, y, and linespec data for each line (easier to let plot
     % check for properly-sized x and y and expand values than to try to do
-    % it myself) 
-    
+    % it myself)
+
     try
         if isempty(linespec{ix})
             hltemp = plot(x{ix}, y{ix});
@@ -191,13 +191,13 @@ for ix = 1:length(x)
         close(htemp);
         error('X and Y matrices and/or linespec not appropriate for line plot');
     end
-    
+
     linedata = get(hltemp, {'xdata', 'ydata', 'marker', 'linestyle', 'color'});
-    
+
     nline = size(linedata,1);
-    
+
     % Expand bounds matrix if necessary
-    
+
     if nline > 1
         if ndims(err{ix}) == 3
             err2 = squeeze(num2cell(err{ix},[1 2]));
@@ -207,24 +207,24 @@ for ix = 1:length(x)
     else
         err2 = err(ix);
     end
-    
+
     % Figure out upper and lower bounds
-    
+
     [lo, hi] = deal(cell(nline,1));
     for iln = 1:nline
-        
+
         x2 = linedata{iln,1};
         y2 = linedata{iln,2};
         nx = length(x2);
-        
+
         if isvert
             lineval = y2;
         else
             lineval = x2;
         end
-            
+
         sz = size(err2{iln});
-        
+
         if isequal(sz, [nx 2])
             lo{iln} = lineval - err2{iln}(:,1)';
             hi{iln} = lineval + err2{iln}(:,2)';
@@ -248,14 +248,14 @@ for ix = 1:length(x)
             hi{iln} = lineval + err2{iln}(2);
         else
             error('Error bounds must be npt x nside x nline array');
-        end 
-            
+        end
+
     end
-    
+
     % Combine all data
-    
+
     plotdata = [plotdata; linedata lo hi];
-        
+
 end
 close(htemp);
 
@@ -288,10 +288,10 @@ for iln = 1:nline
         xp{iln} = [plotdata{iln,6} fliplr(plotdata{iln,7})];
         yp{iln} = [plotdata{iln,2} fliplr(plotdata{iln,2})];
     end
-    
+
     marker{iln} = plotdata{iln,3};
     lnsty{iln} = plotdata{iln,4};
-    
+
     if usealpha
         lncol{iln} = plotdata{iln,5};
         ptchcol{iln} = plotdata{iln,5};
@@ -302,7 +302,7 @@ for iln = 1:nline
         alpha{iln} = 1;
     end
 end
-    
+
 % Plot patches and lines
 
 [hp,hl] = deal(zeros(nline,1));
@@ -333,7 +333,7 @@ if nargout == 2
 end
 
 %--------------------
-% Parse optional 
+% Parse optional
 % parameters
 %--------------------
 

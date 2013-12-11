@@ -6,22 +6,22 @@ function map = palettablecolormap(type, n)
   end
 	if nargin < 2
 		n = 100;
-	end	 
+	end
   if(strcmp(type,types{1})) % choose a sequential colormap
 		switch fix(5*rand)
-			case 0,  
-				startcolor = [255 255 255]; 
+			case 0,
+				startcolor = [255 255 255];
 				endcolor = [11,72,107];  % adrift in dreams
-			case 1,    
-				startcolor = [255 255 255]; 
+			case 1,
+				startcolor = [255 255 255];
 				endcolor = [46,64,81];   % bloo
-			case 2,    
-				startcolor = [255 255 255]; 
+			case 2,
+				startcolor = [255 255 255];
 				endcolor = [128,15,37];  % love like a man
-			case 3,  
-				startcolor = [255 255 255];   
+			case 3,
+				startcolor = [255 255 255];
 				endcolor = [107,155,7];  % elle etait belle
-			otherwise, 
+			otherwise,
 				startcolor = [255 255 255];
 				endcolor = [66,9,67];    % black tulip
 		end

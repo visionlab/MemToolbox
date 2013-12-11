@@ -2,7 +2,7 @@
 % inclusive of the boundaries. It allows you to specify multiple ranges, each
 % as a two-item vector:
 function y = countInRanges(x,varargin)
-  numBounds = length(varargin); 
+  numBounds = length(varargin);
   y = 0;
   for i = 1:numBounds
     lower = varargin{i}(1);

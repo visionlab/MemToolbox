@@ -1,7 +1,7 @@
 % PLOTMODELFITINTERACTIVE allow manipulation of the fit with sliders
 % This functions plots the model's probability density function
-% overlaid on a histogram of the data. The plot is interactive, with 
-% a slider that allows you to adjust each of the parameters of the model  
+% overlaid on a histogram of the data. The plot is interactive, with
+% a slider that allows you to adjust each of the parameters of the model
 % and see the impact on the pdf.
 %
 %    figHand = PlotModelFitInteractive(model, params, data, varargin)
@@ -20,26 +20,26 @@
 %
 %  'NewFigure' - whether to make a new figure or plot into the currently
 %  active subplot. Default is false (e.g., plot into current plot).
-% 
+%
 function figHand = PlotModelFitInteractive(model, params, data, varargin)
   % Extra parameters
   args = struct('MarginalPlots', false, 'NewFigure', true, ...
-    'PdfColor', [0.54, 0.61, 0.06]); 
+    'PdfColor', [0.54, 0.61, 0.06]);
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); else figHand = []; end
-  
+
   % If you pass a 'posteriorSamples' struct instead of params
   if isstruct(params) && isfield(params, 'vals')
     params = MCMCSummarize(params, 'maxPosterior');
   end
-  
+
   % If params has a .logLikeMatrix, assume they passed a fullPosterior from
   % GridSearch
   if isstruct(params) && isfield(params, 'logLikeMatrix')
     posteriorSamples = SampleFromPosterior(params, 500);
     params = MCMCSummarize(params, 'maxPosterior');
-  end  
-  
+  end
+
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);
 
@@ -50,7 +50,7 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
   PlotModelFit(model, paramsCur, data, 'ShowNumbers', false, ...
     'PdfColor', args.PdfColor);
   pos = get(gca, 'Position');
-  
+
   % Decide on spacing of plot, based on how many parameters (and thus
   % sliders) we need
   Nparams = length(model.paramNames);
@@ -64,12 +64,12 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
   set(gca, 'Position', pos);
   height = vertSpacing-0.03;
   mainAxis = gca;
-  
+
   % If we're also going to plot marginals, make scroll bars shorter
   if args.MarginalPlots
     height=height-0.02;
   end
-  
+
   % For each parameter, decide how its slider should map to its parameter
   % range, and then make the slider...
   for i=1:Nparams
@@ -88,8 +88,8 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
         InverseMappingFunction{i} = @(val) (1-exp(-val/(params(i)*2)));
       end
     end
-   
-    invertedMapping = InverseMappingFunction{i}(params(i));    
+
+    invertedMapping = InverseMappingFunction{i}(params(i));
     slider(i) = uicontrol(...
       'Parent',gcf,...
       'Units','normalized',...
@@ -99,7 +99,7 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
       'UserData', MappingFunction{i}, ...
       'Value', invertedMapping);
     get(slider(i), 'PixelBounds');
-    
+
     % Create plots for marginals
     if args.MarginalPlots
       myHeight = height+0.03;
@@ -111,7 +111,7 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
       newPos = get(marginalPlot(i), 'Position');
       set(marginalPlot(i), 'Position', [newPos(1)+15, newPos(2), newPos(3)-30, newPos(4)]);
     end
-        
+
     uicontrol(...
       'Parent',gcf,...
       'Units','normalized',...
@@ -121,7 +121,7 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
       'FontWeight', 'bold', ...
       'Position',[0.02 maxPos-(i-1)*vertSpacing-height 0.13 height],...
       'String', model.paramNames{i});
-    
+
     curVals(i) = uicontrol(...
       'Parent',gcf,...
       'Units','normalized',...
@@ -134,7 +134,7 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
       'Callback', @(hObject,eventdata) edit_Callback(hObject, i), ...
       'UserData', InverseMappingFunction{i});
   end
-  
+
   % Allow the user to limit this figure to any subset of the data
   if ~isempty(figHand)
     CreateMenus(data, @redrawFig);
@@ -154,9 +154,9 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
         'PdfColor', args.PdfColor);
     end
   end
-  
+
   PlotMarginals();
-  
+
   % To draw the conditional distribution of each parameter given the other
   % values of the other parameters (if option is chosen)
   function PlotMarginals()
@@ -175,7 +175,7 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
       end
     end
   end
-  
+
   % If they type a new number, set the slider to that value
   function edit_Callback(hObject, which)
     curValue = str2double(get(hObject,'String'));
@@ -185,12 +185,12 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
       return;
     end
     paramsCur(which) = curValue;
-    
+
     inverseMappingFunc = get(hObject, 'UserData');
     set(slider(which), 'Value', inverseMappingFunc(curValue));
     slider_Callback(slider(which), which);
   end
-  
+
   % When the slider moves, find out what value for the parameter that
   % should correspond to, and set the edit box and the plot to show that
   function slider_Callback(hObject, which)

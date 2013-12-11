@@ -3,9 +3,9 @@
 %
 %  posteriorSamples = SampleFromPosterior(fullPosterior, numSamples)
 %
-% This function takes the output of GridSearch and converts it into the 
-% equivalent of what you would have gotten from MCMC. 
-% 
+% This function takes the output of GridSearch and converts it into the
+% equivalent of what you would have gotten from MCMC.
+%
 % Example:
 %  fullPosterior = GridSearch(data, model);
 %  posteriorSamples = SampleFromPosterior(fullPosterior, 1000);

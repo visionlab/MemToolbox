@@ -3,7 +3,7 @@
 %    data = GetDataByField(data, field, value)
 %
 % e.g., if
-%   data = 
+%   data =
 %      errors: [1x500 double]
 %           n: [1x500 double]
 %        cond: {1x500 cell}
@@ -13,7 +13,7 @@
 %
 %    data = GetDataByField(data, 'n', 3)
 %
-%    data = 
+%    data =
 %      errors: [1x250 double]
 %           n: [1x250 double]
 %        cond: {1x250 cell}
@@ -22,19 +22,19 @@
 %
 %    data = GetDataByField(data, 'cond', 'a')
 %
-%    data = 
+%    data =
 %      errors: [1x250 double]
 %           n: [1x250 double]
 %        cond: {1x250 cell}
 %
 function data = GetDataByField(data, field, value)
-  
+
   % If the given field doesn't exist, return the data struct untouched
   if(~isfield(data, field))
     warning('The specified field does not exist.')
     return;
   end
-  
+
   curField = getfield(data,field);
   if iscell(curField)
     getWhich = cellfun(@(x)(isequal(x, value)), curField);
@@ -45,12 +45,12 @@ function data = GetDataByField(data, field, value)
     warning('No elements of that field have that value.')
     return;
   end
-  
+
   % For each field, split it by condition and store it
   fields = fieldnames(data);
   for fieldIndex = 1:length(fields)
     wholeField = getfield(data, fields{fieldIndex});
-    
+
     % Preserve all rows of fields like .distractors that are M x trials
     % and allow them to also be trials X M
     if size(wholeField, 1) == length(getWhich)

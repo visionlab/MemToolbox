@@ -4,11 +4,11 @@
 %
 % This fitting function  loops over reasonable values of each parameter
 % and evaluates the likelihood and prior at those values. It then returns a
-% posterior matrix whose size is N-dimensional for an N-parameter model 
+% posterior matrix whose size is N-dimensional for an N-parameter model
 % (e.g., the full posterior, evaluated at discrete points on each parameter).
 % The .logLikeMatrix is the log posterior; for visualization purposes, it
 % is often useful to have a version of this that is proportional to the
-% actual posterior rather than the log posterior. This is available as 
+% actual posterior rather than the log posterior. This is available as
 % .propToLikeMatrix. The .valuesUsed contains the values at which
 % each dimension/parameter was evaluated.
 %
@@ -42,18 +42,18 @@ function fullPosterior = GridSearch(data, model, varargin)
   args = struct('MleParams', [], 'PosteriorSamples', [], ...
     ... % Default to 5000 total points
     'PointsPerParam', round(nthroot(5000, length(model.paramNames))), ...
-    'TakeSamplesFromPrior', false); 
+    'TakeSamplesFromPrior', false);
   args = parseargs(varargin, args);
-  
+
   % Ensure there is a model.prior, model.logpdf and model.pdf
   model = EnsureAllModelMethods(model);
-  
+
   if ~isempty(args.PosteriorSamples)
-      % Refine the grid search to look only at reasonable values: 
+      % Refine the grid search to look only at reasonable values:
       model.upperbound = max(args.PosteriorSamples.vals);
       model.lowerbound = min(args.PosteriorSamples.vals);
   end
-  
+
   if args.TakeSamplesFromPrior && isempty(args.PosteriorSamples)
     % Sample from prior
     priorModel = model;
@@ -63,16 +63,16 @@ function fullPosterior = GridSearch(data, model, varargin)
     model.upperbound = max(priorSamples.vals);
     model.lowerbound = min(priorSamples.vals);
   end
-  
+
   % Use MAP parameters to center the grid search if any parameters have Inf
   % upper or lowerbound
-  if isempty(args.MleParams) && (any(isinf(model.upperbound)) || any(isinf(model.lowerbound))) 
+  if isempty(args.MleParams) && (any(isinf(model.upperbound)) || any(isinf(model.lowerbound)))
     args.MleParams = MAP(data, model);
   end
-  
+
   % Number of parameters
   Nparams = length(model.paramNames);
-  
+
   % Figure out what values to search
   which = linspace(0,1,args.PointsPerParam);
   for i=1:Nparams
@@ -88,10 +88,10 @@ function fullPosterior = GridSearch(data, model, varargin)
     end
     valuesUsed{i} = MappingFunction{i}(which);
   end
-  
+
   % Convert to full factorial
   [allVals{1:Nparams}] = ndgrid(valuesUsed{:});
-  
+
   % Evaluate
   logLikeMatrix = zeros(size(allVals{1}));
   parfor i=1:numel(allVals{1})
@@ -101,11 +101,11 @@ function fullPosterior = GridSearch(data, model, varargin)
       + model.logprior(curParams(:));
   end
   fullPosterior.logLikeMatrix = logLikeMatrix;
-  
+
   % Convert log likelihood matrix into likelihood, avoiding underflow
   fullPosterior.propToLikeMatrix = exp(logLikeMatrix-max(logLikeMatrix(:)));
   fullPosterior.propToLikeMatrix(isnan(fullPosterior.propToLikeMatrix)) = 0;
-  
+
   % Store values used:
   fullPosterior.valuesUsed = valuesUsed;
 end

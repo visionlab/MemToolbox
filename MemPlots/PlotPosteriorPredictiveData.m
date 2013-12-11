@@ -1,43 +1,43 @@
-%PLOTPOSTERIORPREDICTIVEDATA Show data sampled from the model with the actual 
+%PLOTPOSTERIORPREDICTIVEDATA Show data sampled from the model with the actual
 % data overlayed, plus a plot of where the two differ. This can be thought
 % of as the 'residual' of the data, given the model fit, and is helpful for
 % diagnosing bad fits in the model.
 %
 %   figHand = PlotPosteriorPredictiveData(model, posteriorSamples,...
 %                                             data, [optionalParameters])
-% 
+%
 %
 % Optional parameters:
 %  'NumberOfBins' - the number of bins to use in display the data. Default
 %  55.
-% 
+%
 %  'NumSamplesToPlot' - how many posterior samples to show in the posterior
 %  predictive plot. Default is 48.
 %
-%  'PdfColor' - the color to plot the model fit with. 
+%  'PdfColor' - the color to plot the model fit with.
 %
 %  'NewFigure' - whether to make a new figure or plot into the currently
 %  active subplot. Default is false (e.g., plot into current plot).
-% 
+%
 function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, varargin)
   % Show data sampled from the model with the actual data overlayed, plus a
   % difference plot.
   args = struct('NumSamplesToPlot', 48, 'NumberOfBins', 55, ...
-    'PdfColor', [0.54, 0.61, 0.06], 'NewFigure', true); 
+    'PdfColor', [0.54, 0.61, 0.06], 'NewFigure', true);
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); else figHand = []; end
-  
+
   % Choose which samples to use
   if(isempty(model.paramNames))
     which = 1:args.NumSamplesToPlot;
   else
     which = round(linspace(1, size(posteriorSamples.vals,1), args.NumSamplesToPlot));
   end
-  
+
   % How to bin
   x = linspace(-180, 180, args.NumberOfBins)';
   [normalizedData, nSamples] = getNormalizedBinnedData(data, x);
-  
+
   % Plot samples
   subplot(2,1,1);
   set(gcf, 'Color', [1 1 1]);
@@ -62,7 +62,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
       end
       set(0, 'CurrentFigure', curFigure);
     end
-    
+
     % Bin data and model
     normalizedYRep = getNormalizedBinnedReplication(yrep, data, x);
     if any(isnan(normalizedYRep))
@@ -71,14 +71,14 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
       hSim = patchline(x, normalizedYRep, 'LineStyle', '-', 'EdgeColor', ...
         args.PdfColor, 'EdgeAlpha', 0.15, 'LineSmoothing', 'on');
     end
-    
+
     % Difference between this data and real data
     diffPlot(i,:) = normalizedData - normalizedYRep;
-  end  
-  if ishandle(curHandle)
-    close(curHandle); 
   end
-  
+  if ishandle(curHandle)
+    close(curHandle);
+  end
+
   % Plot data
   hSim = plot(-191:-190, [1 1], '-', 'Color', args.PdfColor);
   h=plot3(x,normalizedData,ones(size(x)),'ok-','LineWidth', 1.5, 'MarkerEdgeColor',[0 0 0], ...
@@ -91,7 +91,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   else
     xlim([-180 180]);
   end
-  
+
   % Plot difference
   subplot(2,1,2);
   bounds = quantile(diffPlot, [.05 .50 .95])';
@@ -111,7 +111,7 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   end
   title('Difference between actual and simulated data', 'FontSize', 13);
   xlabel('(Note: deviations from zero indicate bad fit)');
-      
+
   % Allow the user to limit this figure to any subset of the data
   if ~isempty(figHand)
     CreateMenus(data, @redrawFig);

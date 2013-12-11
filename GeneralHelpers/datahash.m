@@ -120,17 +120,17 @@ if nArg == 2
       error(['JSimon:', mfilename, ':BadInput2'], ...
          '*** %s: 2nd input [Opt] must be a struct.', mfilename);
    end
-   
+
    % Specify hash algorithm:
    if isfield(Opt, 'Method')
       Method = upper(Opt.Method);
    end
-   
+
    % Specify output format:
    if isfield(Opt, 'Format')
       OutFormat = Opt.Format;
    end
-   
+
    % Check if the Input type is specified - default: 'array':
    if isfield(Opt, 'Input')
       if strcmpi(Opt.Input, 'File')
@@ -139,12 +139,12 @@ if nArg == 2
             error(['JSimon:', mfilename, ':CannotOpen'], ...
                '*** %s: 1st input is not a file name', mfilename);
          end
-         
+
          if exist(Data, 'file') ~= 2
             error(['JSimon:', mfilename, ':FileNotFound'], ...
                '*** %s: File not found: %s.', mfilename, Data);
          end
-         
+
       elseif strncmpi(Opt.Input, 'bin', 3)  % Accept 'binary'
          isBin = true;
          if (isnumeric(Data) || ischar(Data) || islogical(Data)) == 0
@@ -153,7 +153,7 @@ if nArg == 2
          end
       end
    end
-   
+
 elseif nArg ~= 1  % Bad number of arguments:
    error(['JSimon:', mfilename, ':BadNInput'], ...
       '*** %s: 1 or 2 inputs required.', mfilename);
@@ -177,7 +177,7 @@ if isFile
    end
    Data = fread(FID, Inf, '*uint8');
    fclose(FID);
-   
+
    Engine.update(Data);
    if usetypecastx
       Hash = typecastx(Engine.digest, 'uint8');
@@ -194,7 +194,7 @@ elseif isBin         % Contents of an elementary array:
          Engine.update(typecastx(imag(Data(:)), 'uint8'));
       end
       Hash = typecastx(Engine.digest, 'uint8');
-      
+
    else              % Matlab's TYPECAST is less elegant:
       if isnumeric(Data)
          if isreal(Data)
@@ -211,11 +211,11 @@ elseif isBin         % Contents of an elementary array:
       end
       Hash = typecast(Engine.digest, 'uint8');
    end
-   
+
 elseif usetypecastx  % Faster typecastx:
    Engine = CoreHash_(Data, Engine);
    Hash   = typecastx(Engine.digest, 'uint8');
-   
+
 else                 % Slower built-in TYPECAST:
    Engine = CoreHash(Data, Engine);
    Hash   = typecast(Engine.digest, 'uint8');
@@ -253,18 +253,18 @@ Engine.update([uint8(class(Data)), typecastx(size(Data), 'uint8')]);
 if isstruct(Data)                    % Hash for all array elements and fields:
    F      = sort(fieldnames(Data));  % Ignore order of fields
    Engine = CoreHash_(F, Engine);    % Catch the fieldnames
-   
+
    for iS = 1:numel(Data)            % Loop over elements of struct array
       for iField = 1:length(F)       % Loop over fields
          Engine = CoreHash_(Data(iS).(F{iField}), Engine);
       end
    end
-   
+
 elseif iscell(Data)                  % Get hash for all cell elements:
    for iS = 1:numel(Data)
       Engine = CoreHash_(Data{iS}, Engine);
    end
-      
+
 elseif isnumeric(Data) || islogical(Data) || ischar(Data)
    if isempty(Data) == 0
       if isreal(Data)                % TRUE for LOGICAL and CHAR also:
@@ -274,7 +274,7 @@ elseif isnumeric(Data) || islogical(Data) || ischar(Data)
          Engine.update(typecastx(imag(Data(:)), 'uint8'));
       end
    end
-   
+
 elseif isa(Data, 'function_handle')
    Engine = CoreHash(ConvertFuncHandle(Data), Engine);
 else  % Most likely this is a user-defined object:

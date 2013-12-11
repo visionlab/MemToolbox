@@ -6,7 +6,7 @@ function K = sd2k (S)
 %   Ref: Topics in Circular Statistics, S. R. Jammalamadaka & A. Sengupta
 %
 %   --> www.paulbays.com
-  
+
   R = exp(-S.^2/2);
   K = 1./(R.^3 - 4 * R.^2 + 3 * R);
   K(R < 0.85) = -0.4 + 1.39 * R(R < 0.85) + 0.43./(1 - R(R < 0.85));

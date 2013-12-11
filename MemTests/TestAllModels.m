@@ -4,7 +4,7 @@
 %   TestAllModels(numTrials, numItemsPerTrial);
 %
 function TestAllModels(numTrials, numItemsPerTrial)
-  
+
   % Default parameters
   if nargin < 1
     numTrials = 1000;
@@ -12,7 +12,7 @@ function TestAllModels(numTrials, numItemsPerTrial)
   if nargin < 2
     numItemsPerTrial = [3 5];
   end
-  
+
   % Which models to check:
   models = {...
     SlotPlusResourceModel(), ...
@@ -24,13 +24,13 @@ function TestAllModels(numTrials, numItemsPerTrial)
     SwapModel(), ...
     VariablePrecisionModel() ...
   };
-    
+
   % Try recovering parameters for each model
   for md=1:length(models)
     fprintf('\nModel: %s\n', models{md}.name);
     for s=1:size(models{md}.start,1)
       fprintf(' -- trying to recover params (%d of %d): ', s, size(models{md}.start,1));
-      
+
       % Try sampling and fitting this model at each value of its start
       % parameters:
       paramsIn = models{md}.start(s,:);
@@ -38,7 +38,7 @@ function TestAllModels(numTrials, numItemsPerTrial)
       [paramsOut, lowerCI, upperCI] = ...
         TestSamplingAndFitting(models{md}, asCell, numTrials, ...
         numItemsPerTrial, 'Verbosity', 0);
-      
+
       % Check that the credible intervals contain the correct parameter
       if all(paramsIn > lowerCI) && all(paramsIn < upperCI)
         fprintf('PASS\n');

@@ -1,18 +1,18 @@
-% TEMPLATEMODEL is a model template whose comments explain each of the required 
+% TEMPLATEMODEL is a model template whose comments explain each of the required
 % and optional components. (It happens to be NoGuessingModel, with bias, and
 % parameterized by the concentration parameter kappa of the von Mises.)
 function model = TemplateModel()
-  
+
   % The model should be given a unique name. This name is used by MemFit and
   % the model testing functions to let the user know which model is being
   % tested. Example model names are 'Slots+averaging model' and 'Swap model'.
   model.name = 'Template model';
 
-  % What are the names of the model's parameters? Later, we're going to define 
-  % a likelihood function that specifies a probability distribution over data 
-  % sets for each possible setting of the model's parameters. The only 
+  % What are the names of the model's parameters? Later, we're going to define
+  % a likelihood function that specifies a probability distribution over data
+  % sets for each possible setting of the model's parameters. The only
   % constraint in naming them is that they should probably use names that will
-  % work as MATLAB variables, like 'g', 'sd', or 'precision', but not '12x' 
+  % work as MATLAB variables, like 'g', 'sd', or 'precision', but not '12x'
   % or 'mean-sd'. We recommend giving them descriptive names.
 	model.paramNames = {'p1', 'p2'};
 
@@ -51,33 +51,33 @@ function model = TemplateModel()
   % settings to new settings. How big should those jumps initially be for each
   % parameter? Pick
   model.movestd = [0.02, 1];
-  
+
   % (optional)
   % Bayesian methods update a set of prior beliefs based on observed data.
-  % What are your prior beliefs? For the purposes of exploratory data analysis, 
-  % it is common to use a noninformative or weakly informative prior that 
-  % spreads the probability thinly over a swath of plausible parameter values. 
-  % Following this tradition, the existing models in the toolbox use the 
-  % Jeffreys prior, a class of noninformative priors that is invariant under 
-  % reparameterization of the model (Jeffreys, 1946; Jaynes1968). With 
-  % sufficient data, these noninformative priors have almost no influence on 
-  % the final inferences, serving only to limit the range of parameters to 
+  % What are your prior beliefs? For the purposes of exploratory data analysis,
+  % it is common to use a noninformative or weakly informative prior that
+  % spreads the probability thinly over a swath of plausible parameter values.
+  % Following this tradition, the existing models in the toolbox use the
+  % Jeffreys prior, a class of noninformative priors that is invariant under
+  % reparameterization of the model (Jeffreys, 1946; Jaynes1968). With
+  % sufficient data, these noninformative priors have almost no influence on
+  % the final inferences, serving only to limit the range of parameters to
   % those that are meaningful. There's a subfolder MemModels/Priors that
   % has many priors that you might find useful.
   %
   % If you do not specify a model.prior, the toolbox defaults to using an
   % improper prior that any value is equally likely.
   %
-  % The prior is a function of the parameters (specified as a vector), that 
-  % returns a probability. To recreate the toolbox's default behavior when no 
-  % model is specified (i.e., the behavior you would get if you commented out 
+  % The prior is a function of the parameters (specified as a vector), that
+  % returns a probability. To recreate the toolbox's default behavior when no
+  % model is specified (i.e., the behavior you would get if you commented out
   % the following line), you would define the prior as follows:
-  model.prior = @(p) (1);  
+  model.prior = @(p) (1);
 
   % (optional)
   % Some of the toolbox's functionality, like posterior predictive checks,
   % simulate data from the model. The toolbox includes a general purpose
-  % sampler, but this is often slow and it is considerably faster to specify 
+  % sampler, but this is often slow and it is considerably faster to specify
   % your own generator function. The generator function takes three parameters.
   % The first is a cell array of values for the model's parameters. The second
   % is the number of data points to simulate, in the form of the dimensions of

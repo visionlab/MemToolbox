@@ -22,27 +22,27 @@
 %
 function [paramsOut, lowerCI, upperCI] = ...
     TestSamplingAndFitting(model, paramsIn, numTrials, numItems, varargin)
-  
+
   % Optional parameters
-  args = struct('Verbosity', 1); 
+  args = struct('Verbosity', 1);
   args = parseargs(varargin, args);
-  
+
   % Generate error data using parameters from the initial start position of
   % the model
   if(nargin < 2)
     paramsIn = num2cell(model.start(1,:));
   end
-  
+
   % Use 10, 100, 1000, and 10,000 trials
   if(nargin < 3)
     numTrials = round(logspace(1,4,4));
   end
-  
+
   % Simulate displays with 3 and 5 items on them
   if(nargin < 4)
     numItems = [3 5];
   end
-  
+
   if args.Verbosity > 0
     % Print model and parameters being simulated:
     fprintf('\nModel: %s\n\n', model.name);
@@ -54,15 +54,15 @@ function [paramsOut, lowerCI, upperCI] = ...
         paramsIn{paramIndex});
     end
   end
-  
+
   for i = 1:length(numTrials)
     if args.Verbosity > 0
       fprintf('\nNow running pipeline with %d trials.', numTrials(i))
-      if(i == length(numTrials)) 
-        fprintf('\n'); 
+      if(i == length(numTrials))
+        fprintf('\n');
       end
     end
-    
+
     % Generate displays
     if length(numItems)>1
       numItemsVec = ceil((1:numTrials(i))./(numTrials(i)/length(numItems)));
@@ -79,7 +79,7 @@ function [paramsOut, lowerCI, upperCI] = ...
     else
       data.errors = SampleFromModel(model, paramsIn, [1,numTrials(i)], displays);
     end
-    
+
     % Now try to recover the parameters that led to these errors:
     posteriorSamples = MCMC(data, model, 'Verbosity', 0);
     fit = MCMCSummarize(posteriorSamples);
@@ -87,7 +87,7 @@ function [paramsOut, lowerCI, upperCI] = ...
     lowerCI(i,:) = fit.lowerCredible;
     upperCI(i,:) = fit.upperCredible;
   end
-  
+
   if args.Verbosity > 1
     % Make plot:
     figure;

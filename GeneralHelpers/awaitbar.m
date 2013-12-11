@@ -54,7 +54,7 @@ function fout = awaitbar(x,whichbar,varargin)
   % Modified by TFB, 8/15, to be less ugly.
   %
   % See also WAITBAR, WAITBAR(11398)
-  
+
   % I appreciate the bug reports and suggestions.
   %
   % Copyright 2008 by Durga Lal Shrestha.
@@ -64,9 +64,9 @@ function fout = awaitbar(x,whichbar,varargin)
   %
   %% Argument check
   error(nargchk(1,4,nargin))
-  
+
   figTitle = 'Progress';             % default title
-  
+
   if nargin>=2
     if ischar(whichbar)            % h =awaitbar(0,'Please wait...');
       % Delete all pre-existing waitbar graphical objects (Thanks to Peder Axensten(11398)
@@ -90,7 +90,7 @@ function fout = awaitbar(x,whichbar,varargin)
     else
       error('AWaitbar:InvalidInputs', ['Input arguments of type ' class(whichbar) ' not valid.'])
     end
-    
+
   elseif nargin==1                   % abort = awaitbar(i/n);
     f = findobj(allchild(0),'flat','Tag','TMWAWaitbar');
     if isempty(f)                  % if there is no awaitbar, then force to abort the loop as well
@@ -103,7 +103,7 @@ function fout = awaitbar(x,whichbar,varargin)
   else
     error('AWaitbar:InvalidArguments', 'Input arguments not valid.');
   end
-  
+
   % if completed the job, then close the figure
   if x==1;
     fout = true;
@@ -112,9 +112,9 @@ function fout = awaitbar(x,whichbar,varargin)
     end
     return
   end
-  
+
   x = max(0,min(100*x,100));
-  
+
   switch type
     case 1
       %% Initialize
@@ -132,7 +132,7 @@ function fout = awaitbar(x,whichbar,varargin)
       else
         pos = [screenSize(3)/2-width/2 screenSize(4)/2-height/2 width height];
       end
-      
+
       % Main waitbar figure
       f = figure(...
         'Units', 'points', ...
@@ -146,7 +146,7 @@ function fout = awaitbar(x,whichbar,varargin)
         'Visible','on',...
         'name',figTitle,...
         'UserData',t0);
-      
+
       % Abort button
       uicontrol('Style', 'pushbutton', 'String', 'Stop',...
         'FontWeight','bold',...
@@ -155,7 +155,7 @@ function fout = awaitbar(x,whichbar,varargin)
       colormap([]);
       axNorm=[.05 .55 .82 .2];
       axPos=axNorm.*[pos(3:4),pos(3:4)];
-      
+
       % Label "Time Elapsed"
       uicontrol('Parent',f,...
         'Units','points',...
@@ -163,7 +163,7 @@ function fout = awaitbar(x,whichbar,varargin)
         'String','Time Elapsed:',...
         'BackgroundColor', [0.80 0.80 0.80],...
         'Style','text');
-      
+
       % Label "Estimated Time Remaining"
       uicontrol('Parent',f,...
         'Units','points',...
@@ -171,7 +171,7 @@ function fout = awaitbar(x,whichbar,varargin)
         'String','Estimated Time Remaining:',...
         'BackgroundColor', [0.80 0.80 0.80],...
         'Style','text');
-      
+
       % Tag for "Time Elapsed"
       uicontrol('Parent',f,...
         'Units','points',...
@@ -179,7 +179,7 @@ function fout = awaitbar(x,whichbar,varargin)
         'BackgroundColor', [0.80 0.80 0.80],...
         'Style','text',...
         'Tag','lapseTag');
-      
+
       % Tag for "Estimated Time Remaining"
       uicontrol('Parent',f,...
         'Units','points',...
@@ -187,7 +187,7 @@ function fout = awaitbar(x,whichbar,varargin)
         'BackgroundColor', [0.80 0.80 0.80],...
         'Style','text',...
         'Tag','etaTag');
-      
+
       % Tag for "Percentage completed"
       uicontrol('Parent',f,...
         'Units','points',...
@@ -199,7 +199,7 @@ function fout = awaitbar(x,whichbar,varargin)
         'FontSize',10,...
         'FontWeight','bold',...
         'Tag','percentTag');
-      
+
       % Axis for waitbar
       h = axes('XLim',[0 100],...
         'YLim',[0 1],...
@@ -215,12 +215,12 @@ function fout = awaitbar(x,whichbar,varargin)
         'XTickLabel',[],...
         'YTickLabelMode','manual',...
         'YTickLabel',[]);
-      
+
       tHandle=get(h,'title');
       set(tHandle,...
         'Units',      'points',...
         'String',     name,'FontSize',11);
-      
+
       xpatch = [0 x x 0];
       ypatch = [0 0 1 1];
       xline = [100 0 0 100 100];
@@ -230,10 +230,10 @@ function fout = awaitbar(x,whichbar,varargin)
       set(l,'Color',get(gca,'XColor'));
       set(f,'HandleVisibility','callback','visible','on');
       set(0, 'Units', oldRootUnits);
-      
+
       % save figTitle to load agian
       setappdata(f, 'figTitle', figTitle);
-      
+
       %% UPDATE OF WAITBAR
     case 2,
       try
@@ -256,9 +256,9 @@ function fout = awaitbar(x,whichbar,varargin)
         set(l,'XData',xline);
         time_lapse = etime(clock,t0);
         time_lapse = round(time_lapse);
-        
+
         if(x~=0),time_eta=(time_lapse/x)*(100-x);else fout = f;return; end;
-        
+
         time_eta=round(time_eta);
         str_lapse= get_timestr(time_lapse);
         str_eta= get_timestr(time_eta);
@@ -277,19 +277,19 @@ function fout = awaitbar(x,whichbar,varargin)
         error('Awaitbar:InvalidArguments','Improper arguments for awaitbar');
       end
   end  % end case
-  
+
   drawnow;
-  
+
 %   %% Put the waitbar window on top of all others (Thanks to Peder Axensten(11398).
 %   children=allchild(0);
 %   if((numel(children) > 1) && (children(1) ~= f))
 %     uistack(f, 'top');
 %   end
-  
+
   %--------------------------------------------------------------------------
   % Handle the output correctly when clicking the abort button or
   % closing the figure or finishing the job etc.
-  
+
   if type == 1;                      % initializing
     fout = f;
   elseif ishandle(f)                 % if figure is not closed, then check the
@@ -299,13 +299,13 @@ function fout = awaitbar(x,whichbar,varargin)
   else
     fout=true;                    % if figure is close then also return true to abort the loop
   end
-  
+
 end % End of main function
 
 %% Internal Function
 function timestr= get_timestr(s) %(Thanks to Peder Axensten(11398).
   %Return a time string, given seconds.
-  
+
   h = floor(s/3600);					% Hours.
   s = s - h*3600;
   m = floor(s/60);						% Minutes.

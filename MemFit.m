@@ -19,7 +19,7 @@
 %   which controls the amount of text printed to the command window.
 %   If Verbosity is 0, output is suppressed. If Verbosity is 1, output is
 %   minimal. If Verbosity is 2, then MemFit is verbose. The default is 2.
-%   e.g., 
+%   e.g.,
 %      MemFit(model, data, 'Verbosity', 0)
 %   runs MemFit in silent mode, with no output.
 %
@@ -38,14 +38,14 @@ function fit = MemFit(varargin)
   % below:
   %
   %    MemFit_SingleData(data,model), which fits the model to the data
-  %    MemFit_MultipleSubjects({data1,data2,...}, model), which fits to 
+  %    MemFit_MultipleSubjects({data1,data2,...}, model), which fits to
   %       multiple subject at once
-  %    MemFit_ModelComparison(data, {model1,model2,...}), which performs 
+  %    MemFit_ModelComparison(data, {model1,model2,...}), which performs
   %       model comparison
-  % 
+  %
   % If you want to see how MemFit() works, you should look at those
   % functions, located below this one.
-  
+
   % Verbosity controls the amount of output. If verbosity is 0, output is
   % suppressed completely. If verbosity is 1, output is minimal. If verbosity
   % is 2, then it's verbose. Here, check for verbosity and then chop it off.
@@ -60,74 +60,74 @@ function fit = MemFit(varargin)
     hierarchy = false;
     nArguments = nargin;
   end
-  
+
   if nArguments < 1
     % No arguments - just open the tutorial
     fprintf('\nOpening the tutorial using your default PDF viewer...\n\n');
-    open('tutorial.pdf'); 
-    
+    open('tutorial.pdf');
+
   elseif nArguments == 1
     % One input argument, assumed to be (errors) or (data).
     if(isnumeric(varargin{1}))
       data = struct('errors', varargin{1});
       fit = MemFit(data, StandardMixtureModel(), 'Verbosity', 1);
-      
+
     elseif(isfield(varargin{1}, 'afcCorrect'))
       warning('MemToolbox:MemFit:InputFormat', ...
         'It looks like you passed in 2AFC data. Trying to fit with TwoAFC(StandardMixtureModel()).');
       fit = MemFit_SingleData(varargin{1}, TwoAFC(StandardMixtureModel()), 2);
-      
+
     elseif(any(isfield(varargin{1}, {'errors','error'})))
       data = varargin{1};
       fit = MemFit(data, StandardMixtureModel(), 'Verbosity', 1);
-      
+
     elseif(isCellArrayOfDataStructs(varargin{1}))
       data = varargin{1};
       fit = MemFit(data, StandardMixtureModel(), 'Verbosity', 1);
-      
+
     else
       error('MemToolbox:MemFit:InputFormat', 'Input format is wrong.');
     end
 
   elseif nArguments == 2
-    
+
     % Two input arguments, so many possibilities...
     if(isnumeric(varargin{1}) && isModelStruct(varargin{2}))
       % (errors, model)
       data = struct('errors', varargin{1});
       model = varargin{2};
       fit = MemFit_SingleData(data, model, verbosity);
-      
+
     elseif(isModelStruct(varargin{1}) && isnumeric(varargin{2}))
       % (model, errors)
       data = struct('errors', varargin{2});
       model = varargin{1};
       fit = MemFit_SingleData(data, model, verbosity);
-      
+
     elseif(isModelStruct(varargin{1}) && isDataStruct(varargin{2}))
       % (model, data)
       data = ValidateData(varargin{2});
       model = varargin{1};
       fit = MemFit_SingleData(data, model, verbosity);
-      
+
     elseif(isDataStruct(varargin{1}) && isModelStruct(varargin{2}))
       % (data, model) - preferred format
       data = ValidateData(varargin{1});
       model = varargin{2};
       fit = MemFit_SingleData(data, model, verbosity);
-      
+
     elseif(isnumeric(varargin{1}) && isCellArrayOfModelStructs(varargin{2}))
       % (errors, {model1,model2,model3,...})
       data = ValidateData(struct('errors', varargin{1}));
       models = varargin{2};
       fit = MemFit_ModelComparison(data, models, verbosity);
-      
+
     elseif(isDataStruct(varargin{1}) && isCellArrayOfModelStructs(varargin{2}))
       % (data, {model1,model2,model3,...})
       data = ValidateData(varargin{1});
       models = varargin{2};
       fit = MemFit_ModelComparison(data, models, verbosity);
-      
+
     elseif(isCellArrayOfDataStructs(varargin{1}) && isModelStruct(varargin{2}))
       % ({data1,data2,data3,...}, model)
       dataCellArray = varargin{1};
@@ -136,12 +136,12 @@ function fit = MemFit(varargin)
         dataCellArray{i} = ValidateData(dataCellArray{i});
       end
       fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity, hierarchy);
-      
+
     else
       error('MemToolbox:MemFit:InputFormat', ...
         'Sorry, MTB doesn''t support that input format.');
     end
-    
+
   else
     % If we get here, throw an error
     error('MemToolbox:MemFit:TooManyInputs', 'That''s just too much to handle.');
@@ -163,20 +163,20 @@ function fit = MemFit_SingleData(data, model, verbosity)
        'distributions at +/-90 rather than +/-180.\n']);
     end
   end
-  
+
   if(verbosity > 0)
     % Tell the user what's to come;
     if isfield(data, 'errors') && ~isfield(model, 'isOrientationModel')
       fprintf('\nError histogram:   ')
       PlotAsciiHist(data.errors);
     elseif isfield(data, 'afcCorrect')
-      fprintf('\nMean percent correct: %0.2f\n', mean(data.afcCorrect));      
+      fprintf('\nMean percent correct: %0.2f\n', mean(data.afcCorrect));
     end
     fprintf('          Model:   %s\n', model.name);
     fprintf('     Parameters:   %s\n', prettyPrintParams(model.paramNames));
     pause(1);
   end
-  
+
   % Do the fitting
   if(isempty(model.paramNames))
     fit.maxPosterior = [];
@@ -190,7 +190,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
       'BurnInSamplesBeforeCheck', 200);
     fit = MCMCSummarize(posteriorSamples);
     fit.posteriorSamples = posteriorSamples;
-  
+
     if(verbosity > 0)
       % Display the results
       fprintf('\n...finished. Now let''s view the results:\n\n')
@@ -205,7 +205,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
       end
     end
   end
-  
+
   if(verbosity > 0)
     % Optional interactive visualization
     fprintf('\n');
@@ -214,7 +214,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
       PlotModelFitInteractive(model, fit.maxPosterior, data);
     end
   end
-  
+
   if(verbosity > 0)
     % Optional posterior visualization
     fprintf('\n');
@@ -222,7 +222,7 @@ function fit = MemFit_SingleData(data, model, verbosity)
       'between parameters, samples from the posterior\n'...
       'distribution and a posterior predictive check? (y/n): '], 's');
     if(strcmp(r,'y'))
-      
+
       if(isempty(model.paramNames))
         % Posterior predictive for zero-parameter models
         h = PlotPosteriorPredictiveData(model, [], data);
@@ -231,11 +231,11 @@ function fit = MemFit_SingleData(data, model, verbosity)
         % Show a figure with each parameter's correlation with each other
         h = PlotPosterior(posteriorSamples, model.paramNames);
         subfigure(2,2,1, h);
-        
+
         % Show fit
         h = PlotModelParametersAndData(model, posteriorSamples, data);
         subfigure(2,2,2, h);
-        
+
         % Posterior predictive plot
         h = PlotPosteriorPredictiveData(model, posteriorSamples, data);
         subfigure(2,2,3, h);
@@ -259,7 +259,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
   % Introduction & model listing
   if verbosity > 0
     fprintf('\nYou''ve chosen to compare the following models:\n\n')
-    
+
     for modelIndex = 1:length(modelCellArray)
       fprintf('        Model %d:   %s\n',  ...
         modelIndex, modelCellArray{modelIndex}.name);
@@ -267,13 +267,13 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
         prettyPrintParams(modelCellArray{modelIndex}.paramNames));
       fprintf('\n');
     end
-    
+
     fprintf('Computing log likelihood, AIC, AICc and BIC...\n\n');
   end
-  
+
   % Model comparison & results
   [fit.AIC, fit.BIC, fit.logLike, fit.AICc] = ModelComparison_AIC_BIC(data, modelCellArray);
-  
+
   % Print stats
   if verbosity > 0
     printStat('Log likelihood', fit.logLike, @max);
@@ -281,17 +281,17 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
     printStat('AICc', fit.AICc, @min);
     printStat('BIC', fit.BIC, @min);
   end
-  
+
   if verbosity > 0
     r = input(['Would you like to compute the DIC (note that this can be slow,\n' ...
       'since it requires running MCMC on each model)? (y/n): '], 's');
     fprintf('\n');
   end
-  
+
   if verbosity == 0
     r = 'y';  % compute dic and bayes factors
   end
-  
+
   posteriorSamples = [];
   if(strcmp(r,'y'))
     if verbosity > 0
@@ -308,7 +308,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
       printStat('DIC', fit.DIC, @min);
     end
   end
-  
+
   function printStat(name,stats,bestF,f)
     DescribeModelComparisonMethod(name);
     % Print headers
@@ -343,7 +343,7 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity, hierarch
   end
   if verbosity > 0
     fprintf('\nYou''ve chosen to fit multiple subjects'' data at once...\n\n');
-    if hierarchy 
+    if hierarchy
       fprintf('... using a hierarchical model to fit the subjects together\n\n');
     end
     pause(1);
@@ -354,7 +354,7 @@ function fit = MemFit_MultipleSubjects(dataCellArray, model, verbosity, hierarch
       fprintf('\n')
     end
     fprintf('          Model:   %s\n', ...
-        [lower(model.name(1)) model.name(2:end)]);    
+        [lower(model.name(1)) model.name(2:end)]);
     fprintf('     Parameters:   %s\n\n', prettyPrintParams(model.paramNames));
     pause(1);
     fprintf('MTB will now fit the model to your datasets...\n');

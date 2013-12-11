@@ -1,4 +1,4 @@
-function y = vonmisespdf(x,mu,k) 
+function y = vonmisespdf(x,mu,k)
   % y = vonmisespdf(x,mu,k)
   % Generate a probability distribution function over the values x of a von
   % mises distribution with mean (mu) and spread kappa (k) parameters.

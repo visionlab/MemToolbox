@@ -54,7 +54,7 @@ exp = sprintf('(\\S\\S{%d,}|.{1,%d})(?:\\s+|$)', maxchars, maxchars);
 
 tokens = regexp(s, exp, 'tokens').';
 
-% Each element if the cell array tokens is single-element cell array 
+% Each element if the cell array tokens is single-element cell array
 % containing a string.  Convert this to a cell array of strings.
 get_contents = @(f) f{1};
 c = cellfun(get_contents, tokens, 'UniformOutput', false);

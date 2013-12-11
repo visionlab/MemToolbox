@@ -1,6 +1,6 @@
-% NOGUESSINGMODEL returns a structure for a single component model. 
-% This is the same as StandardMixtureModel, but without a guess state. 
-% The probability distribution is a uniform distribution of error. 
+% NOGUESSINGMODEL returns a structure for a single component model.
+% This is the same as StandardMixtureModel, but without a guess state.
+% The probability distribution is a uniform distribution of error.
 %
 function model = NoGuessingModel()
   model.name = 'No guessing model';
@@ -12,10 +12,10 @@ function model = NoGuessingModel()
 	model.start = [ 3;  % sd
                  15;  % sd
                  75]; % sd
-                     
-  % To specify a prior probability distribution, change and uncomment 
-  % the following line, where p is a vector of parameter values, arranged 
+
+  % To specify a prior probability distribution, change and uncomment
+  % the following line, where p is a vector of parameter values, arranged
   % in the same order that they appear in model.paramNames:
   % model.prior = @(p) (1);
-  
+
 end

@@ -1,5 +1,5 @@
-% ALLGUESSINGMODEL returns a structure for a single-component model (a uniform 
-% distribution). This is like StandardMixtureModel, but without a 
+% ALLGUESSINGMODEL returns a structure for a single-component model (a uniform
+% distribution). This is like StandardMixtureModel, but without a
 % remembered state.
 function model = AllGuessingModel()
   model.name = 'All guessing model';
