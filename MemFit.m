@@ -323,7 +323,7 @@ function fit = MemFit_ModelComparison(data, modelCellArray, verbosity)
       f = @(s,m1,m2) (s(m1) - s(m2));
     end
     if(~strcmp(name,'Posterior odds'))
-      combos = combnk([1:length(stats)],2);
+      combos = combnk(1:length(stats),2);
       for i = 1:size(combos,1)
         fprintf('%d:%d  \t%0.2f\n', combos(i,1), combos(i,2), ...
           f(stats, combos(i,1), combos(i,2)));

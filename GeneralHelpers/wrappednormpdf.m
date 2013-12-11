@@ -22,13 +22,13 @@ y = zeros(size(x)); % preallocate output vector
 
 % if user doesn't specify a number of wraps, default to 100
 if(length(varargin) > 0)
-	nWraps = varargin{:}
+	nWraps = varargin{:};
 else
 	nWraps = 100;
 end
 
 % do the actual work of wrapping
 for i = 1:length(x)
-	xfork = [x(i)-nWraps*2*pi:2*pi:x(i)+nWraps*2*pi];
+	xfork = (x(i)-nWraps*2*pi):(2*pi):(x(i)+nWraps*2*pi);
 	y(i) = sum(normpdf(xfork, mu, sigma));
 end

@@ -1,11 +1,12 @@
 function y = wrappedtpdf(x, mu, sigma, df, nWraps)
-	if (nargin < 5) nWraps = 200; end
-	n = prod(size(x));
+    if (nargin < 5)
+        nWraps = 200;
+    end
 	range = (-nWraps:nWraps);
-	add = range(ones(n,1), :)'.*2*pi;
+	add = range(ones(numel(x), 1), :)'.*2*pi;
 	x2 = repmat(x(:)', nWraps*2+1, 1);
 	a = tlspdf(x2+add, mu, sigma, df);
-	y = reshape(sum(a,1),size(x));
+	y = reshape(sum(a, 1), size(x));
 end
 
 % % ------------------------------------------------------------------------
@@ -21,6 +22,6 @@ end
 % % result, the three-parameter Student's t distribution arises naturally
 % % in many Bayesian inference problems.)
 function y = tlspdf(x, mu, sigma, df)
-     y = tpdf((x - mu)./sigma,df)./sigma;
+    y = tpdf((x - mu)./sigma, df)./sigma;
 end
 

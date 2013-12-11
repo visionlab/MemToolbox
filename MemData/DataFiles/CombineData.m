@@ -12,6 +12,6 @@ function data = CombineData(data1,data2)
   fields = fieldnames(data);
   for fieldIndex = 1:length(fields)
     data.(fields{fieldIndex}) = ...
-      [data.(fields{fieldIndex}), data2.(fields{fieldIndex})]);
+      [data.(fields{fieldIndex}), data2.(fields{fieldIndex})];
   end
 end

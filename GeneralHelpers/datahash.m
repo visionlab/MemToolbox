@@ -1,4 +1,4 @@
-function Hash = DataHash(Data, Opt)
+function Hash = datahash(Data, Opt)
 % DATAHASH - Checksum for Matlab array of any type
 % This function creates a hash value for an input of any type. The type and
 % dimensions of the input are considered as default, such that UINT8([0,0]) and
