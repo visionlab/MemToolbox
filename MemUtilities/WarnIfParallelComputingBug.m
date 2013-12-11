@@ -8,7 +8,7 @@ function pass = WarnIfParallelComputingBug()
   javaVersion = version('-java');
   i = strfind(javaVersion, '_');
   javaVersionNumMinor = str2num(javaVersion((i+1):(i+2)));
-  if(strfind(javaVersion, 'Java 1.6.0') & (javaVersionNumMinor >= 39) & isParallelInstalled)
+  if(strfind(javaVersion, 'Java 1.6.0') && (javaVersionNumMinor >= 39) && isParallelInstalled)
    try
      matlabpool open;
    catch
