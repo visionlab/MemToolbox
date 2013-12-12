@@ -13,12 +13,12 @@ function model = EnsureAllModelMethods(model)
   if ~isfield(model, 'prior')
     model.prior = @(params)(1);
   end
-  
+
   % If there's no model.pdf, create one using model.logpdf
   if ~isfield(model, 'pdf')
     model.pdf = @(varargin)(exp(model.logpdf(varargin{:})));
   end
-  
+
   % If no logpdf, create one from pdf
   if ~isfield(model, 'logpdf')
     model.logpdf = @(varargin)(sumWithNans(log(model.pdf(varargin{:}))));
@@ -27,7 +27,7 @@ function model = EnsureAllModelMethods(model)
   % If no logprior, create one from prior
   if ~isfield(model, 'logprior')
     model.logprior = @(params)(sumWithNans(log(model.prior(params))));
-  end  
+  end
 end
 
 function s = sumWithNans(v)

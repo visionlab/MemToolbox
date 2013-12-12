@@ -4,8 +4,8 @@
 %
 % whichData should take a value from 1-9 or the string 'vandenbergetal2012',
 % each of which corresponds to one of the datasets available in the toolbox.
-% 
-% Datasets 1 and 2 are from an experiment reported in the supplement of 
+%
+% Datasets 1 and 2 are from an experiment reported in the supplement of
 % Fougnie et al. (2012). Each dataset is a participant performing 3000+ trials
 % of a continuous report color working memory task.
 %
@@ -29,13 +29,13 @@
 % 'AA','ACO','ELA','RGG','TCS', and 'WJM'.
 %
 % References
-%  
+%
 % Fougnie, D. F., Suchow, J. W., & Alvarez, G. A. (2012). Variability in the
 % precision of visual working memory. Nature Communications, 1129.
 %
 % van den Berg, R., Shin, H., Chou, W-C., George, R., & Ma, W. J. (2012).
 % Variability in encoding precision accounts for visual short-term memory
-% limitations. Proceedings of the National Academy of Sciences, 
+% limitations. Proceedings of the National Academy of Sciences,
 %
 function data = MemDataset(whichData,varargin)
   if(nargin < 1)
@@ -63,19 +63,19 @@ function data = MemDataset(whichData,varargin)
         'dataset-multiple-conditions-s3.mat'));
     case 7
       data = load(fullfile(currentDir, 'DataFiles', ...
-        'dataset-multiple-conditions-s4.mat'));  
+        'dataset-multiple-conditions-s4.mat'));
     case 8
       f = load(fullfile(currentDir, 'DataFiles', ...
-        'allFields5SetSizes.mat'));  
+        'allFields5SetSizes.mat'));
       data = f.data;
     case 9
       f = load(fullfile(currentDir, 'DataFiles', ...
-        'allFieldsVariablePrecision.mat'));  
+        'allFieldsVariablePrecision.mat'));
       data = f.data;
     case 10
       f = load(fullfile(currentDir, 'DataFiles', ...
-        'multipleSetSizesSlotAverage.mat'));  
-      data = f.data;      
+        'multipleSetSizesSlotAverage.mat'));
+      data = f.data;
     case 'vandenbergetal2012'
       if(length(varargin) < 2)
         error('You must specify both a dimension, 1 or 2, and a participant.')
@@ -94,13 +94,13 @@ function data = MemDataset(whichData,varargin)
       for i = 1:length(listing)
         thisFile = load(fullfile(dataDir, listing(i).name));
         for j = 1:4
-          data = CombineData(data,getfield(thisFile,['recording' num2str(j)]));
+          data = CombineData(data, thisFile.(['recording' num2str(j)]));
         end
       end
       if(dim == 1)
-        data.error = data.error*2;      
-      end    
-        
+        data.error = data.error*2;
+      end
+
     otherwise
       error('Sorry, that''s not one of the available datasets.')
   end

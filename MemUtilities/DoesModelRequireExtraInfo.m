@@ -2,8 +2,8 @@
 %
 % r = DoesModelRequireExtraInfo(model)
 %
-% This function is a helper function used by functions that attempt to 
-% evaluate a model's pdf at specific values independent of the specified 
+% This function is a helper function used by functions that attempt to
+% evaluate a model's pdf at specific values independent of the specified
 % data. It check if a model.pdf function requires more than just specifying
 % the data.errors to evaluate at (for example, the SwapModel also requires
 % you to include data.distractors, and thus will return true).

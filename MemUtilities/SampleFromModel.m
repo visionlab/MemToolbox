@@ -1,4 +1,4 @@
-% SAMPLEFROMMODEL simulates data from a model with some parameters. 
+% SAMPLEFROMMODEL simulates data from a model with some parameters.
 %
 %  samp = SampleFromModel(model, params, dims, displayInfo)
 %
@@ -14,7 +14,7 @@
 %  display information as the 4th parameter (e.g., a data struct that has
 %  .distractors), and the dimensions you request back (third parameter,
 %  dims) must match the number of displays you provide.
-% 
+%
 % e.g.,
 %    model = SwapModel();
 %    displays = GenerateDisplays(100, 3); % 100 trials, 3 items/trial
@@ -26,12 +26,12 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
   if(nargin < 3)
     dims = [1 1];
   end
-  
+
   % Make sure params is a cell array of parameters
   if ~iscell(params)
     params = num2cell(params);
   end
-  
+
   % Check if the model needs extra information about the displays
   r = DoesModelRequireExtraInfo(model);
   if nargin < 4
@@ -43,8 +43,8 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
         'the displays you wish to sample data for as the fourth parameter.']);
     end
   end
-  
-  if r 
+
+  if r
     if isfield(displayInfo, 'errors')
       sz = size(displayInfo.errors);
     elseif isfield(displayInfo, 'distractors')
@@ -52,7 +52,7 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
     elseif isfield(displayInfo, 'n')
       sz = size(displayInfo.n);
     elseif isfield(displayInfo, 'afcCorrect')
-      sz = size(displayInfo.afcCorrect);  
+      sz = size(displayInfo.afcCorrect);
     end
     if all(prod(dims) ~= prod(sz))
       error(['You passed a model that requires extra information to make ' ...
@@ -60,17 +60,17 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
       'displays you provide in the fourth parameter.']);
     end
   end
-  
+
   % If the model has an efficient generator, use it. otherwise use rejection sampling
   if(isfield(model, 'generator'))
     samp = model.generator(params, dims, displayInfo);
     return
   end
-  
+
   % Get CDF
   if ~r
     interpVals = linspace(-180, 180, 1000);
-    
+
     % Just generate enough samples to fill dims
     data.errors = interpVals;
     y = model.pdf(data, params{:});

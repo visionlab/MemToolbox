@@ -1,6 +1,6 @@
 % SPLITDATABYCONDITION Splits a data set into subsets, one per condition
-% as specified by a field data.condition. data.condition can be a cell 
-% array of strings or a vector. 
+% as specified by a field data.condition. data.condition can be a cell
+% array of strings or a vector.
 %
 %  [datasets, conditionOrder] = SplitDataByCondition(data)
 %

@@ -13,9 +13,9 @@ function model = StandardMixtureModel_SD()
                  0.4, 15;  % g, sd
                  0.1, 20]; % g, sd
   model.generator = @StandardMixtureModelGenerator;
-  
-  % To specify a prior probability distribution, change and uncomment 
-  % the following line, where p is a vector of parameter values, arranged 
+
+  % To specify a prior probability distribution, change and uncomment
+  % the following line, where p is a vector of parameter values, arranged
   % in the same order that they appear in model.paramNames:
   % model.prior = @(p) (1);
 

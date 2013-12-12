@@ -19,7 +19,7 @@ function figHand = PlotPosterior(posterior, paramNames)
   end
 end
 
-function figHand = PlotPosterior_MCMC(posteriorSamples, paramNames)  
+function figHand = PlotPosterior_MCMC(posteriorSamples, paramNames)
   % Plot correlation
   figHand = figure;
   N = length(paramNames);
@@ -31,7 +31,7 @@ function figHand = PlotPosterior_MCMC(posteriorSamples, paramNames)
       set(gca,'YDir','normal');
       set(gca, 'box', 'off');
       axis tight;
-      
+
       subplot(N,N,sub2ind([N N],p2,p));
       imagesc(C{2}, C{1}, V);
       set(gca,'YDir','normal');
@@ -59,9 +59,9 @@ function figHand = PlotPosterior_MCMC(posteriorSamples, paramNames)
       ylabel(['$\bf{' paramNames{p} '}$'], ...
         'FontSize', 14, 'Interpreter', 'latex');
     end
-    
+
   end
-  
+
   % Comestics
   colormap(palettablecolormap('sequential'));
   makepalettable(figHand);
@@ -71,9 +71,9 @@ function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
   % Shorten names
   likeMatrix = fullPosterior.propToLikeMatrix;
   valuesUsed = fullPosterior.valuesUsed;
-  
+
   % Show 2x2 correlation for each variable with each other to look for
-  % structure; Visualize both as a scatter and as a 2D histogram  
+  % structure; Visualize both as a scatter and as a 2D histogram
   figHand = figure;
   N = length(paramNames);
   for p=1:N
@@ -84,16 +84,16 @@ function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
       set(gca,'YDir','normal');
       set(gca, 'box', 'off');
       axis tight;
-      
+
       subplot(N,N,sub2ind([N N],p2,p));
       imagesc(valuesUsed{p2}, valuesUsed{p}, V');
       set(gca,'YDir','normal');
       set(gca, 'box', 'off');
       axis tight;
     end
-    
+
     subplot(N,N,sub2ind([N N],p,p));
-    marginal = ndsum(likeMatrix, find(1:N ~= p)); 
+    marginal = ndsum(likeMatrix, find(1:N ~= p));
     h = bar(valuesUsed{p}(:), marginal(:));
     set(h, 'LineStyle','none');
     axis tight;
@@ -116,7 +116,7 @@ function figHand = PlotPosterior_GridSearch(fullPosterior, paramNames)
         'FontSize', 14, 'Interpreter', 'latex');
     end
   end
-  
+
   % Comestics
   colormap(palettablecolormap('sequential'));
   makepalettable(figHand);

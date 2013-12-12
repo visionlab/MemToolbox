@@ -1,8 +1,8 @@
 % MCMCSUMMARIZE Convert samples from MCMC into estimates of parameters
 %
-%  s = MCMCSummarize(posteriorSamples, whichField) 
+%  s = MCMCSummarize(posteriorSamples, whichField)
 %
-% Returns a struct with a .posteriorMean, .posteriorMedian, .maxPosterior, 
+% Returns a struct with a .posteriorMean, .posteriorMedian, .maxPosterior,
 %  .lowerCredible, .upperCredible.
 %
 % If you pass the optional second parameter whichField, it does not
@@ -13,13 +13,13 @@
 %  Examples:
 %     posteriorSamples = MCMC(data, model);
 %     posteriorMean = MCMCSummarize(posteriorSamples, 'posteriorMean');
-%  
+%
 %  or:
 %     posteriorSamples = MCMC(data, model);
 %     fit = MCMCSummarize(posteriorSamples);
 %     fit.posteriorMean
 %
-function s = MCMCSummarize(posteriorSamples, whichField) 
+function s = MCMCSummarize(posteriorSamples, whichField)
   [tmp,highestLike]=max(posteriorSamples.like);
   outParams.posteriorMean = mean(posteriorSamples.vals);
   outParams.posteriorMedian = median(posteriorSamples.vals);

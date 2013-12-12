@@ -4,16 +4,16 @@ function CreateMenus(data, callbackFun)
   if strcmp(get(gcf, 'UserData'), 'HasMenus')
     return;
   end
-  
+
   % Add menus
   hMem = uimenu('Label', '<html><strong>&MemToolbox</strong></html>', 'Callback', []);
   uimenu(hMem, 'Label', 'Show all data', 'Callback', ...
     @(hObject, eventdata, h)(callbackFun('all', 1)));
   hLimit = uimenu(hMem, 'Label', 'Limit to:', 'Callback', []);
-  
+
   % Mark that this figure has them
   set(gcf, 'UserData', 'HasMenus');
-  
+
   % Which fields to use?
   if isfield(data, 'errors')
     nSamples = numel(data.errors);

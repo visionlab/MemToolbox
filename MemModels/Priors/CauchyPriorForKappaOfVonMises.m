@@ -2,8 +2,8 @@
 %
 % References:
 %
-%  Wallace, C. S., and Dowe, D. L. (1993). MML estimation of the von Mises 
-%  concentration parameter. Technical report 93/193, Department of Computer 
+%  Wallace, C. S., and Dowe, D. L. (1993). MML estimation of the von Mises
+%  concentration parameter. Technical report 93/193, Department of Computer
 %  Science, Monash University, Melbourne.
 %
 function y = CauchyPriorForKappaOfVonMises(K)

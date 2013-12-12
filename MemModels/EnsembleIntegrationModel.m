@@ -11,9 +11,9 @@
 %
 % Note that these values are the *distance from the correct answer*, not
 % the actual color values of the distractors. They should thus range from
-% -180 to 180. 
+% -180 to 180.
 %
-% data.distractors may contain NaNs. For example, if you have data with 
+% data.distractors may contain NaNs. For example, if you have data with
 % different set sizes, data.distractors should contain as many rows as you
 % need for the largest set size, and for displays with smaller set sizes
 % the last several rows can be filled with NaNs.
@@ -32,23 +32,23 @@ function model = EnsembleIntegrationModel()
 	model.start = [0.2, 10, 1;  % g, B, sd
     0.4, 15, 0;  % g, B, sd
     0.1, 20, 5]; % g, B, sd
-  
-  % To specify a prior probability distribution, change and uncomment 
-  % the following line, where p is a vector of parameter values, arranged 
+
+  % To specify a prior probability distribution, change and uncomment
+  % the following line, where p is a vector of parameter values, arranged
   % in the same order that they appear in model.paramNames:
   % model.prior = @(p) (1);
-  
+
   function p = IntegrationModelPDF(data, g, sd, samples)
     if(~isfield(data, 'distractors'))
       error('The integration model requires that you specify the distractors.')
     end
-    
+
     data.distractors(end+1, :) = 0; % (target is always at zero)
     ensembleMean = nanmean(data.distractors);
     ensembleStd = nanstd(data.distractors);
     w = (1./(ensembleStd.^2)) ./ ((1./(ensembleStd.^2)) + (samples./(sd.^2)));
     shiftedMean = w.*ensembleMean + (1-w)*0;  % (target is always at zero)
-    
+
     p = (1-g).*vonmisespdf(data.errors(:), shiftedMean(:), deg2k(sd)) ...
       + (g).*1/360;
   end

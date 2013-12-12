@@ -9,18 +9,18 @@
 %
 %  'NewFigure' - whether to make a new figure or plot into the currently
 %  active subplot. Default is false (e.g., plot into current plot).
-% 
+%
 function figHand = PlotData(data, varargin)
   % Extra arguments and parsing
-  args = struct('NumberOfBins', 40, 'NewFigure', true); 
+  args = struct('NumberOfBins', 40, 'NewFigure', true);
   args = parseargs(varargin, args);
   if args.NewFigure, figHand = figure(); else figHand = []; end
-  
+
   % Clean data up if it is just errors
   if(~isfield(data,'errors')) && (~isfield(data,'afcCorrect'))
     data = struct('errors',data);
   end
-  
+
   if isfield(data, 'errors')
     % Plot data histogram for continuous report data
     set(gcf, 'Color', [1 1 1]);
@@ -34,7 +34,7 @@ function figHand = PlotData(data, varargin)
     topOfY = max(n./sum(n))*1.20;
     ylim([0 topOfY]);
   else
-    
+
     % Plot binned data for 2AFC data
     set(gcf, 'Color', [1 1 1]);
     x = linspace(-180, 180, args.NumberOfBins)';
@@ -53,7 +53,7 @@ function figHand = PlotData(data, varargin)
     ylabel('Probability Correct', 'FontSize', 14);
     ylim([0 1]);
   end
-  
+
   % Allow the user to limit this figure to any subset of the data
   if ~isempty(figHand)
     CreateMenus(data, @redrawFig);

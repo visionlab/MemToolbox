@@ -49,7 +49,7 @@ while(~all(pass));
 
 	f(~pass) = (1 + r.*cosd(180.*u(:,1)))./(r+cosd(180.*u(:,1)));
 	c(~pass) = kappa.*(r-f(~pass));
-	
+
 	% check if the new samples pass
 	conditionOne = c(~pass).*(2-c(~pass))-u(:,2) > 0;
 	conditionTwo = log(c(~pass)./u(:,2))+1-c(~pass) >= 0;

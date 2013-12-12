@@ -7,9 +7,9 @@ function p = patchline(xs,ys,varargin)
 %     patchline(xs,ys,zs,'PropertyName',propertyvalue,...)
 %     p = patchline(...)
 %
-% PROPERTIES: 
+% PROPERTIES:
 %     Accepts all parameter-values accepted by PATCH.
-% 
+%
 % DESCRIPTION:
 %     p = patchline(xs,ys,zs,'PropertyName',propertyvalue,...)
 %         Takes a vector of x-values (xs) and a same-sized
@@ -18,7 +18,7 @@ function p = patchline(xs,ys,varargin)
 %         occupy the third input position. Takes all P-V
 %         pairs supported by PATCH. Returns in p the handle
 %         to the resulting patch object.
-%         
+%
 % NOTES:
 %     Note that we are drawing 0-thickness patches here,
 %     represented only by their edges. FACE PROPERTIES WILL
@@ -57,7 +57,7 @@ function p = patchline(xs,ys,varargin)
 % end
 %
 %%% Example 3 (requires Image Processing Toolbox):
-%%%   (NOTE that this is NOT the same as showing a transparent image on 
+%%%   (NOTE that this is NOT the same as showing a transparent image on
 %%%         of the existing image. (That functionality is
 %%%         available using showMaskAsOverlay or imoverlay).
 %%%         Instead, patchline plots transparent lines over
@@ -80,7 +80,7 @@ function p = patchline(xs,ys,varargin)
 % Written by Brett Shoelson, PhD
 % brett.shoelson@mathworks.com
 % 5/31/2012
-% 
+%
 % Revisions:
 % 6/26 Improved rice.png example, modified FEX image.
 %

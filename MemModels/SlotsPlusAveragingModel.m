@@ -9,8 +9,8 @@
 % with a model that does not make predictions across set size, like
 % StandardMixtureModel().
 %
-% Uses the capacity and SD to fit data across multiple sizes. 
-% 
+% Uses the capacity and SD to fit data across multiple sizes.
+%
 % A prior probability distribution can be specified in model.prior. Example
 % priors are available in MemModels/Priors.
 %
@@ -23,16 +23,16 @@ function model = SlotsPlusAveragingModel()
 	model.pdf = @slotpdf;
 	model.start = [2, 5;    % capacity, sd
                  3, 10;
-                 4, 100];   
-                 
-  % To specify a prior probability distribution, change and uncomment 
-  % the following line, where p is a vector of parameter values, arranged 
+                 4, 100];
+
+  % To specify a prior probability distribution, change and uncomment
+  % the following line, where p is a vector of parameter values, arranged
   % in the same order that they appear in model.paramNames:
   % model.prior = @(p) (1);
 end
 
 function y = slotpdf(data,capacity,sd)
-  
+
   % First compute the number of items that get at least one slot
   numRepresented = min(capacity, data.n(:));
 

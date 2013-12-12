@@ -3,7 +3,7 @@
 %  [successAIC, successBIC, successAICc] = ...
 %      TestModelComparison(trueModel, foilModels, paramsIn, ...
 %                      numTrials, numItems, [optionalParameters])
-%  
+%
 %  successAIC/BIC/AICc are the percentage of time that the respective model
 %  comparison metric correctly selected the true model as opposed to one of
 %  the foil models.
@@ -14,7 +14,7 @@
 %                 StandardMixtureModel('Bias', true)};
 %   TestModelComparison(model, foilModels);
 %
-% You can also specify the parameters of the fits: e.g., 
+% You can also specify the parameters of the fits: e.g.,
 %
 %   paramsIn = {0.1, 10}; % g, SD
 %   numTrials = [500 1000];
@@ -27,27 +27,27 @@
 function [successAIC, successBIC, successAICc] = ...
     TestModelComparison(trueModel, foilModels, paramsIn, ...
     numTrials, numItems, varargin)
-  
+
   % Optional parameters
-  args = struct('Verbosity', 1); 
+  args = struct('Verbosity', 1);
   args = parseargs(varargin, args);
-  
+
   % Generate error data using parameters from the initial start position of
   % the model
   if(nargin < 3)
     paramsIn = num2cell(trueModel.start(1,:));
   end
-  
+
   % Use 10, 100, 1000 and 3000 trials
   if(nargin < 4)
     numTrials = [10 100 1000 3000];
   end
-  
+
   % Simulate displays with 3 items on them
   if(nargin < 5)
     numItems = 3;
   end
-  
+
   if args.Verbosity > 0
     % Print model and parameters being simulated:
     fprintf('\nTrue model: %s\n\n', trueModel.name);
@@ -63,19 +63,19 @@ function [successAIC, successBIC, successAICc] = ...
       fprintf('\t%s\n', foilModels{i}.name);
     end
   end
-  
-  for i = 1:length(numTrials) 
+
+  for i = 1:length(numTrials)
     if args.Verbosity > 0
       fprintf('\nTrying with %d trials.\n', numTrials(i))
     end
     parfor j=1:30
       % Generate displays
       displays = GenerateDisplays(numTrials(i), numItems);
-      
+
       % Generate error data for these displays:
       data = displays;
       data.errors = SampleFromModel(trueModel, paramsIn, [numTrials(i),1], displays);
-      
+
       % Now try to recover the parameters that led to these errors:
       [aic,bic,loglike,aicc] = ModelComparison_AIC_BIC(data, {trueModel, foilModels{:}});
       successAIC(i,j) = argmin(aic)==1;

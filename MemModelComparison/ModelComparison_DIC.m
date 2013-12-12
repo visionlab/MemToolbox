@@ -6,7 +6,7 @@
 %  designed for hierarchical models.  It estimates the "effective number of
 %  parameters" based on the spread of the posterior distribution, and thus
 %  does not penalize models for having more parameters but rather penalizes
-%  them for being more flexible (not all parameters give equal flexibility). 
+%  them for being more flexible (not all parameters give equal flexibility).
 %
 %  Differences in DIC should be interpreted in much the same way as
 %  differences in AIC. E.g.,
@@ -16,7 +16,7 @@
 %   < 5  - unclear support
 %
 %  Calculating the DIC requires running MCMC on each model, which in many
-%  cases you will have already done. Thus, ModelComparison_DIC takes an 
+%  cases you will have already done. Thus, ModelComparison_DIC takes an
 %  optional parameter 'PosteriorSamples', which is a cell array the same
 %  length as the cell array of models that contains these samples. E.g.,
 %
@@ -32,15 +32,15 @@
 function [dic, pD] = ModelComparison_DIC(data, models, varargin)
   args = struct('Verbosity', 1, 'PosteriorSamples', []);
   args = parseargs(varargin, args);
-  
+
   if length(models) < 2
     error('Model comparison requires a cell array of at least two models.');
   end
-  
+
   if args.Verbosity > 0
     fprintf('\nComparing %d models by DIC:\n', length(models));
-  end 
-  
+  end
+
    % Fit each model...
    for md = 1:length(models)
      models{md} = EnsureAllModelMethods(models{md});
@@ -52,22 +52,22 @@ function [dic, pD] = ModelComparison_DIC(data, models, varargin)
      else
        posteriorSamples = args.PosteriorSamples{md};
      end
-     
+
      % Calculate mean deviance from posterior samples
      meanDeviance = mean(-2.*posteriorSamples.like);
-     
+
      % Calculate the deviance of the posterior mean
      posteriorMean = MCMCSummarize(posteriorSamples, 'posteriorMean');
      asCell = num2cell(posteriorMean);
      devianceOfMean = -2 .* (models{md}.logpdf(data, asCell{:}) ...
        + models{md}.logprior(posteriorMean));
-     
+
      % Effective number of parameters is the difference of these two values
      pD(md) = meanDeviance - devianceOfMean;
-     
+
      % Final DIC calculation
      dic(md) = pD(md) + meanDeviance;
-   end   
+   end
 end
 
 

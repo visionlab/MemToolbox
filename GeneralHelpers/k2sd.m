@@ -6,7 +6,7 @@ function S = k2sd (K)
 %   Ref: Topics in Circular Statistics, S. R. Jammalamadaka & A. Sengupta
 %
 %   --> www.paulbays.com
-  
+
   if K==0
     S = Inf;
   elseif isinf(K)

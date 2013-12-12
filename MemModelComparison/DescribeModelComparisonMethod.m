@@ -1,5 +1,5 @@
 % DESCRIBEMODELCOMPARISONMETHOD Describe in words the various model comparsion metrics
-%   
+%
 %   DescribeModelComparisonMethod(name);
 %
 %  Given the name of a model comparison metric (e.g., 'AIC'), prints a

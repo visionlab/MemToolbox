@@ -1,5 +1,5 @@
 %PLOTPOSTERIORCOMPARISON Show multiple posteriors at once (e.g., for two conditions)
-% 
+%
 %    figHand = PlotPosteriorComparison(posteriors, paramNames)
 %
 %  Example usage:
@@ -15,7 +15,7 @@
 function figHand = PlotPosteriorComparison(posteriors, paramNames)
   % Show 2x2 correlation for each variable with each other to look for
   % structure; Visualize both as a scatter and as a 2D histogram
-  figHand = figure; 
+  figHand = figure;
   set(gcf, 'Color', [1 1 1]);
   for i=1:length(posteriors)
     if isfield(posteriors{i}, 'vals')
@@ -33,10 +33,10 @@ function figHand = PlotPosteriorComparison(posteriors, paramNames)
   set(l, 'Position', [pos(1)+0.05, pos(2)+0.04, pos(3), pos(4)]);
 end
 
-function cl=PlotPosterior_MCMC(posteriorSamples, paramNames, w)  
+function cl=PlotPosterior_MCMC(posteriorSamples, paramNames, w)
   % Plot correlation
   N = length(paramNames);
-  cols = palettablecolors(w);     
+  cols = palettablecolors(w);
   for p=1:N
     for p2=1:(p-1)
       subplot(N,N,sub2ind([N N],p,p2)); hold on;
@@ -52,7 +52,7 @@ function cl=PlotPosterior_MCMC(posteriorSamples, paramNames, w)
       axis tight;
       ylim([min(ylim)-(max(ylim)-min(ylim))/3 max(ylim)+(max(ylim)-min(ylim))/3]);
       xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);
-      
+
       subplot(N,N,sub2ind([N N],p2,p)); hold on;
       ch=imagesc(C{2}, C{1}, V);
       set(ch, 'AlphaData', V);
@@ -61,7 +61,7 @@ function cl=PlotPosterior_MCMC(posteriorSamples, paramNames, w)
       set(gca, 'box', 'off');
       axis tight;
       ylim([min(ylim)-(max(ylim)-min(ylim))/3 max(ylim)+(max(ylim)-min(ylim))/3]);
-      xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);      
+      xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);
     end
     subplot(N,N,sub2ind([N N],p,p)); hold on;
     [n,x] = hist(posteriorSamples.vals(:,p));
@@ -70,7 +70,7 @@ function cl=PlotPosterior_MCMC(posteriorSamples, paramNames, w)
     hPatch = findobj(h1,'Type','patch');
     set(hPatch,'FaceAlpha',0.4);
     axis tight;
-    xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);  
+    xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);
     set(gca, 'YTick', []);
     set(gca, 'box', 'off');
     subplot(N,N,sub2ind([N N],p,1));
@@ -78,7 +78,7 @@ function cl=PlotPosterior_MCMC(posteriorSamples, paramNames, w)
     subplot(N,N,sub2ind([N N],1,p));
     ylabel(paramNames{p}, 'FontSize', 15);
   end
-  
+
   % Comestics
   map = gray;
   colormap(map(end:-1:1,:));
@@ -88,11 +88,11 @@ function cl=PlotPosterior_GridSearch(fullPosterior, paramNames, w)
   % Shorten names
   likeMatrix = fullPosterior.propToLikeMatrix;
   valuesUsed = fullPosterior.valuesUsed;
-  
+
   % Show 2x2 correlation for each variable with each other to look for
-  % structure; Visualize both as a scatter and as a 2D histogram  
+  % structure; Visualize both as a scatter and as a 2D histogram
   N = length(paramNames);
-  cols = palettablecolors(w);  
+  cols = palettablecolors(w);
   for p=1:N
     for p2=1:(p-1)
       subplot(N,N,sub2ind([N N],p,p2)); hold on;
@@ -106,7 +106,7 @@ function cl=PlotPosterior_GridSearch(fullPosterior, paramNames, w)
       axis tight;
       ylim([min(ylim)-(max(ylim)-min(ylim))/3 max(ylim)+(max(ylim)-min(ylim))/3]);
       xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);
-      
+
       subplot(N,N,sub2ind([N N],p2,p)); hold on;
       ch=imagesc(valuesUsed{p2}, valuesUsed{p}, V');
       set(ch, 'AlphaData', V');
@@ -115,17 +115,17 @@ function cl=PlotPosterior_GridSearch(fullPosterior, paramNames, w)
       set(gca, 'box', 'off');
       axis tight;
       ylim([min(ylim)-(max(ylim)-min(ylim))/3 max(ylim)+(max(ylim)-min(ylim))/3]);
-      xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);      
+      xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);
     end
-    
+
     subplot(N,N,sub2ind([N N],p,p)); hold on;
-    marginal = ndsum(likeMatrix, find(1:N ~= p)); 
+    marginal = ndsum(likeMatrix, find(1:N ~= p));
     marginal = marginal ./ max(marginal(:));
     h1=bar(valuesUsed{p}, marginal, 'FaceColor',cols(w,:),'EdgeColor',cols(w,:));
     hPatch = findobj(h1,'Type','patch');
     set(hPatch,'FaceAlpha',0.4);
     axis tight;
-    xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);      
+    xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);
     set(gca, 'YTick', []);
     set(gca, 'box', 'off');
     subplot(N,N,sub2ind([N N],p,1));
@@ -133,7 +133,7 @@ function cl=PlotPosterior_GridSearch(fullPosterior, paramNames, w)
     subplot(N,N,sub2ind([N N],1,p));
     ylabel(paramNames{p}, 'FontSize', 15);
   end
-  
+
   % Comestics
   map = gray;
   colormap(map(end:-1:1,:));

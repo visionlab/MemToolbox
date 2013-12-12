@@ -2,7 +2,6 @@ function BuildDocs(dir)
   if(nargin < 1)
     dir = '**';
   end
-  parentFolder = 'MemUtilities';
 	MTBfolder = fileparts(fileparts(which(mfilename)));
 	options.evalCode = false;
   options.format = 'html';

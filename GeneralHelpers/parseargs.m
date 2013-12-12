@@ -1,6 +1,6 @@
 function ArgStruct = ParseArgs(args,ArgStruct,varargin)
 %
-% Helper function for parsing varargin. 
+% Helper function for parsing varargin.
 %
 % ArgStruct = ParseArgs(varargin,ArgStruct[,FlagtypeParams[,Aliases]])
 %
@@ -9,7 +9,7 @@ function ArgStruct = ParseArgs(args,ArgStruct,varargin)
 % * Aliases can be used to map one argument-name to several argstruct fields
 %
 %
-% example usage: 
+% example usage:
 % --------------
 % function parseargtest(varargin)
 %
@@ -18,10 +18,10 @@ function ArgStruct = ParseArgs(args,ArgStruct,varargin)
 %        'SpacingVertical',0.05,'SpacingHorizontal',0.05, ...
 %        'PaddingLeft',0,'PaddingRight',0,'PaddingTop',0,'PaddingBottom',0, ...
 %        'MarginLeft',.1,'MarginRight',.1,'MarginTop',.1,'MarginBottom',.1, ...
-%        'rows',[],'cols',[]); 
+%        'rows',[],'cols',[]);
 %
-% %The capital letters define abrreviations.  
-% %  Eg. parseargtest('spacingvertical',0) is equivalent to  parseargtest('sv',0) 
+% %The capital letters define abrreviations.
+% %  Eg. parseargtest('spacingvertical',0) is equivalent to  parseargtest('sv',0)
 %
 % Args=parseArgs(varargin,Args, ... % fill the arg-struct with values entered by the user
 %           {'Holdaxis'}, ... %this argument has no value (flag-type)
@@ -41,13 +41,13 @@ function ArgStruct = ParseArgs(args,ArgStruct,varargin)
 Aliases={};
 FlagTypeParams='';
 
-if (length(varargin)>0) 
+if (length(varargin)>0)
     FlagTypeParams=lower(strvcat(varargin{1}));
     if length(varargin)>1
         Aliases=varargin{2};
     end
 end
- 
+
 
 %---------------Get "numeric" arguments
 NumArgCount=1;
@@ -59,7 +59,7 @@ if (NumArgCount>0)
     ArgStruct.NumericArguments={args{1:NumArgCount}};
 else
     ArgStruct.NumericArguments={};
-end 
+end
 
 
 %--------------Make an accepted fieldname matrix (case insensitive)
@@ -75,12 +75,12 @@ end
 FnamesFull=strvcat(Fnames{:,2});
 FnamesAbbr=strvcat(Fnames{:,3});
 
-if length(Aliases)>0  
+if length(Aliases)>0
     for i=1:length(Aliases)
         name=lower(Aliases{i,1});
         FieldIdx=strmatch(name,FnamesAbbr,'exact'); %try abbreviations (must be exact)
-        if isempty(FieldIdx) 
-            FieldIdx=strmatch(name,FnamesFull); %&??????? exact or not? 
+        if isempty(FieldIdx)
+            FieldIdx=strmatch(name,FnamesFull); %&??????? exact or not?
         end
         Aliases{i,2}=FieldIdx;
         AbbrevIdx=find(Aliases{i,1}~=name);
@@ -88,30 +88,30 @@ if length(Aliases)>0
         Aliases{i,1}=name; %dont need the name in uppercase anymore for aliases
     end
     %Append aliases to the end of FnamesFull and FnamesAbbr
-    FnamesFull=strvcat(FnamesFull,strvcat(Aliases{:,1})); 
+    FnamesFull=strvcat(FnamesFull,strvcat(Aliases{:,1}));
     FnamesAbbr=strvcat(FnamesAbbr,strvcat(Aliases{:,3}));
 end
 
 %--------------get parameters--------------------
-l=NumArgCount+1; 
+l=NumArgCount+1;
 while (l<=length(args))
     a=args{l};
     if ischar(a)
         paramHasValue=1; % assume that the parameter has is of type 'param',value
         a=lower(a);
         FieldIdx=strmatch(a,FnamesAbbr,'exact'); %try abbreviations (must be exact)
-        if isempty(FieldIdx) 
-            FieldIdx=strmatch(a,FnamesFull); 
+        if isempty(FieldIdx)
+            FieldIdx=strmatch(a,FnamesFull);
         end
-        if (length(FieldIdx)>1) %shortest fieldname should win 
+        if (length(FieldIdx)>1) %shortest fieldname should win
             [mx,mxi]=max(sum(FnamesFull(FieldIdx,:)==' ',2));
             FieldIdx=FieldIdx(mxi);
         end
         if FieldIdx>length(Fnames) %then it's an alias type.
-            FieldIdx=Aliases{FieldIdx-length(Fnames),2}; 
+            FieldIdx=Aliases{FieldIdx-length(Fnames),2};
         end
-        
-        if isempty(FieldIdx) 
+
+        if isempty(FieldIdx)
             error(['Unknown named parameter: ' a])
         end
         for curField=FieldIdx' %if it is an alias it could be more than one.
@@ -131,11 +131,11 @@ while (l<=length(args))
                         end
                     else
                         val=true;
-                        paramHasValue=0; 
+                        paramHasValue=0;
                     end
                 else
                     val=true;
-                    paramHasValue=0; 
+                    paramHasValue=0;
                 end
             end
             ArgStruct.(Fnames{curField,1})=val;

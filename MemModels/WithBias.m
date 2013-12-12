@@ -1,4 +1,4 @@
-% WITHBIAS adds a bias terms to any model 
+% WITHBIAS adds a bias terms to any model
 %
 %  model = WithBias(model, [priorForMu])
 %
@@ -19,7 +19,7 @@ function model = WithBias(model, priorForMu)
   if nargin < 2
     priorForMu = @(p)(1);
   end
-  
+
   % Take model and turn it into a model with a bias term
   model.name = [model.name ' with bias'];
   model.paramNames = {'mu', model.paramNames{:}};
@@ -27,24 +27,24 @@ function model = WithBias(model, priorForMu)
   model.upperbound = [180 model.upperbound];
   model.movestd = [1 model.movestd];
   model.start = [rand(size(model.start,1),1)*10  model.start];
-  
+
   % Adjust pdf and prior
   model.oldPdf = model.pdf;
   model.pdf = @NewPDF;
-  
+
   model.priorForMu = priorForMu;
   if isfield(model, 'prior')
     model.oldPrior = model.prior;
     model.prior = @(p)(model.oldPrior(p(2:end)) .* model.priorForMu(p(1)));
   end
-  
+
   % Adjust generator function
   if isfield(model, 'generator')
     model.oldGenerator = model.generator;
     model.generator = @(params,dims,displayInfo)(...
       wrap(model.oldGenerator(params(2:end), dims, displayInfo)+params{1}));
   end
-  
+
   % Adjust model_plot
   if isfield(model, 'modelPlot')
     model.oldModelPlot = model.modelPlot;
@@ -63,11 +63,11 @@ function model = WithBias(model, priorForMu)
     end
     if isfield(data, 'changeSize')
       data.changeSize = wrap(data.changeSize - mu);
-    end    
+    end
     figHand =  model.oldModelPlot(data, params, varargin);
   end
-  
-  % Shift errors and/or changeSize 
+
+  % Shift errors and/or changeSize
   function p = NewPDF(data, mu, varargin)
     if isfield(data, 'errors')
       data.errors = wrap(data.errors - mu);

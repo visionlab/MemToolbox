@@ -2,10 +2,10 @@
 %
 % model = GetModelPdfForPlot(model)
 %
-% adds pdfForPlot to a model, a function that allows you to plot a pdf 
+% adds pdfForPlot to a model, a function that allows you to plot a pdf
 % with arbitrary requirements. For example, with the swap model, it will be
 % appropriately 'bumpy', as though we averaged across all the displays.
-% 
+%
 % It is used by PlotModelFit() as a helper function, and allows you to,
 % for example, do this:
 %
@@ -19,10 +19,10 @@
 %  displays (by the bumps in the pdf).
 %
 function model = GetModelPdfForPlot(model)
-  
+
   % Check if we need extra information to call the pdf
   requiresSeparatePDFs = DoesModelRequireExtraInfo(model);
-  
+
   % If the model doesn't require separate information to call the pdf, just
   % call it once for all the data points by pretending the values we want
   % to plot are the errors
@@ -30,10 +30,10 @@ function model = GetModelPdfForPlot(model)
     model.pdfForPlot = @(vals, data, varargin) model.pdf(struct('errors',vals), varargin{:});
     return;
   end
-  
+
   % If the model does require separate information to call the pdf, call it
   % separately for each value we want to plot, and average across all the
-  % pdf values for all of the datapoints 
+  % pdf values for all of the datapoints
   model.pdfForPlot = @NewPdfForPlot;
   function p = NewPdfForPlot(vals, data, varargin)
     sz = size(data.errors);
