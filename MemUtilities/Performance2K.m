@@ -2,7 +2,7 @@
 % 
 %  k = Performance2K(p,n,m) 
 %
-% gives a subject's proportion correct P in a partial  report task with N 
+% gives a subject's proportion correct P in a partial report task with N 
 % objects and M alternatives.
 %
 function k = Performance2K(p,n,m)
