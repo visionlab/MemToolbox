@@ -2,8 +2,8 @@
 %
 %  k = Performance2K(p,n,m)
 %
-% gives a subject's proportion correct P in a partial  report task with N
-% objects and M alternatives.
+% Given a subject's proportion correct p in a partial report task with n
+% objects and m alternatives, returns k, the number of remembered objects.
 %
 function k = Performance2K(p,n,m)
     k = (n - n*m*p) / (1 - m);
