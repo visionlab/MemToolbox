@@ -6,5 +6,5 @@
 % objects and m alternatives, returns k, the number of remembered objects.
 %
 function k = Performance2K(p,n,m)
-    k = (n - n*m*p) / (1 - m);
+    k = n * (p - 1/m)/(1 - 1/m);
 end
