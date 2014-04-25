@@ -83,7 +83,7 @@ function p = SwapModelPDF(data, g, B, sd)
 
   % Allow for the possibility of NaN's in distractors, as in the case where
   % different trials have different set sizes
-  numDistractorsPerTrial = sum(~isnan(data.distractors));
+  numDistractorsPerTrial = sum(~isnan(displayInfo.distractors),1)';
   for i=1:nDistractors
     pdfOut = vonmisespdf(data.errors(:), data.distractors(i,:)', deg2k(sd));
     pdfOut(isnan(pdfOut)) = 0;
@@ -98,7 +98,7 @@ function y = SwapModelGenerator(params,dims,displayInfo)
   % Assign types to trials
   r = rand(n,1);
   which = zeros(n,1); % default = remembered
-  numDistractorsPerTrial = sum(~isnan(displayInfo.distractors))';
+  numDistractorsPerTrial = sum(~isnan(displayInfo.distractors),1)';
   which(r<params{1}+params{2}) = ceil(rand(sum(r<params{1}+params{2}), 1) ...
     .* numDistractorsPerTrial(r<params{1}+params{2})); % swap to random distractor
   which(r<params{1}) = -1; % guess
