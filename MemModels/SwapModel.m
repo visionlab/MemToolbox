@@ -83,7 +83,7 @@ function p = SwapModelPDF(data, g, B, sd)
 
   % Allow for the possibility of NaN's in distractors, as in the case where
   % different trials have different set sizes
-  numDistractorsPerTrial = sum(~isnan(displayInfo.distractors),1)';
+  numDistractorsPerTrial = sum(~isnan(data.distractors),1)';
   for i=1:nDistractors
     pdfOut = vonmisespdf(data.errors(:), data.distractors(i,:)', deg2k(sd));
     pdfOut(isnan(pdfOut)) = 0;
