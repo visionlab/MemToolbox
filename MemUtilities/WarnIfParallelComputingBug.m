@@ -10,7 +10,11 @@ function pass = WarnIfParallelComputingBug()
   javaVersionNumMinor = str2num(javaVersion((i+1):(i+2)));
   if(~isempty(strfind(javaVersion, 'Java 1.6.0')) && (javaVersionNumMinor >= 39) && isParallelInstalled)
    try
-     matlabpool open;
+     if exist('gcp')
+       gcp();
+     else
+       matlabpool('open');
+     end
    catch
      pass = false;
      fprintf(['\nWarning: you are using a version of Java with a known bug\n' ...

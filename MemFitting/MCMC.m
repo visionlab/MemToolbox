@@ -92,9 +92,19 @@ function posteriorSamples = MCMC(data, model, varargin)
   if(pass)
     % Matlabpool open?
     try
-      if matlabpool('size') == 0
+      noParallel = 0;
+      if exist('gcp') % Despite being a MATLAB command, this returns 2 for file
+        if isempty(gcp('nocreate'))
+          noParallel = 1;
+        end
+      else
+        if matlabpool('size') == 0
+          noParallel = 1;
+        end
+      end
+      if noParallel
         fprintf(['\nTip: You are running MCMC without first turning on parallel\n' ...
-                 'processing. See Demo 6 in the tutorial for a speed boost.\n']);
+          'processing. See Demo 6 in the tutorial for a speed boost.\n']);
       end
     end
   end
