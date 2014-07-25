@@ -64,10 +64,16 @@ function figHand = PlotPriorPredictive(model, data, varargin)
     % Bin data
     normalizedYRep = getNormalizedBinnedReplication(yrep, data, x);
     if any(isnan(normalizedYRep))
-      hSim = plot(x, normalizedYRep, 'x-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
+      hSim = plot(x, normalizedYRep, 'x-', 'Color', args.PdfColor);
+      if verLessThan('matlab','8.4.0')
+        set(hSim, 'LineSmoothing', 'on');
+      end      
     else
       hSim = patchline(x, normalizedYRep, 'LineStyle', '-', 'EdgeColor', ...
-        args.PdfColor, 'EdgeAlpha', 0.15, 'LineSmoothing', 'on');
+        args.PdfColor, 'EdgeAlpha', 0.15);
+      if verLessThan('matlab','8.4.0')
+        set(hSim, 'LineSmoothing', 'on');
+      end
     end
     hold on;
   end

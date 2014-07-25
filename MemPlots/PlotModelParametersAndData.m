@@ -57,7 +57,10 @@ function figHand = PlotModelParametersAndData(model, posteriorSamples, data, var
       xlim([0 2]);
     else
       seriesInfo(i) = plot(1:size(values,2), valuesNormalized(i,:), ...
-        'Color', colorOfLine(i,:), 'LineSmoothing', 'on');
+        'Color', colorOfLine(i,:));
+      if verLessThan('matlab','8.4.0')
+        set(seriesInfo(i), 'LineSmoothing', 'on');
+      end
     end
     hold on;
   end

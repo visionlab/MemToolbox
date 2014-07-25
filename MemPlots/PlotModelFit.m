@@ -131,8 +131,11 @@ function Plot2AFC(model, params, data, args)
     newD.afcCorrect = ones(size(vals));
     p = model.pdf(newD, paramsAsCell{:});
   end
-  plot(vals, p, 'Color', args.PdfColor, 'LineWidth', 2, 'LineSmoothing', 'on');
-
+  h = plot(vals, p, 'Color', args.PdfColor, 'LineWidth', 2);
+  if verLessThan('matlab','8.4.0')
+    set(h, 'LineSmoothing', 'on');
+  end
+  
   % Label plot
   if args.ShowAxisLabels
     xlabel('Distance (degrees)', 'FontSize', 14);
@@ -176,8 +179,11 @@ function PlotContinuousReport(model, params, data, args)
   else
     paramsAsCell = num2cell(params);
     p = model.pdfForPlot(vals, data, paramsAsCell{:});
-    plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, ...
-         'LineWidth', 3, 'LineSmoothing', 'on');
+    h = plot(vals, p(:) ./ sum(p(:)) .* multiplier, 'Color', args.PdfColor, ...
+         'LineWidth', 3);
+    if verLessThan('matlab','8.4.0')
+      set(h, 'LineSmoothing', 'on');
+    end
   end
 
   if args.ShowAxisLabels

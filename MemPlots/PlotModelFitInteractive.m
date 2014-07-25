@@ -98,7 +98,6 @@ function figHand = PlotModelFitInteractive(model, params, data, varargin)
       'Style','slider', ...
       'UserData', MappingFunction{i}, ...
       'Value', invertedMapping);
-    get(slider(i), 'PixelBounds');
 
     % Create plots for marginals
     if args.MarginalPlots

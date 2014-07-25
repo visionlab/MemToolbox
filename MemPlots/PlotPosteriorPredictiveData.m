@@ -66,10 +66,16 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
     % Bin data and model
     normalizedYRep = getNormalizedBinnedReplication(yrep, data, x);
     if any(isnan(normalizedYRep))
-      hSim = plot(x, normalizedYRep, 'x-', 'Color', args.PdfColor, 'LineSmoothing', 'on');
+      hSim = plot(x, normalizedYRep, 'x-', 'Color', args.PdfColor);
+      if verLessThan('matlab','8.4.0')
+        set(hSim, 'LineSmoothing', 'on');
+      end
     else
       hSim = patchline(x, normalizedYRep, 'LineStyle', '-', 'EdgeColor', ...
-        args.PdfColor, 'EdgeAlpha', 0.15, 'LineSmoothing', 'on');
+        args.PdfColor, 'EdgeAlpha', 0.15);
+      if verLessThan('matlab','8.4.0')
+        set(hSim, 'LineSmoothing', 'on');
+      end
     end
 
     % Difference between this data and real data
@@ -101,7 +107,10 @@ function figHand = PlotPosteriorPredictiveData(model, posteriorSamples, data, va
   else
     hB = boundedline(x, bounds(:,2), [bounds(:,2)-bounds(:,1) bounds(:,3)-bounds(:,2)], ...
       'cmap', [0.3 0.3 0.3]);
-    set(hB, 'LineWidth', 2, 'LineSmoothing', 'on');
+    set(hB, 'LineWidth', 2);
+    if verLessThan('matlab','8.4.0')
+      set(hB, 'LineSmoothing', 'on');
+    end
   end
   line([-180 180], [0 0], 'LineStyle', '--', 'Color', [.5 .5 .5]);
   if isfield(model, 'isOrientationModel')
