@@ -5,8 +5,13 @@
 function [maxPosterior, like] = MAP(data, model)
   % Fastest if your number of start positions is the same as the number
   % of cores/processors you have
-  options = statset('MaxIter',50000,'MaxFunEvals',50000,...
-    'UseParallel','always','FunValCheck','off');
+  if license('test', 'optimization_toolbox')
+    options = statset('MaxIter',50000,'MaxFunEvals',50000,...
+      'UseParallel','always','FunValCheck','off');
+  else
+    options = statset('MaxIter',50000,'MaxFunEvals',50000,...
+      'FunValCheck','off');    
+  end
 
   % If they don't pass in a model, assume the standard mixture model.
   if nargin < 2
