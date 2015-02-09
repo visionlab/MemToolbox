@@ -39,7 +39,7 @@ function model = Orientation(model, whichParameters)
     model.prior = @NewPrior;
   end
   function p = NewPrior(params)
-    params(whichParameters) = params(whichParameters).*2;
+    params(whichParameters) = params(whichParameters)./2;
     p = model.oldPrior(params);
   end
   
@@ -60,15 +60,15 @@ function model = Orientation(model, whichParameters)
   model.pdf = @NewPDF;
   function p = NewPDF(data, varargin)
     if isfield(data, 'errors')
-      data.errors = data.errors .* 2;
+      data.errors = data.errors;
     end
     if isfield(data, 'distractors')
-      data.distractors = data.distractors .* 2;
+      data.distractors = data.distractors;
     end
     if isfield(data, 'changeSize')
-      data.changeSize = data.changeSize .* 2;
+      data.changeSize = data.changeSize;
     end
-    varargin(whichParameters) = cellfun(@(x){x.*2}, varargin(whichParameters));
+    varargin(whichParameters) = cellfun(@(x){x./2}, varargin(whichParameters));
     p = model.oldPdf(data, varargin{:});
     
     % To make plotting functions work right:

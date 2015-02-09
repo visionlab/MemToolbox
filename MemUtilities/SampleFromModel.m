@@ -69,8 +69,12 @@ function samp = SampleFromModel(model, params, dims, displayInfo)
   
   % Get CDF
   if ~r
-    interpVals = linspace(-180, 180, 1000);
-    
+    if model.isOrientationModel
+      interpVals = linspace(-90, 90, 1000);
+    else
+      interpVals = linspace(-180, 180, 1000);
+    end
+
     % Just generate enough samples to fill dims
     data.errors = interpVals;
     y = model.pdf(data, params{:});
