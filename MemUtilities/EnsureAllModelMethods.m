@@ -32,7 +32,11 @@ end
 
 function s = sumWithNans(v)
   if any(~isnan(v))
-    s = nansum(v);
+    try
+      s = nansum(v);
+    catch 
+      error('It looks like you don''t have the function nansum(). This is most likely caused by not having the Statistics Toolbox, which is required for MemToolbox!');
+    end
   else
     s = NaN;
   end
