@@ -1,6 +1,6 @@
 %PLOTPOSTERIORCOMPARISON Show multiple posteriors at once (e.g., for two conditions)
 %
-%    figHand = PlotPosteriorComparison(posteriors, paramNames)
+%    figHand = PlotPosteriorComparison(posteriors, paramNames, conditionOrder)
 %
 %  Example usage:
 %   posteriorSamples1 = MCMC(MemDataset(1), model);
@@ -12,7 +12,12 @@
 % Posteriors can be either fullPosteriors or posteriorSamples or a mixture
 % of the two.
 %
-function figHand = PlotPosteriorComparison(posteriors, paramNames)
+% The optional third argument "conditionOrder" can be used to plot 
+% condition names instead of numbers. The output from 
+% [datasets, conditionOrder] = SplitDataByCondition(data)
+% can be recycled.
+%
+function figHand = PlotPosteriorComparisonWanja(posteriors, paramNames, conditionOrder)
   % Show 2x2 correlation for each variable with each other to look for
   % structure; Visualize both as a scatter and as a 2D histogram
   figHand = figure;
@@ -28,7 +33,11 @@ function figHand = PlotPosteriorComparison(posteriors, paramNames)
   end
   N = length(paramNames);
   subplot(N,N,sub2ind([N N],N,1));
-  l = legend(cl, num2str((1:length(posteriors))'), 'Location', 'NorthEast');
+  if exist('conditionOrder','var')
+      l = legend(cl, conditionOrder, 'Location', 'NorthEast');
+  else
+      l = legend(cl, num2str((1:length(posteriors))'), 'Location', 'NorthEast');
+  end
   pos = get(l, 'Position');
   set(l, 'Position', [pos(1)+0.05, pos(2)+0.04, pos(3), pos(4)]);
 end
@@ -67,8 +76,13 @@ function cl=PlotPosterior_MCMC(posteriorSamples, paramNames, w)
     [n,x] = hist(posteriorSamples.vals(:,p));
     n = n./max(n(:));
     h1=bar(x,n, 'FaceColor',cols(w,:),'EdgeColor',cols(w,:));
-    hPatch = findobj(h1,'Type','patch');
-    set(hPatch,'FaceAlpha',0.4);
+    %different transparency handles starting R2014b
+    if verLessThan('matlab','8.5')
+        hPatch = findobj(h1,'Type','patch');
+        set(hPatch,'FaceAlpha',0.4);
+    else
+        h1.FaceAlpha = 0.4;
+    end
     axis tight;
     xlim([min(xlim)-(max(xlim)-min(xlim))/3 max(xlim)+(max(xlim)-min(xlim))/3]);
     set(gca, 'YTick', []);
