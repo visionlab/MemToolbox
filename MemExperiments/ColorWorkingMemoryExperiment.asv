@@ -71,7 +71,7 @@ function ColorWorkingMemoryExperiment()
       ShowCursor('Arrow');
 
       % If mouse button is already down, wait for release.
-      [x, y, buttons] = GetMouse(window.onScreen);
+      [x, y, buttons]GetMouse(window.onScreen);
       while any(buttons)
         [x, y, buttons] = GetMouse(window.onScreen);
       end
@@ -119,7 +119,8 @@ function ColorWorkingMemoryExperiment()
     save data.mat data prefs
     postpareEnvironment;
 
-  catch
+  catch ME
+      rethrow(ME)
     postpareEnvironment;
     psychrethrow(psychlasterror);
 
