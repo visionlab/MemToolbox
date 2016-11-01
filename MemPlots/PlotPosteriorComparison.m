@@ -17,7 +17,7 @@
 % [datasets, conditionOrder] = SplitDataByCondition(data)
 % can be recycled.
 %
-function figHand = PlotPosteriorComparisonWanja(posteriors, paramNames, conditionOrder)
+function figHand = PlotPosteriorComparison(posteriors, paramNames, conditionOrder)
   % Show 2x2 correlation for each variable with each other to look for
   % structure; Visualize both as a scatter and as a 2D histogram
   figHand = figure;
